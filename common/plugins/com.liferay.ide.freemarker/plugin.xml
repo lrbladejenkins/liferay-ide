@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="org.jboss.ide.eclipse.freemarker.editor.FreemarkerMultiPageEditor"
+            class="com.liferay.ide.freemarker.editor.LiferayFreemarkerEditor"
             contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
             icon="icons/icon.gif"
             id="com.liferay.ide.freemarker.editor.FreemarkerEditor"
@@ -68,8 +68,8 @@
       <content-type
             file-extensions="ftl"
             id="com.liferay.ide.freemarker.contentType"
-            name="Freemarker Content Type"
-            priority="normal">
+            name="Liferay Freemarker Content Type"
+            priority="high">
       </content-type>
    </extension>
 

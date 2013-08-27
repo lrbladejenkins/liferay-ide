@@ -11,4 +11,11 @@
       </image>
       
    </extension>
+   <extension
+         point="com.liferay.ide.core.liferayProjectAdapters">
+      <liferayProjectAdapter
+            class="com.liferay.ide.theme.ui.ThemeFreemarkerEditorAdapter"
+            id="com.liferay.ide.theme.ui.themeFreemarkerEditorAdapter">
+      </liferayProjectAdapter>
+   </extension>
 </plugin>

@@ -25,6 +25,7 @@ package org.jboss.ide.eclipse.freemarker.configuration;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,6 +64,8 @@ public class ConfigurationManager {
 	private Map contextValues = new HashMap();
 	private Map macroLibrary = new HashMap();
 	private MacroLibrary[] macroLibraryArr;
+
+    private URL[] extraUrls;
 
 	private ConfigurationManager () {}
 
@@ -144,7 +147,7 @@ public class ConfigurationManager {
 		}
 		save();
 	}
-	
+
 	public MacroLibrary getMacroLibrary (String namespace) {
 		return (MacroLibrary) macroLibrary.get(namespace);
 	}
@@ -155,7 +158,7 @@ public class ConfigurationManager {
 			sb.append("\t\t" + macroLibrary.toXML() + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
-	
+
 	private Map loadMacroTemplates (Element element) {
 		Map map = new HashMap();
         try {
@@ -168,7 +171,7 @@ public class ConfigurationManager {
                     if (null != macroLibrary) {
                     	map.put(macroLibrary.getNamespace(), macroLibrary);
                     }
-                    
+
                 } catch (Exception e) {
                 	Plugin.log(e);
                 }
@@ -233,12 +236,21 @@ public class ConfigurationManager {
     	return getProjectClassLoader().loadClass(className);
     }
 
-    public synchronized ClassLoader getProjectClassLoader() throws JavaModelException {
+    public synchronized ProjectClassLoader getProjectClassLoader() throws JavaModelException {
     	if (null == this.projectClassLoader)
-    		this.projectClassLoader = new ProjectClassLoader(JavaCore.create(project));
+    	{
+    	    if( this.extraUrls != null )
+    	    {
+        		this.projectClassLoader = new ProjectClassLoader(JavaCore.create(project), extraUrls);
+    	    }
+    	    else
+    	    {
+        		this.projectClassLoader = new ProjectClassLoader(JavaCore.create(project));
+    	    }
+    	}
     	return this.projectClassLoader;
     }
-    
+
     private void save() {
         StringBuffer sb = new StringBuffer();
         sb.append("<config>\n"); //$NON-NLS-1$
@@ -318,13 +330,13 @@ public class ConfigurationManager {
             }
         }
     }
-    
+
     public ContextValue[] getContextValues(IResource resource, boolean recurse) {
         Map newValues = new HashMap();
         addRootContextValues(resource, newValues, recurse);
         return (ContextValue[]) newValues.values().toArray(new ContextValue[newValues.size()]);
     }
-    
+
     private void addRootContextValues(IResource resource, Map newValues, boolean recurse) {
         String key = null;
         if (null != resource.getParent()) {
@@ -400,5 +412,10 @@ public class ConfigurationManager {
             this.contextValues.put(resource.getProjectRelativePath().toString(), newValues);
             save();
         }
+    }
+
+    public void setExtraUrls( URL[] urls )
+    {
+        this.extraUrls = urls;
     }
 }

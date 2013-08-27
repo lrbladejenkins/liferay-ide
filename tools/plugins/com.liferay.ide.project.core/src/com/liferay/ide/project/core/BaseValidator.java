@@ -20,12 +20,10 @@ import com.liferay.ide.core.util.NodeUtil;
 import com.liferay.ide.core.util.StringPool;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -411,42 +409,7 @@ public abstract class BaseValidator extends AbstractValidator
 
     protected Map<String, String> getAllClasseElements( String liferayDescriptorClassElementsProperties )
     {
-        Map<String, String> map = new HashMap<String, String>();
-        Properties p = new Properties();
-        InputStream resource = null;
-
-        try
-        {
-            resource = this.getClass().getClassLoader().getResourceAsStream( liferayDescriptorClassElementsProperties );
-            p.load( resource );
-
-            for( Object key : p.keySet() )
-            {
-                String elementName = key.toString();
-                String typeNames = p.get( key ).toString();
-
-                map.put( elementName, typeNames );
-            }
-        }
-        catch( IOException e )
-        {
-            LiferayProjectCore.logError( e );
-        }
-        finally
-        {
-            if( resource != null )
-            {
-                try
-                {
-                    resource.close();
-                }
-                catch( IOException e )
-                {
-                }
-            }
-        }
-
-        return map;
+        return CoreUtil.loadProperties( this.getClass(), liferayDescriptorClassElementsProperties );
     }
 
     protected Integer getMessageSeverity( String qualifier, IScopeContext[] preferenceScopes, String key )

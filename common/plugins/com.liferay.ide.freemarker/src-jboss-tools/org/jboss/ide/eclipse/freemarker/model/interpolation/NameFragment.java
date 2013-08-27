@@ -27,8 +27,6 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -41,8 +39,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.jboss.ide.eclipse.freemarker.configuration.ConfigurationManager;
-import org.jboss.ide.eclipse.freemarker.configuration.ContextValue;
 
 /**
  * @author <a href="mailto:joe@binamics.com">Joe Hudson</a>
@@ -100,43 +96,43 @@ public class NameFragment extends AbstractFragment {
 	}
 
 	private Class singulaReturnClass;
-	public Class getSingularReturnClass(Class parentClass, List fragments, Map context, IResource resource, IProject project) {
-		if (null == singulaReturnClass) {
-			String content = getContent();
-			if (isStartFragment()) {
-				ContextValue contextValue = ConfigurationManager.getInstance(project).getContextValue(content, resource, true);
-				if (null == contextValue || null == contextValue.singularClass)
-					singulaReturnClass = Object.class;
-				else
-					singulaReturnClass = contextValue.singularClass;
-			}
-			else {
-				if (null == parentClass) {
-					singulaReturnClass = Object.class;
-				}
-				else {
-					content = Character.toUpperCase(content.charAt(1)) + content.substring(2, getContent().length());
-					String getcontent = "get" + content; //$NON-NLS-1$
-					for (int i=0; i<parentClass.getMethods().length; i++) {
-						Method m = parentClass.getMethods()[i];
-						if (m.getName().equals(content) || m.getName().equals(getcontent)) {
-							Type type = m.getGenericReturnType();
-							if (type instanceof ParameterizedType) {
-								ParameterizedType pType = (ParameterizedType) type;
-								if (pType.getActualTypeArguments().length > 0) {
-									singulaReturnClass = (Class) pType.getActualTypeArguments()[0];
-									break;
-								}
-							}
-							singulaReturnClass = Object.class;
-							break;
-						}
-					}
-				}
-			}
-		}
-		return singulaReturnClass;
-	}
+//	public Class getSingularReturnClass(Class parentClass, List fragments, Map context, IResource resource, IProject project) {
+//		if (null == singulaReturnClass) {
+//			String content = getContent();
+//			if (isStartFragment()) {
+//				ContextValue contextValue = ConfigurationManager.getInstance(project).getContextValue(content, resource, true);
+//				if (null == contextValue || null == contextValue.singularClass)
+//					singulaReturnClass = Object.class;
+//				else
+//					singulaReturnClass = contextValue.singularClass;
+//			}
+//			else {
+//				if (null == parentClass) {
+//					singulaReturnClass = Object.class;
+//				}
+//				else {
+//					content = Character.toUpperCase(content.charAt(1)) + content.substring(2, getContent().length());
+//					String getcontent = "get" + content; //$NON-NLS-1$
+//					for (int i=0; i<parentClass.getMethods().length; i++) {
+//						Method m = parentClass.getMethods()[i];
+//						if (m.getName().equals(content) || m.getName().equals(getcontent)) {
+//							Type type = m.getGenericReturnType();
+//							if (type instanceof ParameterizedType) {
+//								ParameterizedType pType = (ParameterizedType) type;
+//								if (pType.getActualTypeArguments().length > 0) {
+//									singulaReturnClass = (Class) pType.getActualTypeArguments()[0];
+//									break;
+//								}
+//							}
+//							singulaReturnClass = Object.class;
+//							break;
+//						}
+//					}
+//				}
+//			}
+//		}
+//		return singulaReturnClass;
+//	}
 
 	public boolean isStartFragment () {
 		return !getContent().startsWith("."); //$NON-NLS-1$

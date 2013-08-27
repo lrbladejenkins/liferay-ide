@@ -56,7 +56,7 @@ public class ProjectClassLoader extends URLClassLoader {
 				list.add(extraUrls[i]);
 			}
 		}
-		
+
 		IPackageFragmentRoot[] roots = project.getAllPackageFragmentRoots();
 		String installLoc = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile().getAbsolutePath();
 		installLoc = installLoc.replace('\\', '/');
@@ -105,12 +105,18 @@ public class ProjectClassLoader extends URLClassLoader {
 			}
 			catch (Exception e) {}
 		}
-		
+
 		URL[] urls = new URL[list.size()];
 		int index = 0;
 		for (Iterator i=list.iterator(); i.hasNext(); index++) {
 			urls[index] = (URL) i.next();
 		}
 		return urls;
+	}
+
+	@Override
+	public void addURL( URL url )
+	{
+	    super.addURL( url );
 	}
 }

@@ -507,6 +507,11 @@ public class CoreUtil
         return list == null || list.size() == 0;
     }
 
+    public static boolean isNullOrEmpty( Map<?,?> map )
+    {
+        return map != null && map.size() == 0;
+    }
+
     public static boolean isNullOrEmpty( Object[] array )
     {
         return array == null || array.length == 0;
@@ -550,6 +555,46 @@ public class CoreUtil
         }
 
         return false;
+    }
+
+    public static Map<String, String> loadProperties( final Class<?> clazz, final String resource )
+    {
+        Map<String, String> map = new HashMap<String, String>();
+        Properties p = new Properties();
+        InputStream input = null;
+
+        try
+        {
+            input = clazz.getClassLoader().getResourceAsStream( resource );
+            p.load( input );
+
+            for( Object key : p.keySet() )
+            {
+                String elementName = key.toString();
+                String typeNames = p.get( key ).toString();
+
+                map.put( elementName, typeNames );
+            }
+        }
+        catch( IOException e )
+        {
+            LiferayCore.logError( e );
+        }
+        finally
+        {
+            if( input != null )
+            {
+                try
+                {
+                    input.close();
+                }
+                catch( IOException e )
+                {
+                }
+            }
+        }
+
+        return map;
     }
 
     public static void makeFolders( IFolder folder ) throws CoreException
