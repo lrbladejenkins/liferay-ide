@@ -20,14 +20,28 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.liferay.ide.common.plugins</groupId>
-        <artifactId>common-plugins</artifactId>
-        <version>2.2.1-SNAPSHOT</version>
+        <groupId>com.liferay.ide.tools.plugins</groupId>
+        <artifactId>tools-plugins</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>com.liferay.ide.debug.core</artifactId>
+    <artifactId>com.liferay.ide.taglib.ui</artifactId>
     <packaging>eclipse-plugin</packaging>
 
-    <name>Liferay IDE Debug Core</name>
+    <name>Liferay IDE Taglib UI</name>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <!-- 
+            <plugin>
+                <groupId>org.bsc.maven</groupId>
+                <artifactId>maven-processor-plugin</artifactId>
+            </plugin>
+             -->
+        </plugins>
+    </build>
 </project>
