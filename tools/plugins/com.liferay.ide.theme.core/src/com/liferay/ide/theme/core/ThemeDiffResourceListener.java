@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -50,7 +49,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.wst.common.componentcore.resources.IVirtualFolder;
 
 /**
  * @author Greg Amerson
@@ -142,26 +140,13 @@ public class ThemeDiffResourceListener implements IResourceChangeListener
                 }
 
                 // IDE-110 IDE-648
-                IVirtualFolder webappRoot = CoreUtil.getDocroot( project );
+                IResource res = LiferayCore.create( project ).findDocrootResource( "WEB-INF/" + ILiferayConstants.LIFERAY_LOOK_AND_FEEL_XML_FILE );
 
                 IFile lookAndFeelFile = null;
 
-                if( webappRoot != null )
+                if( res != null && res.exists() )
                 {
-                    for( IContainer container : webappRoot.getUnderlyingFolders() )
-                    {
-                        if( container != null && container.exists() )
-                        {
-                            final Path path = new Path( "WEB-INF/" + ILiferayConstants.LIFERAY_LOOK_AND_FEEL_XML_FILE ); //$NON-NLS-1$
-                            IFile file = container.getFile( path );
-
-                            if( file.exists() )
-                            {
-                                lookAndFeelFile = file;
-                                break;
-                            }
-                        }
-                    }
+                    lookAndFeelFile = (IFile) res;
                 }
 
                 if( lookAndFeelFile == null )
@@ -169,53 +154,44 @@ public class ThemeDiffResourceListener implements IResourceChangeListener
                     String id =
                         project.getName().replaceAll( ISDKConstants.THEME_PLUGIN_PROJECT_SUFFIX, StringPool.EMPTY );
 
-                    for( IContainer container : webappRoot.getUnderlyingFolders() )
+                    IResource propsRes = LiferayCore.create( project ).findDocrootResource( "WEB-INF/" + ILiferayConstants.LIFERAY_PLUGIN_PACKAGE_PROPERTIES_FILE );
+                    String name = id;
+
+                    if( propsRes instanceof IFile && propsRes.exists() )
                     {
-                        if( container != null && container.exists() )
+                        Properties props = new Properties();
+
+                        try
                         {
-                            IFile propsFile =
-                                container.getFile( new Path(
-                                    "WEB-INF/" + ILiferayConstants.LIFERAY_PLUGIN_PACKAGE_PROPERTIES_FILE ) ); //$NON-NLS-1$
-                            String name = id;
+                            props.load( ( (IFile) propsRes).getContents() );
+                            String nameValue = props.getProperty( "name" ); //$NON-NLS-1$
 
-                            if( propsFile.exists() )
+                            if( !CoreUtil.isNullOrEmpty( nameValue ) )
                             {
-                                Properties props = new Properties();
-
-                                try
-                                {
-                                    props.load( propsFile.getContents() );
-                                    String nameValue = props.getProperty( "name" ); //$NON-NLS-1$
-
-                                    if( !CoreUtil.isNullOrEmpty( nameValue ) )
-                                    {
-                                        name = nameValue;
-                                    }
-                                }
-                                catch( IOException e )
-                                {
-                                    ThemeCore.logError( "Unable to load plugin package properties.", e ); //$NON-NLS-1$
-                                }
-                            }
-
-                            final ThemeDescriptorHelper themeDescriptorHelper = new ThemeDescriptorHelper( project );
-
-                            final IFolder descriptorParent = container.getFolder( new Path( "WEB-INF" ) );
-                            final ILiferayProject lProject = LiferayCore.create( project );
-                            final String type = lProject.getProperty( "theme.type", "vm" );
-
-                            themeDescriptorHelper.createDefaultFile(
-                                descriptorParent, lProject.getPortalVersion(), id, name, type );
-
-                            try
-                            {
-                                container.refreshLocal( IResource.DEPTH_INFINITE, null );
-                            }
-                            catch( Exception e )
-                            {
-                                ThemeCore.logError( e );
+                                name = nameValue;
                             }
                         }
+                        catch( IOException e )
+                        {
+                            ThemeCore.logError( "Unable to load plugin package properties.", e ); //$NON-NLS-1$
+                        }
+                    }
+
+                    final ThemeDescriptorHelper themeDescriptorHelper = new ThemeDescriptorHelper( project );
+
+                    final ILiferayProject lProject = LiferayCore.create( project );
+                    final String type = lProject.getProperty( "theme.type", "vm" );
+
+                    themeDescriptorHelper.createDefaultFile(
+                        lProject.getDefaultDocrootFolder(), lProject.getPortalVersion(), id, name, type );
+
+                    try
+                    {
+                        lProject.getDefaultDocrootFolder().refreshLocal( IResource.DEPTH_INFINITE, null );
+                    }
+                    catch( Exception e )
+                    {
+                        ThemeCore.logError( e );
                     }
                 }
 
@@ -248,24 +224,16 @@ public class ThemeDiffResourceListener implements IResourceChangeListener
         IPath fullPath = delta.getFullPath();
 
         // IDE-110 IDE-648
-        IVirtualFolder webappRoot = CoreUtil.getDocroot( delta.getResource().getProject() );
+        IFolder webappRoot = LiferayCore.create( delta.getResource().getProject() ).getDefaultDocrootFolder();
 
-        if( webappRoot == null )
+        if( webappRoot == null || !webappRoot.exists() )
         {
             return false;
         }
 
-        for( IContainer container : webappRoot.getUnderlyingFolders() )
-        {
-            if( container != null && container.exists() )
-            {
-                IPath diffPath = container.getFolder( new Path( "_diffs" ) ).getFullPath(); //$NON-NLS-1$
+        IPath diffPath = webappRoot.getFolder( new Path( "_diffs" ) ).getFullPath(); //$NON-NLS-1$
 
-                return diffPath.isPrefixOf( fullPath );
-            }
-        }
-
-        return false;
+        return diffPath.isPrefixOf( fullPath );
     }
 
     private static class Msgs extends NLS

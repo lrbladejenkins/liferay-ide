@@ -15,11 +15,11 @@
 
 package com.liferay.ide.project.core.facet;
 
-import com.liferay.ide.core.util.CoreUtil;
 import com.liferay.ide.core.util.FileUtil;
 import com.liferay.ide.project.core.IPluginWizardFragmentProperties;
 import com.liferay.ide.project.core.ProjectCore;
 import com.liferay.ide.sdk.core.ISDKConstants;
+import com.liferay.ide.server.util.ComponentUtil;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -164,7 +164,7 @@ public class PortletPluginFacetInstall extends PluginFacetInstall
                         if( fragmentModel.getBooleanProperty( IPluginWizardFragmentProperties.REMOVE_EXISTING_ARTIFACTS ) )
                         {
                             // IDE-110 IDE-648
-                            IVirtualFolder webappRoot = CoreUtil.getDocroot( this.project );
+                            IVirtualFolder webappRoot = ComponentUtil.getVirtualDocroot( this.project );
 
                             for( IContainer container : webappRoot.getUnderlyingFolders() )
                             {

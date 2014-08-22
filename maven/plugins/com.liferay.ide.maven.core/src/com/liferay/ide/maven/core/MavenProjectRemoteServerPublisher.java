@@ -14,11 +14,12 @@
  *******************************************************************************/
 package com.liferay.ide.maven.core;
 
-import com.liferay.ide.core.util.CoreUtil;
+import com.liferay.ide.core.LiferayCore;
 import com.liferay.ide.core.util.LaunchHelper;
 import com.liferay.ide.project.core.util.ProjectUtil;
 import com.liferay.ide.project.core.util.SearchFilesVisitor;
 import com.liferay.ide.server.remote.AbstractRemoteServerPublisher;
+import com.liferay.ide.server.util.ComponentUtil;
 
 import java.io.IOException;
 import java.util.List;
@@ -128,7 +129,7 @@ public class MavenProjectRemoteServerPublisher extends AbstractRemoteServerPubli
             final int deltaKind = delta.getKind();
             final IResource deltaResource = (IResource) delta.getModuleResource().getAdapter( IResource.class );
             final IProject deltaProject = deltaResource.getProject();
-            final IVirtualFolder webappRoot = CoreUtil.getDocroot( deltaProject );
+            final IVirtualFolder webappRoot = ComponentUtil.getVirtualDocroot( deltaProject );
             final IPath deltaFullPath = deltaResource.getFullPath();
 
             boolean deltaZip = false;
@@ -153,7 +154,7 @@ public class MavenProjectRemoteServerPublisher extends AbstractRemoteServerPubli
 
             if ( deltaZip ==false && new Path("WEB-INF").isPrefixOf( delta.getModuleRelativePath() ))
             {
-                final IFolder[] folders = CoreUtil.getSrcFolders( deltaProject );
+                final IFolder[] folders = LiferayCore.create( deltaProject ).getSrcFolders();
 
                 for( IFolder folder : folders )
                 {

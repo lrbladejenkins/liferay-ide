@@ -15,8 +15,8 @@
 
 package com.liferay.ide.server.ui;
 
-import com.liferay.ide.core.util.CoreUtil;
 import com.liferay.ide.core.util.StringPool;
+import com.liferay.ide.server.util.ComponentUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -69,7 +69,7 @@ public class RemoteJSPBreakpointProvider extends JavaStratumBreakpointProvider {
 				String path = null;
                 // IDE-648 IDE-110
 				// get docroot relative path
-				IVirtualFolder webappRoot = CoreUtil.getDocroot(res.getProject());
+				IVirtualFolder webappRoot = ComponentUtil.getVirtualDocroot(res.getProject());
 
 				if (webappRoot != null) {
 				    for( IContainer container : webappRoot.getUnderlyingFolders() )

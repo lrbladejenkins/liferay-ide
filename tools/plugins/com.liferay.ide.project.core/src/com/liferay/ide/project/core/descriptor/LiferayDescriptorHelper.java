@@ -270,7 +270,12 @@ public abstract class LiferayDescriptorHelper
 
     protected IFile getDescriptorFile( String fileName )
     {
-        return project == null ? null : CoreUtil.getDescriptorFile( project, fileName );
+        if( ! CoreUtil.isLiferayProject( project ) )
+        {
+            project = CoreUtil.getLiferayProject( project );
+        }
+
+        return project == null ? null : LiferayCore.create( project ).getDescriptorFile( fileName );
     }
 
     public IDescriptorOperation getDescriptorOperation( Class<? extends IDescriptorOperation> type )

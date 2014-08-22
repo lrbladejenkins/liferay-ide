@@ -36,7 +36,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -52,7 +51,6 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.templates.TemplateException;
 import org.eclipse.jst.j2ee.internal.common.operations.INewJavaClassDataModelProperties;
-import org.eclipse.wst.common.componentcore.resources.IVirtualFolder;
 import org.eclipse.wst.common.frameworks.datamodel.AbstractDataModelOperation;
 import org.eclipse.wst.common.frameworks.datamodel.IDataModel;
 
@@ -116,7 +114,7 @@ public class AddHookOperation extends AbstractDataModelOperation implements INew
 
     protected IStatus checkDescriptorFile( IProject project )
     {
-        IVirtualFolder webappRoot = CoreUtil.getDocroot( project );
+        final IFolder webappRoot = LiferayCore.create( project ).getDefaultDocrootFolder();
 
         if( webappRoot == null )
         {
@@ -124,26 +122,18 @@ public class AddHookOperation extends AbstractDataModelOperation implements INew
         }
 
         // IDE-648 IDE-110
-        for( IContainer container : webappRoot.getUnderlyingFolders() )
+        final Path path = new Path( "WEB-INF/" + ILiferayConstants.LIFERAY_HOOK_XML_FILE ); //$NON-NLS-1$
+        final IFile hookDescriptorFile = webappRoot.getFile( path );
+
+        if( ! hookDescriptorFile.exists() )
         {
-            if( container != null && container.exists() )
+            try
             {
-                final Path path = new Path( "WEB-INF/" + ILiferayConstants.LIFERAY_HOOK_XML_FILE ); //$NON-NLS-1$
-                IFile hookDescriptorFile = container.getFile( path );
-
-                if( !hookDescriptorFile.exists() )
-                {
-                    try
-                    {
-                        createDefaultHookDescriptorFile( hookDescriptorFile );
-
-                        break;
-                    }
-                    catch( Exception ex )
-                    {
-                        return HookCore.createErrorStatus( ex );
-                    }
-                }
+                createDefaultHookDescriptorFile( hookDescriptorFile );
+            }
+            catch( Exception ex )
+            {
+                return HookCore.createErrorStatus( ex );
             }
         }
 
@@ -186,7 +176,7 @@ public class AddHookOperation extends AbstractDataModelOperation implements INew
     {
         IProject project = getTargetProject();
 
-        IFolder defaultWebappRootFolder = CoreUtil.getDefaultDocrootFolder( project );
+        IFolder defaultWebappRootFolder = LiferayCore.create( project ).getDefaultDocrootFolder();
 
         String customJSPsFolder = dm.getStringProperty( CUSTOM_JSPS_FOLDER );
 

@@ -18,6 +18,7 @@ package com.liferay.ide.project.core.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import com.liferay.ide.core.LiferayCore;
 import com.liferay.ide.core.util.CoreUtil;
 import com.liferay.ide.project.core.ProjectCore;
 import com.liferay.ide.project.core.model.NewLiferayPluginProjectOp;
@@ -26,7 +27,7 @@ import com.liferay.ide.project.core.upgrade.NamedItem;
 import com.liferay.ide.project.core.upgrade.UpgradeLiferayProjectsOp;
 import com.liferay.ide.project.core.upgrade.UpgradeLiferayProjectsOpMethods;
 
-import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -110,7 +111,7 @@ public class UpgradeLiferayProjectsAlloyUIOpTests extends ProjectCoreBase
 
         final UpgradeLiferayProjectsOp op = UpgradeLiferayProjectsOp.TYPE.instantiate();
 
-        final IFolder webappRoot = CoreUtil.getDefaultDocrootFolder( project );
+        final IFolder webappRoot = LiferayCore.create( project ).getDefaultDocrootFolder();
 
         assertNotNull( webappRoot );
 
@@ -118,7 +119,8 @@ public class UpgradeLiferayProjectsAlloyUIOpTests extends ProjectCoreBase
 
         assertEquals( true, mainCss.exists() );
 
-        CoreUtil.writeStreamFromString( ".aui-field-select{}", new FileOutputStream( mainCss.getLocation().toFile() ) );
+        mainCss.setContents(
+            new ByteArrayInputStream( ".aui-field-select{}".getBytes() ), true, false, new NullProgressMonitor() );
 
         List<String> actionString = new ArrayList<String>();
         List<String> projectString = new ArrayList<String>();

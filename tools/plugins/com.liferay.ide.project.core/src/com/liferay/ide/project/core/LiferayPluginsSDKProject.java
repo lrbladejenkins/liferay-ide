@@ -37,7 +37,7 @@ import org.w3c.dom.NodeList;
  * @author Gregory Amerson
  * @author Simon Jiang
  */
-public class LiferayPluginsSDKProject extends BaseLiferayProject
+public class LiferayPluginsSDKProject extends WTPLiferayProject
 {
 
     private ILiferayRuntime liferayRuntime;

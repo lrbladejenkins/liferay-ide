@@ -14,9 +14,9 @@
  *******************************************************************************/
 package com.liferay.ide.server.remote;
 
-import com.liferay.ide.core.util.CoreUtil;
 import com.liferay.ide.core.util.StringPool;
 import com.liferay.ide.server.core.LiferayServerCore;
+import com.liferay.ide.server.util.ComponentUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -158,7 +158,7 @@ public abstract class AbstractRemoteServerPublisher implements IRemoteServerPubl
             IProject deltaProject = deltaResource.getProject();
 
             // IDE-110 IDE-648
-            IVirtualFolder webappRoot = CoreUtil.getDocroot( deltaProject );
+            IVirtualFolder webappRoot = ComponentUtil.getVirtualDocroot( deltaProject );
 
             IPath deltaPath = null;
 

@@ -1000,7 +1000,7 @@ public class NewPortletClassDataModelProvider extends NewWebClassDataModelProvid
 
             if( ( !CoreUtil.isNullOrEmpty( folderValue ) ) && targetProject != null )
             {
-                IFolder defaultDocroot = CoreUtil.getDefaultDocrootFolder( targetProject );
+                IFolder defaultDocroot = LiferayCore.create( targetProject ).getDefaultDocrootFolder();
                 String errorMsg = FileUtil.validateNewFolder( defaultDocroot, folderValue );
 
                 if( errorMsg != null )

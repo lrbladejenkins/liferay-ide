@@ -10,8 +10,8 @@
  *******************************************************************************/
 package com.liferay.ide.server.tomcat.core;
 
-import com.liferay.ide.core.util.CoreUtil;
 import com.liferay.ide.project.core.util.ProjectUtil;
+import com.liferay.ide.server.util.ComponentUtil;
 import com.liferay.ide.server.util.ServerUtil;
 
 import java.io.File;
@@ -256,7 +256,7 @@ public class LiferayPublishOperation extends PublishOperation {
 
 		for ( IModuleResourceDelta del : delta )
 		{
-			if ( CoreUtil.containsMember( del, paths ) || isHookProjectDelta( del ) )
+			if ( ComponentUtil.containsMember( del, paths ) || isHookProjectDelta( del ) )
 			{
 				clearWebXmlDescriptors(module2.getProject(), path, monitor);
 
@@ -315,7 +315,7 @@ public class LiferayPublishOperation extends PublishOperation {
 	private IModuleResource getWebXmlFile( IProject project, IPath modelDeployDirectory )
 	{
 	    // IDE-110 IDE-648
-		IVirtualFolder webappRoot = CoreUtil.getDocroot( project );
+		IVirtualFolder webappRoot = ComponentUtil.getVirtualDocroot( project );
 
 		if (webappRoot != null)
 		{

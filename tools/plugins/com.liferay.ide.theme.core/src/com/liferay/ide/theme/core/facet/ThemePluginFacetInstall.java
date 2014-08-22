@@ -20,6 +20,7 @@ import com.liferay.ide.core.util.FileUtil;
 import com.liferay.ide.project.core.facet.IPluginFacetConstants;
 import com.liferay.ide.project.core.facet.PluginFacetInstall;
 import com.liferay.ide.sdk.core.ISDKConstants;
+import com.liferay.ide.server.util.ComponentUtil;
 import com.liferay.ide.theme.core.ThemeCSSBuilder;
 import com.liferay.ide.theme.core.ThemeCore;
 
@@ -118,7 +119,7 @@ public class ThemePluginFacetInstall extends PluginFacetInstall
             configureDeploymentAssembly( IPluginFacetConstants.PORTLET_PLUGIN_SDK_SOURCE_FOLDER, DEFAULT_DEPLOY_PATH );
         }
 
-        IResource libRes = CoreUtil.getDefaultDocrootFolder( project ).findMember( "WEB-INF/lib" ); //$NON-NLS-1$
+        IResource libRes = ComponentUtil.getDefaultDocroot( project ).findMember( "WEB-INF/lib" );
 
         if( libRes != null && libRes.exists() )
         {

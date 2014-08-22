@@ -14,8 +14,7 @@
  *******************************************************************************/
 package com.liferay.ide.portlet.ui.util;
 
-import com.liferay.ide.core.properties.PropertiesFileLookup;
-import com.liferay.ide.core.properties.PropertiesFileLookup.KeyInfo;
+import com.liferay.ide.core.LiferayCore;
 import com.liferay.ide.core.util.CoreUtil;
 import com.liferay.ide.core.util.PropertiesUtil;
 
@@ -53,7 +52,7 @@ public class NodeUtils
             {
                 final List<MessageKey> keys = new ArrayList<MessageKey>();
 
-                for( final IFolder src : CoreUtil.getSrcFolders( project.getProject() ) )
+                for( final IFolder src : LiferayCore.create( project.getProject() ).getSrcFolders() )
                 {
                     final IFile[] props = PropertiesUtil.visitPropertiesFiles( src, ".*" );
 

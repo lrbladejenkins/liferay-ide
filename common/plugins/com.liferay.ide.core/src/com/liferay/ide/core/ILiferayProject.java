@@ -16,7 +16,9 @@ package com.liferay.ide.core;
 
 import java.util.Properties;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 
 
@@ -28,7 +30,13 @@ public interface ILiferayProject
 
     <T> T adapt( Class<T> adapterType );
 
+    IResource findDocrootResource( String path );
+
     IPath getAppServerPortalDir();
+
+    IFolder getDefaultDocrootFolder();
+
+    IFile getDescriptorFile( String name );
 
     String[] getHookSupportedProperties();
 
@@ -45,5 +53,7 @@ public interface ILiferayProject
     IFolder getSourceFolder( String classification );
 
     IPath[] getUserLibs();
+
+    boolean pathInDocroot( IPath fullPath );
 
 }

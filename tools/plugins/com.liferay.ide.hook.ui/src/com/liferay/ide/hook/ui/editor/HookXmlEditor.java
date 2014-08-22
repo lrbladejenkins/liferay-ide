@@ -161,7 +161,7 @@ public class HookXmlEditor extends SapphireEditorForXml
             if( customJspDirElement != null && customJspDirElement.validation().ok() )
             {
                 Path customJspDir = customJspDirElement.getValue().content();
-                IFolder defaultDocroot = CoreUtil.getDefaultDocrootFolder( getProject() );
+                IFolder defaultDocroot = LiferayCore.create( getProject() ).getDefaultDocrootFolder();
                 IFolder customJspFolder = defaultDocroot.getFolder( customJspDir.toPortableString() );
 
                 for( CustomJsp customJsp : customJsps )

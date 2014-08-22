@@ -17,8 +17,8 @@ package com.liferay.ide.maven.core;
 import com.liferay.ide.core.ILiferayProject;
 import com.liferay.ide.core.LiferayCore;
 import com.liferay.ide.core.util.CoreUtil;
-import com.liferay.ide.project.core.BaseLiferayProject;
 import com.liferay.ide.project.core.IProjectBuilder;
+import com.liferay.ide.project.core.WTPLiferayProject;
 import com.liferay.ide.project.core.util.ProjectUtil;
 import com.liferay.ide.server.remote.IRemoteServerPublisher;
 import com.liferay.ide.server.util.LiferayPortalValueLoader;
@@ -49,7 +49,7 @@ import org.eclipse.m2e.jdt.MavenJdtPlugin;
  * @author Cindy Li
  * @author Simon Jiang
  */
-public class LiferayMavenProject extends BaseLiferayProject
+public class LiferayMavenProject extends WTPLiferayProject
 {
 
     public LiferayMavenProject( IProject project )

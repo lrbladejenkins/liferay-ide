@@ -110,7 +110,7 @@ public class RemoteServer extends ServerDelegate implements IRemoteServerWorking
             {
                 IProject addModuleProject = addModule.getProject();
 
-                if( !CoreUtil.isLiferayProject( addModuleProject ) )
+                if( ! CoreUtil.isLiferayProject( addModuleProject ) )
                 {
                     return LiferayServerCore.createErrorStatus( Msgs.notAddNonLiferayPluginProjectModule );
                 }

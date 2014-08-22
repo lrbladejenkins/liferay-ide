@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -856,27 +857,22 @@ public class RemoteServerBehavior extends ServerBehaviourDelegate
                 }
                 else
                 {
-                    IModuleResource resource = delta.getModuleResource();
+                    final IModuleResource resource = delta.getModuleResource();
+                    final IFile resourceFile = (IFile) resource.getAdapter( IFile.class );
 
-                    if( resource.getName().equals( "web.xml" ) || //$NON-NLS-1$
-                        resource.getName().equals( ILiferayConstants.LIFERAY_PLUGIN_PACKAGE_PROPERTIES_FILE ) )
+                    if( resourceFile != null )
                     {
-
-                        retval = CoreUtil.isResourceInDocroot( resource );
-
-                        if( retval )
+                        if( LiferayCore.create( resourceFile.getProject() ).pathInDocroot( resourceFile.getFullPath() ) )
                         {
-                            break;
-                        }
-                    }
-                    else if( resource.getName().equals( "portlet.xml" ) ) //$NON-NLS-1$
-                    {
-                        // if portlet-custom.xml is used we need to redeploy on this change.
-                        retval = CoreUtil.isResourceInDocroot( resource );
-
-                        if( retval )
-                        {
-                            break;
+                            if( resource.getName().equals( "web.xml" ) || //$NON-NLS-1$
+                                            resource.getName().equals( ILiferayConstants.LIFERAY_PLUGIN_PACKAGE_PROPERTIES_FILE ) )
+                            {
+                                break;
+                            }
+                            else if( resource.getName().equals( "portlet.xml" ) ) //$NON-NLS-1$
+                            {
+                                break;
+                            }
                         }
                     }
                 }

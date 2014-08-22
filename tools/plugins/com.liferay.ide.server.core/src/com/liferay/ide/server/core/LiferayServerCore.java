@@ -203,11 +203,44 @@ public class LiferayServerCore extends Plugin
         return pluginPublishers;
     }
 
+    public static PortalLaunchParticipant[] getPortalLaunchParticipants()
+    {
+        PortalLaunchParticipant[] retval = null;
+
+        final IConfigurationElement[] elements =
+            Platform.getExtensionRegistry().getConfigurationElementsFor(
+                "com.liferay.ide.server.core.portalLaunchParticipants" );
+
+        try
+        {
+            final List<PortalLaunchParticipant> participants = new ArrayList<PortalLaunchParticipant>();
+
+            for( IConfigurationElement element : elements )
+            {
+                final Object o = element.createExecutableExtension( "class" ); //$NON-NLS-1$
+
+                if( o instanceof PortalLaunchParticipant )
+                {
+                    PortalLaunchParticipant participant = (PortalLaunchParticipant) o;
+                    participants.add( participant );
+                }
+            }
+
+            retval = participants.toArray( new PortalLaunchParticipant[0] );
+        }
+        catch( Exception e )
+        {
+            logError( "Unable to get portal launch participants", e ); //$NON-NLS-1$
+        }
+
+        return retval;
+    }
+
     public static URL getPortalSupportLibURL()
     {
         try
         {
-            return FileLocator.toFileURL( LiferayServerCore.getPluginEntry( "/portal-support/portal-support.jar" ) ); //$NON-NLS-1$
+            return FileLocator.toFileURL( LiferayServerCore.getPluginEntry( "/portal-support/portal-support.jar" ) );
         }
         catch( IOException e )
         {
@@ -661,7 +694,6 @@ public class LiferayServerCore extends Plugin
     public void start( BundleContext context ) throws Exception
     {
         super.start( context );
-
         plugin = this;
 
         this.runtimeLifecycleListener = new IRuntimeLifecycleListener()
@@ -716,7 +748,6 @@ public class LiferayServerCore extends Plugin
     public void stop( BundleContext context ) throws Exception
     {
         plugin = null;
-
         super.stop( context );
 
         SDKManager.getInstance().removeSDKListener( this.sdkListener );

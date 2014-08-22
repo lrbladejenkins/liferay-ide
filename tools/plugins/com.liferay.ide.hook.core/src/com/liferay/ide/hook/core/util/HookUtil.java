@@ -17,7 +17,7 @@
 
 package com.liferay.ide.hook.core.util;
 
-import com.liferay.ide.core.util.CoreUtil;
+import com.liferay.ide.core.LiferayCore;
 import com.liferay.ide.hook.core.HookCore;
 import com.liferay.ide.hook.core.dd.HookDescriptorHelper;
 import com.liferay.ide.hook.core.model.CustomJspDir;
@@ -148,18 +148,13 @@ public class HookUtil
         if( element != null && ( !element.getValue().empty() ) )
         {
             // IDE-110 IDE-648
-            IFolder webappRoot = CoreUtil.getDefaultDocrootFolder( project );
+            IFolder defaultDocroot = LiferayCore.create( project ).getDefaultDocrootFolder();
 
-            if( element != null && webappRoot != null )
+            if( element != null && defaultDocroot != null )
             {
                 org.eclipse.sapphire.modeling.Path customJspDir = element.getValue().content();
 
-                IFolder customJspFolder = webappRoot.getFolder( customJspDir.toPortableString() );
-
-                if( customJspFolder != null && !customJspFolder.isDerived() )
-                {
-                    return customJspFolder;
-                }
+                return defaultDocroot.getFolder( customJspDir.toPortableString() );
             }
         }
 

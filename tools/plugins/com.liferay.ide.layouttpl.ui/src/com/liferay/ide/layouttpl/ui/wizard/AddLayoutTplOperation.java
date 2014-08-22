@@ -119,8 +119,8 @@ public class AddLayoutTplOperation extends LiferayDataModelOperation implements 
     protected void createThumbnailFile( String thumbnailFileName ) 
         throws CoreException, IOException
     {
-        IFolder defaultDocroot = CoreUtil.getDefaultDocrootFolder( getTargetProject() );
-        IFile thumbnailFile = defaultDocroot.getFile( thumbnailFileName );
+        IFolder defaultDocroot = LiferayCore.create( getTargetProject() ).getDefaultDocrootFolder();
+        IFile thumbnailFileValue = defaultDocroot.getFile( thumbnailFile );
         URL iconFileURL = LayoutTplUI.getDefault().getBundle().getEntry( "/icons/blank_columns.png" ); //$NON-NLS-1$
 
         CoreUtil.prepareFolder( (IFolder) thumbnailFile.getParent() );
@@ -137,8 +137,9 @@ public class AddLayoutTplOperation extends LiferayDataModelOperation implements 
 
     protected IFile createTemplateFile( String templateFileName, LayoutTplElement element ) throws CoreException
     {
-        IFolder defaultDocroot = CoreUtil.getDefaultDocrootFolder( getTargetProject() );
-        IFile templateFile = defaultDocroot.getFile( templateFileName );
+        IFolder defaultDocroot = LiferayCore.create( getTargetProject() ).getDefaultDocrootFolder();
+        IFile templateFileValue = defaultDocroot.getFile( templateFile );
+        CoreUtil.prepareFolder( (IFolder) templateFileValue.getParent() );
 
         if( element != null )
         {

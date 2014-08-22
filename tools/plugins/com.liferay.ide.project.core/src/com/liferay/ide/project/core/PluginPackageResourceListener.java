@@ -20,6 +20,7 @@ import com.liferay.ide.core.util.CoreUtil;
 import com.liferay.ide.core.util.StringPool;
 import com.liferay.ide.project.core.util.ProjectUtil;
 import com.liferay.ide.sdk.core.ISDKConstants;
+import com.liferay.ide.server.util.ComponentUtil;
 import com.liferay.ide.server.util.ServerUtil;
 
 import java.io.FileInputStream;
@@ -159,7 +160,7 @@ public class PluginPackageResourceListener implements IResourceChangeListener, I
         if( fullPath.lastSegment() != null &&
             fullPath.lastSegment().equals( ILiferayConstants.LIFERAY_PLUGIN_PACKAGE_PROPERTIES_FILE ) )
         {
-            final IVirtualFolder webappRoot = CoreUtil.getDocroot( delta.getResource().getProject() );
+            final IVirtualFolder webappRoot = ComponentUtil.getVirtualDocroot( delta.getResource().getProject() );
 
             if( webappRoot == null )
             {
@@ -218,7 +219,7 @@ public class PluginPackageResourceListener implements IResourceChangeListener, I
     protected IVirtualReference processContext( IVirtualComponent rootComponent, String context )
     {
         // first check for jar file
-        IFile serviceJar = ProjectUtil.findServiceJarForContext( context );
+        IFile serviceJar = ComponentUtil.findServiceJarForContext( context );
 
         if( serviceJar == null )
         {

@@ -22,6 +22,8 @@ import com.liferay.ide.core.util.CoreUtil;
 import com.liferay.ide.sdk.core.ISDKConstants;
 import com.liferay.ide.server.core.ILiferayRuntime;
 import com.liferay.ide.server.core.LiferayServerCore;
+import com.liferay.ide.server.remote.IRemoteServer;
+import com.liferay.ide.server.remote.IServerManagerConnection;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,6 +55,8 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.launching.StandardVMType;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.wst.common.componentcore.ComponentCore;
+import org.eclipse.wst.common.componentcore.resources.IVirtualComponent;
 import org.eclipse.wst.common.project.facet.core.IFacetedProject;
 import org.eclipse.wst.common.project.facet.core.IProjectFacet;
 import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
@@ -121,6 +125,37 @@ public class ServerUtil
         }
 
         return null;
+    }
+
+    public static IProject findProjectByContextName( String contextName )
+    {
+        IProject retval = null;
+
+        if( ! CoreUtil.isNullOrEmpty( contextName ) )
+        {
+            for( IProject project : CoreUtil.getAllProjects() )
+            {
+                final IVirtualComponent c = ComponentCore.createComponent( project, true );
+
+                if( c != null )
+                {
+                    final Properties metaProperties = c.getMetaProperties();
+
+                    if( metaProperties != null )
+                    {
+                        String contextRoot = metaProperties.getProperty( "context-root" ); //$NON-NLS-1$
+
+                        if( contextName.equals( contextRoot ) )
+                        {
+                            retval = project;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return retval;
     }
 
     public static Properties getAllCategories( IPath portalDir )
@@ -197,6 +232,23 @@ public class ServerUtil
         return retval;
     }
 
+    public static Set<IRuntime> getAvailableLiferayRuntimes()
+    {
+        Set<IRuntime> retval = new HashSet<IRuntime>();
+
+        IRuntime[] runtimes = ServerCore.getRuntimes();
+
+        for( IRuntime rt : runtimes )
+        {
+            if( isLiferayRuntime( rt ) )
+            {
+                retval.add( rt );
+            }
+        }
+
+        return retval;
+    }
+
     public static Properties getEntryCategories( IPath portalDir, String portalVersion )
     {
         Properties categories = getAllCategories( portalDir );
@@ -254,6 +306,11 @@ public class ServerUtil
         }
     }
 
+    public static org.eclipse.wst.common.project.facet.core.runtime.IRuntime getFacetRuntime( IRuntime runtime )
+    {
+        return RuntimeManager.getRuntime( runtime.getName() );
+    }
+
     public static IProjectFacet getLiferayFacet( IFacetedProject facetedProject )
     {
         for( IProjectFacetVersion projectFacet : facetedProject.getProjectFacets() )
@@ -305,28 +362,6 @@ public class ServerUtil
         }
     }
 
-    public static Set<IRuntime> getAvailableLiferayRuntimes()
-    {
-        Set<IRuntime> retval = new HashSet<IRuntime>();
-
-        IRuntime[] runtimes = ServerCore.getRuntimes();
-
-        for( IRuntime rt : runtimes )
-        {
-            if( isLiferayRuntime( rt ) )
-            {
-                retval.add( rt );
-            }
-        }
-
-        return retval;
-    }
-
-    public static ILiferayRuntime getLiferayRuntime( String name )
-    {
-        return getLiferayRuntime( getRuntime( name ) );
-    }
-
     public static ILiferayRuntime getLiferayRuntime( IRuntime runtime )
     {
         if( runtime != null )
@@ -337,6 +372,11 @@ public class ServerUtil
         return null;
     }
 
+    public static ILiferayRuntime getLiferayRuntime( IRuntime runtime, IProgressMonitor monitor )
+    {
+        return (ILiferayRuntime) runtime.loadAdapter( ILiferayRuntime.class, monitor );
+    }
+
     public static ILiferayRuntime getLiferayRuntime( IServer server )
     {
         if( server != null )
@@ -345,6 +385,11 @@ public class ServerUtil
         }
 
         return null;
+    }
+
+    public static ILiferayRuntime getLiferayRuntime( String name )
+    {
+        return getLiferayRuntime( getRuntime( name ) );
     }
 
     public static IPath getPortalDir( IJavaProject project )
@@ -554,6 +599,11 @@ public class ServerUtil
         return properties;
     }
 
+    public static IServerManagerConnection getServerManagerConnection( IServer server, IProgressMonitor monitor )
+    {
+        return LiferayServerCore.getRemoteConnection( (IRemoteServer) server.loadAdapter( IRemoteServer.class, monitor ) );
+    }
+
     public static IServer[] getServersForRuntime( IRuntime runtime )
     {
         List<IServer> serverList = new ArrayList<IServer>();
@@ -651,12 +701,10 @@ public class ServerUtil
         }
         return false;
     }
-
     public static boolean isExtProject( IProject project )
     {
         return hasFacet( project, ProjectFacetsManager.getProjectFacet( "liferay.ext" ) ); //$NON-NLS-1$
     }
-
     public static boolean isLiferayFacet( IProjectFacet projectFacet )
     {
         return projectFacet != null && projectFacet.getId().startsWith( "liferay" ); //$NON-NLS-1$
@@ -683,10 +731,12 @@ public class ServerUtil
     {
         return getLiferayRuntime( runtime ) != null;
     }
+
     public static boolean isLiferayRuntime( IServer server )
     {
         return getLiferayRuntime( server ) != null;
     }
+
     public static boolean isValidPropertiesFile( File file )
     {
         if( file == null || !file.exists() )
@@ -718,15 +768,5 @@ public class ServerUtil
                 launch.terminate();
             }
         }
-    }
-
-    public static org.eclipse.wst.common.project.facet.core.runtime.IRuntime getFacetRuntime( IRuntime runtime )
-    {
-        return RuntimeManager.getRuntime( runtime.getName() );
-    }
-
-    public static ILiferayRuntime getLiferayRuntime( IRuntime runtime, IProgressMonitor monitor )
-    {
-        return (ILiferayRuntime) runtime.loadAdapter( ILiferayRuntime.class, monitor );
     }
 }

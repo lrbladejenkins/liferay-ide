@@ -107,11 +107,11 @@
             id="com.liferay.ide.server.ui.popup.server"
             objectClass="org.eclipse.wst.server.core.IServer">
          <visibility>
-         	<and>
-	            <objectState
-	                  name="serverType"
-	                  value="com.liferay.*">
-	            </objectState>
+           <and>
+              <objectState
+                    name="serverType"
+                    value="com.liferay.*">
+              </objectState>
             </and>
          </visibility>
          <action
@@ -291,10 +291,10 @@
             <provider
                   contentTypes="org.eclipse.jst.jsp.core.jspsource"
                   id="com.liferay.ide.server.remote.jsp.breakpoint">
-				<class class="com.liferay.ide.server.ui.RemoteJSPBreakpointProvider">
-					<parameter name="org.eclipse.jst.jsp.core.jspsource" value="org.apache.jsp*"/>
-				</class>
-			</provider>
+              <class class="com.liferay.ide.server.ui.RemoteJSPBreakpointProvider">
+                <parameter name="org.eclipse.jst.jsp.core.jspsource" value="org.apache.jsp*"/>
+              </class>
+          </provider>
       </breakpointContribution>
    </extension>
    <extension
@@ -373,5 +373,5 @@
             name="Liferay Portlet Plugin API">
       </classpathContainerPage>
    </extension>
-	-->
+  -->
 </plugin>
