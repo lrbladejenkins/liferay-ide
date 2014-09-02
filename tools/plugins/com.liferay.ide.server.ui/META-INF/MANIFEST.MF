@@ -43,4 +43,5 @@ Export-Package: com.liferay.ide.server.ui,
  com.liferay.ide.server.ui.action,
  com.liferay.ide.server.ui.cmd,
  com.liferay.ide.server.ui.navigator,
+ com.liferay.ide.server.ui.portal,
  com.liferay.ide.server.ui.wizard

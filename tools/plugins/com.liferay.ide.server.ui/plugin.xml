@@ -211,6 +211,16 @@
             id="com.liferay.ide.server.runtime.stub.image"
             typeIds="com.liferay.ide.eclipse.server.runtime.stub">
       </image>
+      <image
+            icon="icons/e16/server.png"
+            id="com.liferay.ide.server.portal.image"
+            typeIds="com.liferay.ide.server.portal">
+      </image>
+      <image
+            icon="icons/e16/server.png"
+            id="com.liferay.ide.server.portal.runtime.image"
+            typeIds="com.liferay.ide.server.portal.runtime">
+      </image>
    </extension>
    <extension
          point="org.eclipse.wst.server.ui.wizardFragments">
@@ -224,6 +234,16 @@
             id="com.liferay.ide.server.remote.fragment"
             typeIds="com.liferay.ide.eclipse.server.remote">
       </fragment>
+      <fragment
+            class="com.liferay.ide.server.ui.portal.PortalRuntimeWizard"
+            id="com.liferay.ide.server.portal.runtime.fragment"
+            typeIds="com.liferay.ide.server.portal.runtime">
+      </fragment>
+      <fragment
+            class="com.liferay.ide.server.ui.portal.PortalServerWizard"
+            id="com.liferay.ide.server.portal.fragment"
+            typeIds="com.liferay.ide.server.portal">
+      </fragment>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
@@ -232,6 +252,11 @@
             id="com.liferay.ide.server.remote.launchConfigurationTabGroup"
             type="com.liferay.ide.server.remote.launchConfigurationType">
       </launchConfigurationTabGroup>
+      <launchConfigurationTabGroup
+            class="com.liferay.ide.server.ui.portal.PortalServerLaunchTabGroup"
+            id="com.liferay.ide.server.portal.launch.tab"
+            type="com.liferay.ide.server.portal.launch">
+      </launchConfigurationTabGroup>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
@@ -239,6 +264,11 @@
             configTypeID="com.liferay.ide.server.remote.launchConfigurationType"
             icon="icons/e16/server.png"
             id="com.liferay.ide.server.remote.launchConfigurationTypeImage">
+      </launchConfigurationTypeImage>
+      <launchConfigurationTypeImage
+            configTypeID="com.liferay.ide.server.portal.launch"
+            icon="icons/e16/server.png"
+            id="com.liferay.ide.server.portal.launch.image">
       </launchConfigurationTypeImage>
    </extension>
    <extension

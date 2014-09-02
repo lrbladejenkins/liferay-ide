@@ -20,6 +20,8 @@ import com.liferay.ide.core.util.CoreUtil;
 import com.liferay.ide.core.util.StringPool;
 import com.liferay.ide.sdk.core.ISDKListener;
 import com.liferay.ide.sdk.core.SDKManager;
+import com.liferay.ide.server.core.portal.PortalBundle;
+import com.liferay.ide.server.core.portal.PortalRuntime;
 import com.liferay.ide.server.remote.IRemoteServer;
 import com.liferay.ide.server.remote.IServerManagerConnection;
 import com.liferay.ide.server.remote.ServerManagerConnection;
@@ -81,6 +83,10 @@ public class LiferayServerCore extends Plugin
     private static IRuntimeDelegateValidator[] runtimeDelegateValidators;
 
     private static ILiferayRuntimeStub[] runtimeStubs;
+
+    private static PortalBundle[] portalBundles;
+
+
 
     public static IStatus createErrorStatus( Exception e )
     {
@@ -328,6 +334,67 @@ public class LiferayServerCore extends Plugin
         }
 
         return retval;
+    }
+
+    public static PortalBundle getPortalBundle( PortalRuntime portalRuntime , String type )
+    {
+        PortalBundle retval = null;
+
+        if( type != null )
+        {
+            for( PortalBundle portalBundle : getPortalBundles() )
+            {
+                if( type.equals( portalBundle.getType() ) )
+                {
+                    try
+                    {
+                        retval =
+                            portalBundle.getClass().getConstructor( PortalRuntime.class ).newInstance( portalRuntime );
+                    }
+                    catch( Exception e )
+                    {
+                        logError( "Unable to get portal bundle class", e );
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        return retval;
+    }
+
+    public static PortalBundle[] getPortalBundles()
+    {
+        if( portalBundles == null )
+        {
+            final IConfigurationElement[] elements =
+                Platform.getExtensionRegistry().getConfigurationElementsFor( PortalBundle.EXTENSION_ID );
+
+            try
+            {
+                List<PortalBundle> bundles = new ArrayList<PortalBundle>();
+
+                for( IConfigurationElement element : elements )
+                {
+                    final Object o = element.createExecutableExtension( "class" );
+
+                    if( o instanceof PortalBundle )
+                    {
+                        PortalBundle portalBundle = (PortalBundle) o;
+                        bundles.add( portalBundle );
+                    }
+                }
+
+                portalBundles = bundles.toArray( new PortalBundle[0] );
+            }
+            catch( Exception e )
+            {
+                logError( "Unable to get PortalBundle extensions", e ); //$NON-NLS-1$
+            }
+        }
+
+        return portalBundles;
     }
 
     public static ILiferayRuntimeStub[] getRuntimeStubs()
@@ -754,4 +821,5 @@ public class LiferayServerCore extends Plugin
         ServerCore.removeRuntimeLifecycleListener( runtimeLifecycleListener );
         ServerCore.removeServerLifecycleListener( serverLifecycleListener );
     }
+
 }
