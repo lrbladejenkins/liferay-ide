@@ -21,6 +21,7 @@ import com.liferay.ide.core.LiferayCore;
 import com.liferay.ide.core.util.CoreUtil;
 import com.liferay.ide.sdk.core.ISDKConstants;
 import com.liferay.ide.server.core.ILiferayRuntime;
+import com.liferay.ide.server.core.ILiferayServer;
 import com.liferay.ide.server.core.LiferayServerCore;
 import com.liferay.ide.server.remote.IRemoteServer;
 import com.liferay.ide.server.remote.IServerManagerConnection;
@@ -768,5 +769,23 @@ public class ServerUtil
                 launch.terminate();
             }
         }
+    }
+
+    public static ILiferayServer getLiferayServer( IServer server, IProgressMonitor monitor )
+    {
+        ILiferayServer retval = null;
+    
+        if( server != null )
+        {
+            try
+            {
+                retval = (ILiferayServer) server.loadAdapter( ILiferayServer.class, monitor );
+            }
+            catch( Exception e )
+            {
+            }
+        }
+    
+        return retval;
     }
 }

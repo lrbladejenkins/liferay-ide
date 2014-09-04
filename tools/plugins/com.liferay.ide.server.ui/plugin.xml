@@ -10,6 +10,10 @@
                   isRoot="false"
                   pattern="com.liferay.ide.server.ui.serverview.plugins">
             </contentExtension>
+            <contentExtension
+                  isRoot="false"
+                  pattern="com.liferay.ide.server.ui.serverview.osgibundles">
+            </contentExtension>
          </includes>
       </viewerContentBinding>
       <viewerContentBinding
@@ -22,6 +26,7 @@
          </includes>
       </viewerContentBinding>
    </extension>
+
    <extension
          point="org.eclipse.ui.navigator.navigatorContent">
       <navigatorContent
@@ -99,6 +104,40 @@
                priority="highest">
          </actionProvider>
       </navigatorContent>
+      <navigatorContent
+            activeByDefault="true"
+            contentProvider="com.liferay.ide.server.ui.navigator.BundlesContentProvider"
+            icon="icons/e16/bundlefolder.png"
+            id="com.liferay.ide.server.ui.serverview.osgibundles"
+            labelProvider="com.liferay.ide.server.ui.navigator.BundlesDecorator"
+            name="OSGi Bundles"
+            priority="higher"
+            providesSaveables="true">
+         <triggerPoints>
+            <or>
+               <instanceof
+                     value="org.eclipse.wst.server.core.IServer">
+               </instanceof>
+            </or>
+         </triggerPoints>
+         <possibleChildren>
+            <or>
+               <instanceof
+                     value="java.lang.Object">
+               </instanceof>
+               <instanceof
+                     value="com.liferay.ide.server.ui.navigator.BundlesFolder">
+               </instanceof>
+               <instanceof
+                     value="com.liferay.ide.server.core.portal.OsgiBundle">
+               </instanceof>
+            </or>
+         </possibleChildren>
+         <override
+               policy="InvokeAlwaysRegardlessOfSuppressedExt"
+               suppressedExtensionId="org.eclipse.wst.server.ui.ServersView.content.root">
+         </override>
+      </navigatorContent>
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
@@ -141,6 +180,13 @@
                icon="icons/e16/properties.png"
                id="com.liferay.ide.server.ui.action.createPortalSettingsFile"
                label="Create Portal Settings File">
+         </action>
+         <action
+               class="com.liferay.ide.server.ui.action.RefreshBundlesAction"
+               enablesFor="1"
+               icon="icons/e16/refresh_bundles.png"
+               id="com.liferay.ide.server.ui.action.refreshBundles"
+               label="Refresh bundles">
          </action>
       </objectContribution>
       <objectContribution
@@ -365,6 +411,15 @@
             id="com.liferay.ide.server.ui.ImportGlobalSettingsPopup"
             label="Import Global Settings">
       </sink>
+         point="org.eclipse.ui.decorators">
+      <decorator
+            class="com.liferay.ide.server.ui.navigator.BundlesDecorator"
+            icon="icons/e16/bundlefolder.png"
+            id="com.liferay.ide.server.ui.osgibundlesDecorator"
+            label="OSGi Bundles Decorator"
+            lightweight="true"
+            state="true">
+      </decorator>
    </extension>
 
    <extension

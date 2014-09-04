@@ -20,6 +20,8 @@ import com.liferay.ide.core.util.CoreUtil;
 import com.liferay.ide.core.util.StringPool;
 import com.liferay.ide.sdk.core.ISDKListener;
 import com.liferay.ide.sdk.core.SDKManager;
+import com.liferay.ide.server.core.portal.OsgiConnection;
+import com.liferay.ide.server.core.portal.OsgiConnectionImpl;
 import com.liferay.ide.server.core.portal.PortalBundle;
 import com.liferay.ide.server.core.portal.PortalRuntime;
 import com.liferay.ide.server.remote.IRemoteServer;
@@ -86,7 +88,61 @@ public class LiferayServerCore extends Plugin
 
     private static PortalBundle[] portalBundles;
 
-
+//    private static Map<String, OsgiConnection> osgiConnections;
+//
+//    private static OsgiConnection getOsgiConnection( final IServer server )
+//    {
+//        OsgiConnection retval = null;
+//
+//        if( osgiConnections == null )
+//        {
+//            osgiConnections = new HashMap<String, OsgiConnection>();
+//
+//            ServerCore.addServerLifecycleListener( new IServerLifecycleListener()
+//            {
+//                public void serverAdded( IServer server )
+//                {
+//                }
+//
+//                public void serverChanged( IServer server )
+//                {
+//                }
+//
+//                public void serverRemoved( IServer s )
+//                {
+//                    if( server.equals( s ) )
+//                    {
+//                        OsgiConnection service = osgiConnections.get( server.getId() );
+//
+//                        if( service != null )
+//                        {
+//                            service = null;
+//                            osgiConnections.remove( server.getId() );
+//                        }
+//                    }
+//                }
+//            });
+//        }
+//
+//        retval = osgiConnections.get( server.getId() );
+//
+//        if( retval == null )
+//        {
+//            retval = new OsgiConnectionImpl( 33133 );
+//
+//            osgiConnections.put( server.getId(), retval );
+//
+//            server.addServerListener( new IServerListener()
+//            {
+//                public void serverChanged( ServerEvent event )
+//                {
+//                    osgiConnections.remove( server.getId() );
+//                }
+//            });
+//        }
+//
+//        return retval;
+//    }
 
     public static IStatus createErrorStatus( Exception e )
     {
@@ -257,27 +313,34 @@ public class LiferayServerCore extends Plugin
 
     public static IServerManagerConnection getRemoteConnection( final IRemoteServer server )
     {
+        IServerManagerConnection retval = null;
+
         if( connections == null )
         {
             connections = new HashMap<String, IServerManagerConnection>();
         }
 
-        IServerManagerConnection service = connections.get( server.getId() );
-
-        if( service == null )
+        if( server != null )
         {
-            service = new ServerManagerConnection();
+            IServerManagerConnection service = connections.get( server.getId() );
 
-            updateConnectionSettings( server, service );
+            if( service == null )
+            {
+                service = new ServerManagerConnection();
 
-            connections.put( server.getId(), service );
+                updateConnectionSettings( server, service );
+
+                connections.put( server.getId(), service );
+            }
+            else
+            {
+                updateConnectionSettings( server, service );
+            }
+
+            retval = service;
         }
-        else
-        {
-            updateConnectionSettings( server, service );
-        }
 
-        return service;
+        return retval;
     }
 
     public static IRuntimeDelegateValidator[] getRuntimeDelegateValidators()
@@ -820,6 +883,11 @@ public class LiferayServerCore extends Plugin
         SDKManager.getInstance().removeSDKListener( this.sdkListener );
         ServerCore.removeRuntimeLifecycleListener( runtimeLifecycleListener );
         ServerCore.removeServerLifecycleListener( serverLifecycleListener );
+    }
+
+    public static OsgiConnection newOsgiConnection( IServer server )
+    {
+        return new OsgiConnectionImpl( 33133 );
     }
 
 }

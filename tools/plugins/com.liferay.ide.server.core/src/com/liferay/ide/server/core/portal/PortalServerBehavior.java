@@ -50,6 +50,14 @@ import org.eclipse.wst.server.core.model.ServerBehaviourDelegate;
  */
 public class PortalServerBehavior extends ServerBehaviourDelegate implements IJavaLaunchConfigurationConstants
 {
+    private static final String[] JMX_EXCLUDE_ARGS = new String []
+    {
+        "-Dcom.sun.management.jmxremote",
+        "-Dcom.sun.management.jmxremote.port=",
+        "-Dcom.sun.management.jmxremote.ssl=",
+        "-Dcom.sun.management.jmxremote.authenticate="
+    };
+
     private static final String ATTR_STOP = "stop-server";
 
     private transient IDebugEventSetListener processListener;
@@ -93,14 +101,18 @@ public class PortalServerBehavior extends ServerBehaviourDelegate implements IJa
             final ILaunchConfiguration launchConfig = ( (Server) getServer() ).getLaunchConfiguration( true, null );
             final ILaunchConfigurationWorkingCopy wc = launchConfig.getWorkingCopy();
 
-            String args = renderCommandLine( getRuntimeProgArgs( "stop" ), " " );
+            final String args = renderCommandLine( getRuntimeProgArgs( "stop" ), " " );
             // Remove JMX arguments if present
-            // String existingVMArgs = wc.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS,
-            // (String)null);
-            // if (existingVMArgs.indexOf(JMX_EXCLUDE_ARGS[0]) >= 0) {
-            // wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS,
-            // mergeArguments(existingVMArgs, new String [] {}, JMX_EXCLUDE_ARGS, false));
-            // }
+            final String existingVMArgs =
+                wc.getAttribute( IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, (String) null );
+
+            if( existingVMArgs.indexOf( JMX_EXCLUDE_ARGS[0] ) >= 0 )
+            {
+                wc.setAttribute(
+                    IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS,
+                    mergeArguments( existingVMArgs, new String[] {}, JMX_EXCLUDE_ARGS, false ) );
+            }
+
             wc.setAttribute( IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, args );
             wc.setAttribute( "org.eclipse.debug.ui.private", true );
             wc.setAttribute( ATTR_STOP, "true" );
@@ -160,7 +172,7 @@ public class PortalServerBehavior extends ServerBehaviourDelegate implements IJa
         throws CoreException
     {
         final String existingProgArgs = launch.getAttribute( ATTR_PROGRAM_ARGUMENTS, (String) null );
-        launch.setAttribute( ATTR_PROGRAM_ARGUMENTS, mergeArguments( existingProgArgs, getRuntimeProgArgs( PortalServer.START ), true ) );
+        launch.setAttribute( ATTR_PROGRAM_ARGUMENTS, mergeArguments( existingProgArgs, getRuntimeProgArgs( PortalServer.START ), null, true ) );
 
         final String existingVMArgs = launch.getAttribute( ATTR_VM_ARGUMENTS, (String) null );
 
@@ -172,7 +184,7 @@ public class PortalServerBehavior extends ServerBehaviourDelegate implements IJa
 //      }
 
         final String[] configVMArgs = getRuntimeVMArguments();
-        launch.setAttribute( ATTR_VM_ARGUMENTS, mergeArguments( existingVMArgs, configVMArgs, false ) );
+        launch.setAttribute( ATTR_VM_ARGUMENTS, mergeArguments( existingVMArgs, configVMArgs, null, false ) );
 
         final PortalRuntime portalRuntime = getPortalRuntime();
         final IVMInstall vmInstall = portalRuntime.getVMInstall();
@@ -331,11 +343,11 @@ public class PortalServerBehavior extends ServerBehaviourDelegate implements IJa
         return retval;
     }
 
-    private String mergeArguments( final String orgArgsString, final String[] newArgs, boolean keepActionLast )
+    private String mergeArguments( final String orgArgsString, final String[] newArgs, final String[] excludeArgs, boolean keepActionLast )
     {
         String retval = null;
 
-        if( CoreUtil.isNullOrEmpty( newArgs ) )
+        if( CoreUtil.isNullOrEmpty( newArgs ) && CoreUtil.isNullOrEmpty( excludeArgs ) )
         {
             retval = orgArgsString;
         }
@@ -435,6 +447,82 @@ public class PortalServerBehavior extends ServerBehaviourDelegate implements IJa
                 }
             }
 
+            // remove excluded arguments
+            if( excludeArgs != null && excludeArgs.length > 0 )
+            {
+                for( int i = 0; i < excludeArgs.length; i++ )
+                {
+                    int ind = excludeArgs[i].indexOf( " " );
+                    int ind2 = excludeArgs[i].indexOf( "=" );
+
+                    if( ind >= 0 && ( ind2 == -1 || ind < ind2 ) )
+                    { // -a bc style
+                        int index = retval.indexOf( excludeArgs[i].substring( 0, ind + 1 ) );
+
+                        if( index == 0 || ( index > 0 && Character.isWhitespace( retval.charAt( index - 1 ) ) ) )
+                        {
+                            // remove
+                            String s = retval.substring( 0, index );
+                            int index2 = getNextToken( retval, index + ind + 1 );
+
+                            if( index2 >= 0 )
+                            {
+                                // If remainder will become the first argument, remove leading blanks
+                                while( index2 < retval.length() &&
+                                    Character.isWhitespace( retval.charAt( index2 ) ) )
+                                    index2 += 1;
+                                retval = s + retval.substring( index2 );
+                            }
+                            else
+                                retval = s;
+                        }
+                    }
+                    else if( ind2 >= 0 )
+                    { // a=b style
+                        int index = retval.indexOf( excludeArgs[i].substring( 0, ind2 + 1 ) );
+
+                        if( index == 0 || ( index > 0 && Character.isWhitespace( retval.charAt( index - 1 ) ) ) )
+                        {
+                            // remove
+                            String s = retval.substring( 0, index );
+                            int index2 = getNextToken( retval, index );
+
+                            if( index2 >= 0 )
+                            {
+                                // If remainder will become the first argument, remove leading blanks
+                                while( index2 < retval.length() &&
+                                    Character.isWhitespace( retval.charAt( index2 ) ) )
+                                    index2 += 1;
+                                retval = s + retval.substring( index2 );
+                            }
+                            else
+                                retval = s;
+                        }
+                    }
+                    else
+                    { // abc style
+                        int index = retval.indexOf( excludeArgs[i] );
+
+                        if( index == 0 || ( index > 0 && Character.isWhitespace( retval.charAt( index - 1 ) ) ) )
+                        {
+                            // remove
+                            String s = retval.substring( 0, index );
+                            int index2 = getNextToken( retval, index );
+                            if( index2 >= 0 )
+                            {
+                                // Remove leading blanks
+                                while( index2 < retval.length() &&
+                                    Character.isWhitespace( retval.charAt( index2 ) ) )
+                                    index2 += 1;
+                                retval = s + retval.substring( index2 );
+                            }
+                            else
+                                retval = s;
+                        }
+                    }
+                }
+            }
+
             // add remaining vmargs to the end
             for( int i = 0; i < size; i++ )
             {
@@ -528,7 +616,7 @@ public class PortalServerBehavior extends ServerBehaviourDelegate implements IJa
 
     public void setServerStarted()
     {
-        setServerState(IServer.STATE_STARTED);
+        setServerState( IServer.STATE_STARTED );
     }
 
     public void cleanup()

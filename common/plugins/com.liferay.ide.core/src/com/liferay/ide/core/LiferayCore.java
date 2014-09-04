@@ -17,6 +17,7 @@ package com.liferay.ide.core;
 import com.liferay.ide.core.util.CoreUtil;
 
 import org.eclipse.core.net.proxy.IProxyService;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -76,7 +77,10 @@ public class LiferayCore extends Plugin
 
         if( project == null )
         {
-            LiferayCore.logInfo( "No liferay project providers registered for type: " + adaptable.getClass() ); //$NON-NLS-1$
+            if( adaptable instanceof IProject )
+            {
+                LiferayCore.logInfo( "No liferay project providers for project " + ( (IProject) adaptable ).getName() );
+            }
         }
 
         return project;
