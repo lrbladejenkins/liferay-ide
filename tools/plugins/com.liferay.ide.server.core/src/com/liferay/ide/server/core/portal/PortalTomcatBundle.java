@@ -72,6 +72,10 @@ public class PortalTomcatBundle implements PortalBundle
 
         args.add( "-Dcatalina.base=" + this.tomcatPath.toPortableString() );
         args.add( "-Dcatalina.home=" + this.tomcatPath.toPortableString() );
+        args.add( "-Dcom.sun.management.jmxremote" );
+        args.add( "-Dcom.sun.management.jmxremote.authenticate=false" );
+        args.add( "-Dcom.sun.management.jmxremote.port=1234" );
+        args.add( "-Dcom.sun.management.jmxremote.ssl=false" );
         args.add( "-Dfile.encoding=UTF8" );
         args.add( "-Djava.endorsed.dirs=" + this.tomcatPath.append( "endorsed" ).toPortableString() );
         args.add( "-Djava.io.tmpdir=" + this.tomcatPath.append( "temp" ).toPortableString() );
