@@ -801,34 +801,38 @@ public class PropertiesUtil
             project = CoreUtil.getLiferayProject( project );
         }
 
-        try
-        {
-            final ILiferayProject liferayProject = LiferayCore.create( project );
-            final IFile[] resourceFiles = getLanguagePropertiesFromPortletXml(
-                liferayProject.getDescriptorFile( ILiferayConstants.PORTLET_XML_FILE ) );
+        final ILiferayProject liferayProject = LiferayCore.create( project );
 
-            for( IFile file : resourceFiles )
+        if( liferayProject != null )
+        {
+            try
             {
-                if( ! ILiferayConstants.LANGUAGE_PROPERTIES_FILE_ENCODING_CHARSET.equals( file.getCharset() ) )
+                final IFile[] resourceFiles = getLanguagePropertiesFromPortletXml(
+                    liferayProject.getDescriptorFile( ILiferayConstants.PORTLET_XML_FILE ) );
+
+                for( IFile file : resourceFiles )
                 {
-                    return true;
+                    if( ! ILiferayConstants.LANGUAGE_PROPERTIES_FILE_ENCODING_CHARSET.equals( file.getCharset() ) )
+                    {
+                        return true;
+                    }
+                }
+
+                final IFile[] languageFiles = getLanguagePropertiesFromLiferayHookXml(
+                    liferayProject.getDescriptorFile( ILiferayConstants.LIFERAY_HOOK_XML_FILE ) );
+
+                for( IFile file : languageFiles )
+                {
+                    if( ! ILiferayConstants.LANGUAGE_PROPERTIES_FILE_ENCODING_CHARSET.equals( file.getCharset() ) )
+                    {
+                        return true;
+                    }
                 }
             }
-
-            final IFile[] languageFiles = getLanguagePropertiesFromLiferayHookXml(
-                liferayProject.getDescriptorFile( ILiferayConstants.LIFERAY_HOOK_XML_FILE ) );
-
-            for( IFile file : languageFiles )
+            catch( CoreException e )
             {
-                if( ! ILiferayConstants.LANGUAGE_PROPERTIES_FILE_ENCODING_CHARSET.equals( file.getCharset() ) )
-                {
-                    return true;
-                }
+                LiferayCore.logError( e );
             }
-        }
-        catch( CoreException e )
-        {
-            LiferayCore.logError( e );
         }
 
         return false;

@@ -12,24 +12,27 @@
  * details.
  *
  *******************************************************************************/
-package com.liferay.ide.core;
+package com.liferay.ide.project.core;
 
-import java.util.List;
+import org.eclipse.core.expressions.PropertyTester;
+import org.eclipse.core.resources.IProject;
 
-/**
- * @author Gregory Amerson
- */
-public interface ILiferayProjectProvider
+
+public class BundleProjectPropertyTester extends PropertyTester
 {
-    <T> List<T> getData( String key, Class<T> type, Object... params );
 
-    String getDisplayName();
+    public BundleProjectPropertyTester()
+    {
+        super();
+    }
 
-    int getPriority();
+    @Override
+    public boolean test( Object receiver, String property, Object[] args, Object expectedValue )
+    {
+        boolean retval = property != null && property.equals( "isBundleProject" ) && receiver instanceof IProject &&
+            ( (IProject) receiver ).getName().startsWith( "sample.bundle" );
 
-    String getShortName();
+        return retval;
+    }
 
-    ILiferayProject provide( Object type );
-
-    boolean provides( Class<?> type );
 }

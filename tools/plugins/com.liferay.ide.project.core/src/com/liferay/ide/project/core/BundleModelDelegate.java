@@ -12,24 +12,12 @@
  * details.
  *
  *******************************************************************************/
-package com.liferay.ide.core;
+package com.liferay.ide.project.core;
 
-import java.util.List;
+import org.eclipse.wst.server.core.util.ProjectModule;
 
-/**
- * @author Gregory Amerson
- */
-public interface ILiferayProjectProvider
+
+public class BundleModelDelegate extends ProjectModule
 {
-    <T> List<T> getData( String key, Class<T> type, Object... params );
 
-    String getDisplayName();
-
-    int getPriority();
-
-    String getShortName();
-
-    ILiferayProject provide( Object type );
-
-    boolean provides( Class<?> type );
 }

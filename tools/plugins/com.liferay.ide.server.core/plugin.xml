@@ -1090,7 +1090,7 @@
             name="Liferay 7.x"
             vendor="Liferay, Inc.">
          <moduleType
-               types="liferay.module"
+               types="liferay.bundle"
                versions="*">
          </moduleType>
       </runtimeType>
@@ -1226,8 +1226,8 @@
    <extension
          point="org.eclipse.wst.server.core.moduleTypes">
       <moduleType
-            id="liferay.module"
-            name="Liferay Module">
+            id="liferay.bundle"
+            name="Liferay OSGi Bundle">
       </moduleType>
    </extension>
    <extension

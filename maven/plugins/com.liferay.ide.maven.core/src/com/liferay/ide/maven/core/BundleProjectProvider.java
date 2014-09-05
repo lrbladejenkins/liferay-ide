@@ -12,24 +12,27 @@
  * details.
  *
  *******************************************************************************/
-package com.liferay.ide.core;
+package com.liferay.ide.maven.core;
 
-import java.util.List;
+import com.liferay.ide.core.AbstractLiferayProjectProvider;
+import com.liferay.ide.core.ILiferayProject;
+import com.liferay.ide.core.ILiferayProjectProvider;
+
 
 /**
  * @author Gregory Amerson
  */
-public interface ILiferayProjectProvider
+public class BundleProjectProvider extends AbstractLiferayProjectProvider implements ILiferayProjectProvider
 {
-    <T> List<T> getData( String key, Class<T> type, Object... params );
 
-    String getDisplayName();
+    public BundleProjectProvider( Class<?>[] types )
+    {
+        super( types );
+    }
 
-    int getPriority();
+    public ILiferayProject provide( Object type )
+    {
+        return null;
+    }
 
-    String getShortName();
-
-    ILiferayProject provide( Object type );
-
-    boolean provides( Class<?> type );
 }

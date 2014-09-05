@@ -32,6 +32,9 @@ import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.wst.server.core.IServer;
 
 
+/**
+ * @author Gregory Amerson
+ */
 public class BundlesFolder
 {
 

@@ -12,24 +12,42 @@
  * details.
  *
  *******************************************************************************/
-package com.liferay.ide.core;
+package com.liferay.ide.project.core;
 
-import java.util.List;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectNature;
+import org.eclipse.core.runtime.CoreException;
+
 
 /**
  * @author Gregory Amerson
  */
-public interface ILiferayProjectProvider
+public class BundleProjectNature implements IProjectNature
 {
-    <T> List<T> getData( String key, Class<T> type, Object... params );
+    public static final String ID = "com.liferay.ide.project.core.bundleNature";
 
-    String getDisplayName();
+    private IProject project;
 
-    int getPriority();
+    @Override
+    public void configure() throws CoreException
+    {
+    }
 
-    String getShortName();
+    @Override
+    public void deconfigure() throws CoreException
+    {
+    }
 
-    ILiferayProject provide( Object type );
+    @Override
+    public IProject getProject()
+    {
+        return this.project;
+    }
 
-    boolean provides( Class<?> type );
+    @Override
+    public void setProject( IProject project )
+    {
+        this.project = project;
+    }
+
 }

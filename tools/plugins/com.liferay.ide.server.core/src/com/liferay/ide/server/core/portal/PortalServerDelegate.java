@@ -15,11 +15,14 @@
 package com.liferay.ide.server.core.portal;
 
 import com.liferay.ide.core.util.CoreUtil;
+import com.liferay.ide.server.core.LiferayServerCore;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.wst.server.core.IModule;
+import org.eclipse.wst.server.core.IModuleType;
 import org.eclipse.wst.server.core.model.ServerDelegate;
 
 
@@ -51,19 +54,54 @@ public class PortalServerDelegate extends ServerDelegate implements PortalServer
     @Override
     public IStatus canModifyModules( IModule[] add, IModule[] remove )
     {
-        return null;
+        IStatus retval = Status.OK_STATUS;
+
+        if( ! CoreUtil.isNullOrEmpty( add ) )
+        {
+            for( IModule module : add )
+            {
+                if( ! "liferay.bundle".equals( module.getModuleType().getId() ) )
+                {
+                    retval =
+                        LiferayServerCore.createErrorStatus( "Unable to add module with type " +
+                            module.getModuleType().getName() );
+                    break;
+                }
+            }
+        }
+
+        return retval;
     }
 
     @Override
     public IModule[] getChildModules( IModule[] module )
     {
-        return null;
+        IModule[] retval = null;
+
+        if( module != null )
+        {
+            final IModuleType moduleType = module[0].getModuleType();
+
+            if( module.length == 1 && moduleType != null && "liferay.bundle".equals( moduleType.getId() ) )
+            {
+                retval = new IModule[0];
+            }
+        }
+
+        return retval;
     }
 
     @Override
     public IModule[] getRootModules( IModule module ) throws CoreException
     {
-        return null;
+        final IStatus status = canModifyModules(new IModule[] { module }, null);
+
+        if (status == null || !status.isOK())
+        {
+            throw new CoreException(status);
+        }
+
+        return new IModule[] { module };
     }
 
     @Override

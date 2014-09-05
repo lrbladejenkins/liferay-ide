@@ -40,6 +40,7 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.wst.server.core.IModule;
 import org.eclipse.wst.server.core.IServer;
 import org.eclipse.wst.server.core.internal.Server;
 import org.eclipse.wst.server.core.model.ServerBehaviourDelegate;
@@ -66,6 +67,17 @@ public class PortalServerBehavior extends ServerBehaviourDelegate implements IJa
     public PortalServerBehavior()
     {
         super();
+    }
+
+    @Override
+    protected void publishModule(
+        final int kind, final int deltaKind, final IModule[] module, final IProgressMonitor monitor )
+        throws CoreException
+    {
+
+        // by default, assume the module has published successfully.
+        // this will update the publish state and delta correctly
+        setModulePublishState( module, IServer.PUBLISH_STATE_NONE );
     }
 
     @Override
