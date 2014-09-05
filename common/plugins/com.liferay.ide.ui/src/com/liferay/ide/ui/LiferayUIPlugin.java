@@ -15,6 +15,8 @@
 
 package com.liferay.ide.ui;
 
+import com.liferay.ide.ui.util.LiferayRuntimeMementoUtil;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,6 +47,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.wst.server.core.ServerCore;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -83,10 +86,10 @@ public class LiferayUIPlugin extends AbstractUIPlugin implements IStartup
     {
         return new Status( IStatus.ERROR, PLUGIN_ID, string );
     }
-    
+
     public static void logError( String msg, Exception e )
     {
-        getDefault().getLog().log(new Status(IStatus.ERROR, PLUGIN_ID, msg, e));
+        getDefault().getLog().log( new Status( IStatus.ERROR, PLUGIN_ID, msg, e ) );
     }
 
     public static IWorkbenchPage getActivePage()
@@ -117,7 +120,7 @@ public class LiferayUIPlugin extends AbstractUIPlugin implements IStartup
         return ResourcesPlugin.getWorkspace();
     }
 
-    public static void logError(Exception e)
+    public static void logError( Exception e )
     {
         logError( e.getMessage(), e );
     }
@@ -175,6 +178,7 @@ public class LiferayUIPlugin extends AbstractUIPlugin implements IStartup
         super.start( context );
 
         plugin = this;
+
     }
 
     /*
@@ -216,9 +220,8 @@ public class LiferayUIPlugin extends AbstractUIPlugin implements IStartup
 
             // add liferay profile
             final Profile eclipseProfile =
-                new CustomProfile(
-                    "Liferay [plug-in]", getLiferaySettings(), profileVersioner.getCurrentVersion(), //$NON-NLS-1$
-                    profileVersioner.getProfileKind() );
+                new CustomProfile( "Liferay [plug-in]", getLiferaySettings(), profileVersioner.getCurrentVersion(), //$NON-NLS-1$
+                profileVersioner.getProfileKind() );
             profiles.add( eclipseProfile );
 
             store.writeProfiles( profiles, instanceScope );
@@ -279,4 +282,5 @@ public class LiferayUIPlugin extends AbstractUIPlugin implements IStartup
     // }
     // return fPluginPropertiesFileDocumentProvider;
     // }
+    
 }
