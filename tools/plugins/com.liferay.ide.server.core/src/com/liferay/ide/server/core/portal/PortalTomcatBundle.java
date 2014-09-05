@@ -25,11 +25,13 @@ public class PortalTomcatBundle implements PortalBundle
 
     private final PortalRuntime runtime;
     private final IPath tomcatPath;
+    private final IPath autoDeployPath;
 
     public PortalTomcatBundle()
     {
         this.runtime = null;
         this.tomcatPath = null;
+        this.autoDeployPath = null;
     }
 
     public PortalTomcatBundle( PortalRuntime portalRuntime )
@@ -43,6 +45,7 @@ public class PortalTomcatBundle implements PortalBundle
 
         // TODO detect tomcat installation
         this.tomcatPath = this.runtime.getRuntime().getLocation().append( "tomcat-7.0.42" );
+        this.autoDeployPath = this.runtime.getRuntime().getLocation().append( "deploy" );
     }
 
     public String[] getRuntimeProgArgs( String launchMode )
@@ -107,6 +110,11 @@ public class PortalTomcatBundle implements PortalBundle
         }
 
         return paths.toArray( new IPath[0] );
+    }
+
+    public IPath getAutoDeployPath()
+    {
+        return this.autoDeployPath;
     }
 
 }

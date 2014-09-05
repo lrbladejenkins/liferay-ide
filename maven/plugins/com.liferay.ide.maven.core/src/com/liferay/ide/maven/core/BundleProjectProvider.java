@@ -18,6 +18,9 @@ import com.liferay.ide.core.AbstractLiferayProjectProvider;
 import com.liferay.ide.core.ILiferayProject;
 import com.liferay.ide.core.ILiferayProjectProvider;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+
 
 /**
  * @author Gregory Amerson
@@ -25,13 +28,31 @@ import com.liferay.ide.core.ILiferayProjectProvider;
 public class BundleProjectProvider extends AbstractLiferayProjectProvider implements ILiferayProjectProvider
 {
 
-    public BundleProjectProvider( Class<?>[] types )
+    public BundleProjectProvider()
     {
-        super( types );
+        super( new Class<?>[] { IProject.class } );
     }
 
     public ILiferayProject provide( Object type )
     {
+        if( type instanceof IProject )
+        {
+            final IProject project = (IProject) type;
+
+            try
+            {
+                if( MavenUtil.isMavenProject( project ) && project.getName().startsWith( "sample.bundle" ) )
+                {
+                    return new BundleProject( project );
+                }
+            }
+            catch( CoreException e )
+            {
+                LiferayMavenCore.logError(
+                    "Unable to create ILiferayProject from maven bundle project " + project.getName(), e ); //$NON-NLS-1$
+            }
+        }
+
         return null;
     }
 

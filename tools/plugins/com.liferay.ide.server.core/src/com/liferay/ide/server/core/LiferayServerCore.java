@@ -164,9 +164,9 @@ public class LiferayServerCore extends Plugin
         return new Status( IStatus.ERROR, pluginId, msg, e );
     }
 
-    public static IStatus createErrorStatus( String pluginId, Throwable t )
+    public static IStatus createErrorStatus( String msg, Throwable t )
     {
-        return new Status( IStatus.ERROR, pluginId, t.getMessage(), t );
+        return new Status( IStatus.ERROR, PLUGIN_ID, msg, t );
     }
 
     public static IStatus createInfoStatus( String msg )

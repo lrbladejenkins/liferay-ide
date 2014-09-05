@@ -14,6 +14,9 @@
  *******************************************************************************/
 package com.liferay.ide.project.core;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.wst.server.core.IModule;
 import org.eclipse.wst.server.core.model.ModuleDelegate;
@@ -22,6 +25,8 @@ import org.eclipse.wst.server.core.util.ProjectModuleFactoryDelegate;
 
 public class BundleFactoryDelegate extends ProjectModuleFactoryDelegate
 {
+
+    private Map <IModule, BundleModulelDelegate> moduleDelegates = new HashMap<IModule, BundleModulelDelegate>(5);
 
     public BundleFactoryDelegate()
     {
@@ -45,8 +50,15 @@ public class BundleFactoryDelegate extends ProjectModuleFactoryDelegate
     @Override
     public ModuleDelegate getModuleDelegate( IModule module )
     {
-        // TODO Auto-generated method stub
-        return null;
+        BundleModulelDelegate md = moduleDelegates.get( module );
+
+        if( md == null )
+        {
+            md = new BundleModulelDelegate( module.getProject() );
+            moduleDelegates.put( module, md );
+        }
+
+        return md;
     }
 
 }

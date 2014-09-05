@@ -22,12 +22,20 @@ import com.liferay.ide.sdk.core.SDKManager;
 import com.liferay.ide.sdk.core.SDKUtil;
 import com.liferay.ide.server.core.ILiferayRuntime;
 import com.liferay.ide.server.remote.IRemoteServerPublisher;
+import com.liferay.ide.server.util.ServerUtil;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Properties;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -184,6 +192,30 @@ public class LiferayPluginsSDKProject extends WTPLiferayProject
     public IPath[] getUserLibs()
     {
         return this.liferayRuntime.getUserLibs();
+    }
+
+    @Override
+    public Collection<IFile> getOutputs( boolean build, IProgressMonitor monitor ) throws CoreException
+    {
+        final Collection<IFile> outputs = new HashSet<IFile>();
+
+        if( build )
+        {
+            this.getProject().build( IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor );
+
+            final SDK sdk = SDKUtil.getSDK( this.getProject() );
+
+            final Map<String, String> appServerProperties = ServerUtil.configureAppServerProperties( getProject() );
+
+            final IStatus warStatus = sdk.war( this.getProject(), null, true, appServerProperties, monitor );
+
+            if( warStatus.isOK() )
+            {
+
+            }
+        }
+
+        return outputs;
     }
 
 }

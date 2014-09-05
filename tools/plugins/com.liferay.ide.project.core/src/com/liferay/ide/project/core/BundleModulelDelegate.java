@@ -14,10 +14,16 @@
  *******************************************************************************/
 package com.liferay.ide.project.core;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.wst.server.core.util.ProjectModule;
 
 
-public class BundleModelDelegate extends ProjectModule
+public class BundleModulelDelegate extends ProjectModule
 {
+
+    public BundleModulelDelegate( IProject project )
+    {
+        super( project );
+    }
 
 }

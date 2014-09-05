@@ -14,20 +14,27 @@
  *******************************************************************************/
 package com.liferay.ide.server.core.portal;
 
+import com.liferay.ide.core.ILiferayProject;
+import com.liferay.ide.core.LiferayCore;
 import com.liferay.ide.core.util.CoreUtil;
+import com.liferay.ide.core.util.FileUtil;
 import com.liferay.ide.server.core.LiferayServerCore;
 import com.liferay.ide.server.util.PingThread;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -69,15 +76,92 @@ public class PortalServerBehavior extends ServerBehaviourDelegate implements IJa
         super();
     }
 
+    private static interface PublishOp
+    {
+        IStatus publish( IModule module, IProgressMonitor monitor ) throws CoreException;
+    }
+
+    private class PublishFullAdd implements PublishOp
+    {
+        public IStatus publish( IModule module, IProgressMonitor monitor ) throws CoreException
+        {
+            IStatus retval = Status.OK_STATUS;
+
+            final ILiferayProject project = LiferayCore.create( module.getProject() );
+
+            if( project != null )
+            {
+                final Collection<IFile> outputs = project.getOutputs( true, monitor );
+
+                for( IFile output : outputs )
+                {
+                    if( output.exists() )
+                    {
+                        final IPath autoDeployPath = getPortalRuntime().getPortalBundle().getAutoDeployPath();
+
+                        if( autoDeployPath.toFile().exists() )
+                        {
+                            try
+                            {
+                                FileUtil.writeFileFromStream(
+                                    autoDeployPath.append( output.getName() ).toFile(), output.getContents( true ) );
+                            }
+                            catch( IOException e )
+                            {
+                                retval = LiferayServerCore.createErrorStatus( "Unable to copy file to auto deploy folder", e );
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                retval =
+                    LiferayServerCore.createErrorStatus( "Unable to get liferay project for " +
+                        module.getProject().getName() );
+            }
+
+            return retval;
+        }
+    }
+
     @Override
     protected void publishModule(
-        final int kind, final int deltaKind, final IModule[] module, final IProgressMonitor monitor )
+        final int kind, final int deltaKind, final IModule[] modules, final IProgressMonitor monitor )
         throws CoreException
     {
+        PublishOp op = null;
 
-        // by default, assume the module has published successfully.
-        // this will update the publish state and delta correctly
-        setModulePublishState( module, IServer.PUBLISH_STATE_NONE );
+        switch( kind )
+        {
+            case IServer.PUBLISH_FULL:
+                switch( deltaKind )
+                {
+                    case ServerBehaviourDelegate.ADDED:
+                    case ServerBehaviourDelegate.CHANGED:
+                        op = new PublishFullAdd();
+                        break;
+                    default:
+                        break;
+                }
+                break;
+
+            default:
+                break;
+        }
+
+        if( op != null )
+        {
+            for( IModule module : modules )
+            {
+                IStatus status = op.publish( module, monitor );
+
+                if( status.isOK() )
+                {
+                    setModulePublishState( new IModule[] { module }, IServer.PUBLISH_STATE_NONE );
+                }
+            }
+        }
     }
 
     @Override

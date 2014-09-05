@@ -25,6 +25,8 @@ import com.liferay.ide.server.util.LiferayPortalValueLoader;
 import com.liferay.ide.server.util.ServerUtil;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 
@@ -32,9 +34,12 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -327,6 +332,32 @@ public class LiferayMavenProject extends WTPLiferayProject
         }
 
         return libs.toArray( new IPath[0] );
+    }
+
+    public Collection<IFile> getOutputs( boolean build, IProgressMonitor monitor ) throws CoreException
+    {
+        final Collection<IFile> outputs = new HashSet<IFile>();
+
+        if( build )
+        {
+            this.getProject().build( IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor );
+
+            new MavenProjectBuilder( this.getProject() ).runMavenGoal( getProject(), "package", monitor );
+
+            final IMavenProjectFacade projectFacade = MavenUtil.getProjectFacade( getProject(), monitor );
+            final MavenProject mavenProject = projectFacade.getMavenProject( monitor );
+            final String targetFolder = mavenProject.getBuild().getDirectory();
+            final String targetWar = mavenProject.getBuild().getFinalName() + "." + mavenProject.getPackaging();
+
+            final IFile output = getProject().getFile( new Path( targetFolder ).append( targetWar ) );
+
+            if( output.exists() )
+            {
+                outputs.add( output );
+            }
+        }
+
+        return outputs;
     }
 
 }

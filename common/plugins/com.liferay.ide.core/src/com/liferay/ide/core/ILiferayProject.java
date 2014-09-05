@@ -14,12 +14,15 @@
  *******************************************************************************/
 package com.liferay.ide.core;
 
+import java.util.Collection;
 import java.util.Properties;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 
 /**
@@ -55,5 +58,7 @@ public interface ILiferayProject
     IPath[] getUserLibs();
 
     boolean pathInDocroot( IPath fullPath );
+
+    Collection<IFile> getOutputs( boolean build, IProgressMonitor monitor ) throws CoreException;
 
 }
