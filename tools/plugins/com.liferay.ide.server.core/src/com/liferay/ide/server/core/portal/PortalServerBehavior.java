@@ -14,27 +14,20 @@
  *******************************************************************************/
 package com.liferay.ide.server.core.portal;
 
-import com.liferay.ide.core.ILiferayProject;
-import com.liferay.ide.core.LiferayCore;
 import com.liferay.ide.core.util.CoreUtil;
-import com.liferay.ide.core.util.FileUtil;
 import com.liferay.ide.server.core.LiferayServerCore;
 import com.liferay.ide.server.util.PingThread;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -56,6 +49,7 @@ import org.eclipse.wst.server.core.model.ServerBehaviourDelegate;
 /**
  * @author Gregory Amerson
  */
+@SuppressWarnings( "restriction" )
 public class PortalServerBehavior extends ServerBehaviourDelegate implements IJavaLaunchConfigurationConstants
 {
     private static final String[] JMX_EXCLUDE_ARGS = new String []
@@ -76,53 +70,10 @@ public class PortalServerBehavior extends ServerBehaviourDelegate implements IJa
         super();
     }
 
-    private static interface PublishOp
+    @Override
+    protected void publishServer( int kind, IProgressMonitor monitor ) throws CoreException
     {
-        IStatus publish( IModule module, IProgressMonitor monitor ) throws CoreException;
-    }
-
-    private class PublishFullAdd implements PublishOp
-    {
-        public IStatus publish( IModule module, IProgressMonitor monitor ) throws CoreException
-        {
-            IStatus retval = Status.OK_STATUS;
-
-            final ILiferayProject project = LiferayCore.create( module.getProject() );
-
-            if( project != null )
-            {
-                final Collection<IFile> outputs = project.getOutputs( true, monitor );
-
-                for( IFile output : outputs )
-                {
-                    if( output.exists() )
-                    {
-                        final IPath autoDeployPath = getPortalRuntime().getPortalBundle().getAutoDeployPath();
-
-                        if( autoDeployPath.toFile().exists() )
-                        {
-                            try
-                            {
-                                FileUtil.writeFileFromStream(
-                                    autoDeployPath.append( output.getName() ).toFile(), output.getContents( true ) );
-                            }
-                            catch( IOException e )
-                            {
-                                retval = LiferayServerCore.createErrorStatus( "Unable to copy file to auto deploy folder", e );
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                retval =
-                    LiferayServerCore.createErrorStatus( "Unable to get liferay project for " +
-                        module.getProject().getName() );
-            }
-
-            return retval;
-        }
+        setServerPublishState(IServer.PUBLISH_STATE_NONE);
     }
 
     @Override
@@ -139,7 +90,7 @@ public class PortalServerBehavior extends ServerBehaviourDelegate implements IJa
                 {
                     case ServerBehaviourDelegate.ADDED:
                     case ServerBehaviourDelegate.CHANGED:
-                        op = new PublishFullAdd();
+                        op = new PublishFullAdd( getServer() );
                         break;
                     default:
                         break;

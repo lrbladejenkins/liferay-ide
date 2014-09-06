@@ -12,26 +12,14 @@
  * details.
  *
  *******************************************************************************/
-package com.liferay.ide.project.core;
+package com.liferay.ide.server.core.portal;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.wst.server.core.model.IModuleResource;
-import org.eclipse.wst.server.core.util.ProjectModule;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.wst.server.core.IModule;
 
-
-public class BundleModulelDelegate extends ProjectModule
+public interface PublishOp
 {
-
-    public BundleModulelDelegate( IProject project )
-    {
-        super( project );
-    }
-
-    @Override
-    public IModuleResource[] members() throws CoreException
-    {
-        return new IModuleResource[0];
-    }
-
+    IStatus publish( IModule module, IProgressMonitor monitor ) throws CoreException;
 }
