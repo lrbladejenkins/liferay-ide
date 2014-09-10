@@ -92,6 +92,11 @@ public class PortalServerBehavior extends ServerBehaviourDelegate implements IJa
                     case ServerBehaviourDelegate.CHANGED:
                         op = new PublishFullAdd( getServer() );
                         break;
+
+                    case ServerBehaviourDelegate.REMOVED:
+                        op = new PublishFullRemove( getServer() );
+                        break;
+
                     default:
                         break;
                 }
@@ -144,7 +149,6 @@ public class PortalServerBehavior extends ServerBehaviourDelegate implements IJa
                 setServerState( IServer.STATE_STOPPING );
             }
 
-            @SuppressWarnings( "restriction" )
             final ILaunchConfiguration launchConfig = ( (Server) getServer() ).getLaunchConfiguration( true, null );
             final ILaunchConfigurationWorkingCopy wc = launchConfig.getWorkingCopy();
 

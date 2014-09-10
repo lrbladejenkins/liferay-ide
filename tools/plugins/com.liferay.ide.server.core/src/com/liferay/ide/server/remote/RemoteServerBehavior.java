@@ -127,7 +127,7 @@ public class RemoteServerBehavior extends ServerBehaviourDelegate
     @Override
     public IStatus canStart( String launchMode )
     {
-        return LiferayServerCore.createErrorStatus( Msgs.liferayServerInstanceRemote );
+        return LiferayServerCore.error( Msgs.liferayServerInstanceRemote );
     }
 
     @Override
@@ -550,7 +550,7 @@ public class RemoteServerBehavior extends ServerBehaviourDelegate
         if ( publisher == null )
         {
             setModuleStatus( module, null );
-            throw new CoreException( LiferayServerCore.createErrorStatus( Msgs.publishingModuleProject ) );
+            throw new CoreException( LiferayServerCore.error( Msgs.publishingModuleProject ) );
         }
 
         final IPath warPath = publisher.publishModuleDelta( appName + ".war", delta, "liferay", true );
@@ -583,7 +583,7 @@ public class RemoteServerBehavior extends ServerBehaviourDelegate
 
         if( error != null )
         {
-            throw new CoreException( LiferayServerCore.createErrorStatus( error.toString() ) );
+            throw new CoreException( LiferayServerCore.error( error.toString() ) );
         }
 
         monitor.done();
@@ -595,7 +595,7 @@ public class RemoteServerBehavior extends ServerBehaviourDelegate
     {
         if( module == null )
         {
-            throw new CoreException( LiferayServerCore.createErrorStatus( "Cannot publish module with length " + //$NON-NLS-1$
+            throw new CoreException( LiferayServerCore.error( "Cannot publish module with length " + //$NON-NLS-1$
                 ( module != null ? module.length : 0 ) ) );
         }
 
@@ -617,7 +617,7 @@ public class RemoteServerBehavior extends ServerBehaviourDelegate
         if ( publisher == null )
         {
             setModuleStatus( module, null );
-            throw new CoreException( LiferayServerCore.createErrorStatus( Msgs.publishingModuleProject ) );
+            throw new CoreException( LiferayServerCore.error( Msgs.publishingModuleProject ) );
         }
 
         final IPath warPath = publisher.publishModuleFull( monitor );
@@ -633,7 +633,7 @@ public class RemoteServerBehavior extends ServerBehaviourDelegate
 
         IServerManagerConnection remoteConnection = getServerManagerConnection();
 
-        setModuleStatus( module, LiferayServerCore.createInfoStatus( Msgs.installing ) );
+        setModuleStatus( module, LiferayServerCore.info( Msgs.installing ) );
 
         submon.worked( 25 ); // 50% complete
 
@@ -668,12 +668,12 @@ public class RemoteServerBehavior extends ServerBehaviourDelegate
         {
             setModuleStatus( module, null );
             setModuleState( module, IServer.STATE_UNKNOWN );
-            throw new CoreException( LiferayServerCore.createErrorStatus( error.toString() ) );
+            throw new CoreException( LiferayServerCore.error( error.toString() ) );
         }
 
         submon.worked( 40 ); // 90%
 
-        setModuleStatus( module, LiferayServerCore.createInfoStatus( Msgs.starting ) );
+        setModuleStatus( module, LiferayServerCore.info( Msgs.starting ) );
 
         // scriptFile = getScriptFile("publish/startApplicationScript.groovy");
 
@@ -707,7 +707,7 @@ public class RemoteServerBehavior extends ServerBehaviourDelegate
         if( state != IServer.STATE_STARTED )
         {
             throw new CoreException(
-                LiferayServerCore.createErrorStatus( Msgs.notPublishRemoteServer ) );
+                LiferayServerCore.error( Msgs.notPublishRemoteServer ) );
         }
     }
 
@@ -748,7 +748,7 @@ public class RemoteServerBehavior extends ServerBehaviourDelegate
     {
         if( module == null )
         {
-            throw new CoreException( LiferayServerCore.createErrorStatus( "Cannot publish module with length " + //$NON-NLS-1$
+            throw new CoreException( LiferayServerCore.error( "Cannot publish module with length " + //$NON-NLS-1$
                 ( module != null ? module.length : 0 ) ) );
         }
 
@@ -777,7 +777,7 @@ public class RemoteServerBehavior extends ServerBehaviourDelegate
 
         final String appName = ComponentUtilities.getServerContextRoot( moduleProject );
 
-        setModuleStatus( module, LiferayServerCore.createInfoStatus( Msgs.uninstalling ) );
+        setModuleStatus( module, LiferayServerCore.info( Msgs.uninstalling ) );
 
         monitor.subTask( Msgs.gettingRemoteConnection );
 
@@ -804,7 +804,7 @@ public class RemoteServerBehavior extends ServerBehaviourDelegate
 
         if( error != null )
         {
-            throw new CoreException( LiferayServerCore.createErrorStatus( error.toString() ) );
+            throw new CoreException( LiferayServerCore.error( error.toString() ) );
         }
 
         setModuleStatus( module, null );

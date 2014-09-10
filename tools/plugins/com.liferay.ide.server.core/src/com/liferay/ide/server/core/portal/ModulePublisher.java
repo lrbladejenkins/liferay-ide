@@ -14,15 +14,14 @@
  *******************************************************************************/
 package com.liferay.ide.server.core.portal;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.wst.server.core.IModule;
+import org.eclipse.wst.server.core.IServer;
 
-/**
- * @author Gregory Amerson
- */
-public interface PublishOp
+
+public interface ModulePublisher
 {
-    IStatus publish( IModule module, IProgressMonitor monitor ) throws CoreException;
+
+    IStatus remove( IServer server , IModule module );
+
 }

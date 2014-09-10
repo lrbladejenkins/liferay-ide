@@ -11,8 +11,10 @@
 
 package com.liferay.ide.server.ui.navigator;
 
+import com.liferay.ide.server.core.LiferayServerCore;
 import com.liferay.ide.server.core.portal.BundleAPIException;
 import com.liferay.ide.server.core.portal.OsgiBundle;
+import com.liferay.ide.server.core.portal.OsgiConnection;
 import com.liferay.ide.server.ui.BundlesImages;
 
 import org.eclipse.core.runtime.IStatus;
@@ -23,6 +25,8 @@ import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.wst.server.core.IServer;
+import org.eclipse.wst.server.ui.IServerModule;
 import org.osgi.framework.Version;
 
 /**
@@ -89,6 +93,30 @@ public class BundlesDecorator extends LabelProvider implements ILightweightLabel
             else
             {
                 decoration.addSuffix( "" );
+            }
+        }
+        else if( element instanceof IServerModule )
+        {
+            final IServerModule module = (IServerModule) element;
+
+            final IServer server = module.getServer();
+
+            if( server.getServerState() == IServer.STATE_STARTED )
+            {
+                final OsgiConnection osgi = LiferayServerCore.newOsgiConnection( module.getServer() );
+
+                //TODO this chould be cached somehow?
+                for( OsgiBundle bundle : osgi.getBundles() )
+                {
+                    if( module.getModule()[0].getName().equals( bundle.getSymbolicName() ) )
+                    {
+                        String id = bundle.getId();
+                        String state = bundle.getState();
+                        Version version = bundle.getVersion();
+
+                        decoration.addSuffix( combine( id, state, version.toString() ) );
+                    }
+                }
             }
         }
     }

@@ -17,6 +17,9 @@ package com.liferay.ide.server.core.portal;
 import org.eclipse.core.runtime.IPath;
 
 
+/**
+ * @author Gregory Amerson
+ */
 public interface PortalBundle
 {
 
@@ -31,5 +34,7 @@ public interface PortalBundle
     IPath[] getRuntimeClasspath();
 
     IPath getAutoDeployPath();
+
+    IPath getModulesPath();
 
 }

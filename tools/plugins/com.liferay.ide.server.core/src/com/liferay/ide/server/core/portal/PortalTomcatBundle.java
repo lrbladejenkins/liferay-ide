@@ -20,18 +20,23 @@ import java.util.List;
 import org.eclipse.core.runtime.IPath;
 
 
+/**
+ * @author Gregory Amerson
+ */
 public class PortalTomcatBundle implements PortalBundle
 {
 
+    private final IPath autoDeployPath;
+    private final IPath modulesPath;
     private final PortalRuntime runtime;
     private final IPath tomcatPath;
-    private final IPath autoDeployPath;
 
     public PortalTomcatBundle()
     {
+        this.autoDeployPath = null;
+        this.modulesPath = null;
         this.runtime = null;
         this.tomcatPath = null;
-        this.autoDeployPath = null;
     }
 
     public PortalTomcatBundle( PortalRuntime portalRuntime )
@@ -44,8 +49,11 @@ public class PortalTomcatBundle implements PortalBundle
         this.runtime = portalRuntime;
 
         // TODO detect tomcat installation
-        this.tomcatPath = this.runtime.getRuntime().getLocation().append( "tomcat-7.0.42" );
-        this.autoDeployPath = this.runtime.getRuntime().getLocation().append( "deploy" );
+        final IPath location = this.runtime.getRuntime().getLocation();
+
+        this.autoDeployPath = location.append( "deploy" );
+        this.modulesPath = location.append( "osgi" );
+        this.tomcatPath = location.append( "tomcat-7.0.42" );
     }
 
     public String[] getRuntimeProgArgs( String launchMode )
@@ -75,6 +83,7 @@ public class PortalTomcatBundle implements PortalBundle
 
         args.add( "-Dcatalina.base=" + this.tomcatPath.toPortableString() );
         args.add( "-Dcatalina.home=" + this.tomcatPath.toPortableString() );
+        // TODO use dynamic attach API
         args.add( "-Dcom.sun.management.jmxremote" );
         args.add( "-Dcom.sun.management.jmxremote.authenticate=false" );
         args.add( "-Dcom.sun.management.jmxremote.port=33133" );
@@ -115,6 +124,11 @@ public class PortalTomcatBundle implements PortalBundle
     public IPath getAutoDeployPath()
     {
         return this.autoDeployPath;
+    }
+
+    public IPath getModulesPath()
+    {
+        return this.modulesPath;
     }
 
 }

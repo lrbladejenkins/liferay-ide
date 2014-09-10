@@ -146,10 +146,10 @@ public class LiferayServerCore extends Plugin
 
     public static IStatus createErrorStatus( Exception e )
     {
-        return createErrorStatus( PLUGIN_ID, e );
+        return error( e.getMessage(), e );
     }
 
-    public static IStatus createErrorStatus( String msg )
+    public static IStatus error( String msg )
     {
         return createErrorStatus( PLUGIN_ID, msg );
     }
@@ -164,12 +164,12 @@ public class LiferayServerCore extends Plugin
         return new Status( IStatus.ERROR, pluginId, msg, e );
     }
 
-    public static IStatus createErrorStatus( String msg, Throwable t )
+    public static IStatus error( String msg, Throwable t )
     {
         return new Status( IStatus.ERROR, PLUGIN_ID, msg, t );
     }
 
-    public static IStatus createInfoStatus( String msg )
+    public static IStatus info( String msg )
     {
         return new Status( IStatus.INFO, PLUGIN_ID, msg );
     }
@@ -517,7 +517,17 @@ public class LiferayServerCore extends Plugin
 
     public static void logError( String msg )
     {
-        logError( createErrorStatus( msg ) );
+        logError( error( msg ) );
+    }
+
+    public static void logInfo( String msg )
+    {
+        logInfo( info( msg ) );
+    }
+
+    public static void logInfo( IStatus status )
+    {
+        getDefault().getLog().log( status );
     }
 
     public static void logError( String msg, Throwable e )

@@ -15,6 +15,7 @@
 package com.liferay.ide.maven.core;
 
 import com.liferay.ide.project.core.BaseLiferayProject;
+import com.liferay.ide.server.core.portal.ModulePublisher;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -39,6 +40,24 @@ public class BundleProject extends BaseLiferayProject
     public BundleProject( IProject project )
     {
         super( project );
+    }
+
+    @Override
+    public <T> T adapt( Class<T> adapterType )
+    {
+        final T adapter = super.adapt( adapterType );
+
+        if( adapter != null )
+        {
+            return adapter;
+        }
+
+        if( ModulePublisher.class.equals( adapterType ) )
+        {
+            return adapterType.cast( new BundleModulePublisher( this ) );
+        }
+
+        return null;
     }
 
     public IResource findDocrootResource( String path )

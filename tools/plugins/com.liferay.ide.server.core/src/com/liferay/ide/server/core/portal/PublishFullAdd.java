@@ -31,6 +31,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.wst.server.core.IModule;
 import org.eclipse.wst.server.core.IServer;
 
+/**
+ * @author Gregory Amerson
+ */
 public class PublishFullAdd implements PublishOp
 {
     private final IServer server;
@@ -61,28 +64,65 @@ public class PublishFullAdd implements PublishOp
             {
                 if( output.exists() )
                 {
-                    final IPath autoDeployPath = portalRuntime.getPortalBundle().getAutoDeployPath();
-
-                    if( autoDeployPath.toFile().exists() )
+                    if( this.server.getServerState() == IServer.STATE_STARTED )
                     {
-                        try
-                        {
-                            FileUtil.writeFileFromStream(
-                                autoDeployPath.append( output.getName() ).toFile(), output.getContents( true ) );
-                        }
-                        catch( IOException e )
-                        {
-                            retval = LiferayServerCore.createErrorStatus( "Unable to copy file to auto deploy folder", e );
-                        }
+                        retval = remoteDeploy( output );
+                    }
+                    else
+                    {
+                        retval = autoDeploy( output );
                     }
                 }
             }
         }
         else
         {
+            retval = LiferayServerCore.error( "Unable to get liferay project for " + module.getProject().getName() );
+        }
+
+        return retval;
+    }
+
+    private IStatus remoteDeploy( IFile output )
+    {
+        IStatus retval = null;
+
+        final OsgiConnection osgi = LiferayServerCore.newOsgiConnection( this.server );
+
+        final IPath rawLocation = output.getRawLocation();
+
+        if( rawLocation != null )
+        {
+            retval = osgi.instalBundle( rawLocation.toPortableString(), rawLocation.toFile() );
+        }
+        else
+        {
             retval =
-                LiferayServerCore.createErrorStatus( "Unable to get liferay project for " +
-                    module.getProject().getName() );
+                LiferayServerCore.error( "Uninstall to deploy file remotely " + output.getLocation().toPortableString() );
+        }
+
+        return retval;
+    }
+
+    private IStatus autoDeploy( IFile output ) throws CoreException
+    {
+        IStatus retval = null;
+
+        final IPath autoDeployPath = portalRuntime.getPortalBundle().getAutoDeployPath();
+
+        if( autoDeployPath.toFile().exists() )
+        {
+            try
+            {
+                FileUtil.writeFileFromStream(
+                    autoDeployPath.append( output.getName() ).toFile(), output.getContents( true ) );
+
+                retval = Status.OK_STATUS;
+            }
+            catch( IOException e )
+            {
+                retval = LiferayServerCore.error( "Unable to copy file to auto deploy folder", e );
+            }
         }
 
         return retval;

@@ -87,7 +87,7 @@ public class BundlesFolder
                 @Override
                 protected IStatus run( IProgressMonitor monitor )
                 {
-                    currentStatus = LiferayServerCore.createInfoStatus( "Loading osgi bundles..." );
+                    currentStatus = LiferayServerCore.info( "Loading osgi bundles..." );
 
                     final OsgiConnection osgi = LiferayServerCore.newOsgiConnection( server );
 

@@ -14,13 +14,21 @@
  *******************************************************************************/
 package com.liferay.ide.server.core.portal;
 
+import java.io.File;
+
+import org.eclipse.core.runtime.IStatus;
 
 
+/**
+ * @author Gregory Amerson
+ */
 public interface OsgiConnection
 {
 
     OsgiBundle[] getBundles();
 
     boolean ping();
+
+    IStatus instalBundle( String location, File bundle );
 
 }

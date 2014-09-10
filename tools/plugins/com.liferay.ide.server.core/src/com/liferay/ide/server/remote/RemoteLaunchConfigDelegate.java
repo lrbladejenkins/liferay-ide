@@ -139,7 +139,7 @@ public class RemoteLaunchConfigDelegate extends AbstractJavaLaunchConfigurationD
         if( state != IServer.STATE_STARTED )
         {
             throw new CoreException(
-                LiferayServerCore.createErrorStatus( Msgs.serverNotRunning ) );
+                LiferayServerCore.error( Msgs.serverNotRunning ) );
         }
 
         if( ILaunchManager.RUN_MODE.equals( mode ) )
@@ -152,7 +152,7 @@ public class RemoteLaunchConfigDelegate extends AbstractJavaLaunchConfigurationD
         }
         else
         {
-            throw new CoreException( LiferayServerCore.createErrorStatus( "Profile mode is not supported." ) ); //$NON-NLS-1$
+            throw new CoreException( LiferayServerCore.error( "Profile mode is not supported." ) ); //$NON-NLS-1$
         }
 
         for( PortalLaunchParticipant participant : LiferayServerCore.getPortalLaunchParticipants() )

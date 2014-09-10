@@ -16,6 +16,7 @@ package com.liferay.ide.server.core.portal;
 
 import com.liferay.ide.server.core.LiferayServerCore;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -27,6 +28,9 @@ import javax.management.openmbean.TabularData;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
+
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 
 /**
@@ -93,6 +97,33 @@ public class OsgiConnectionImpl implements OsgiConnection
         {
             return false;
         }
+    }
+
+    public IStatus instalBundle( String location, File bundle )
+    {
+        IStatus retval = Status.OK_STATUS;
+
+        try
+        {
+            final ObjectName objectName =
+                this.mbsc.queryNames( new ObjectName( "osgi.core:type=framework,*" ), null ).iterator().next();
+
+            final Object[] params = new Object[] { location, bundle.toURI().toURL().toExternalForm() };
+            final String[] signature = new String[] { String.class.getName(), String.class.getName() };
+
+            Object installed = this.mbsc.invoke( objectName, "installBundleFromURL", params, signature );
+
+            if( installed instanceof Long )
+            {
+                retval = Status.OK_STATUS;
+            }
+        }
+        catch( Exception e )
+        {
+            retval = LiferayServerCore.error( "Error installing bundle " + bundle.getName(), e );
+        }
+
+        return retval;
     }
 
 }
