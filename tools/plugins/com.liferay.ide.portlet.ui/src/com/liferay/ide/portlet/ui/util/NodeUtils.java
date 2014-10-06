@@ -15,6 +15,8 @@
 package com.liferay.ide.portlet.ui.util;
 
 import com.liferay.ide.core.LiferayCore;
+import com.liferay.ide.core.properties.PropertiesFileLookup;
+import com.liferay.ide.core.properties.PropertiesFileLookup.KeyInfo;
 import com.liferay.ide.core.util.CoreUtil;
 import com.liferay.ide.core.util.PropertiesUtil;
 

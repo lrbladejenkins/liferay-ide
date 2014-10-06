@@ -18,6 +18,7 @@
 package com.liferay.ide.hook.core.util;
 
 import com.liferay.ide.core.LiferayCore;
+import com.liferay.ide.core.util.CoreUtil;
 import com.liferay.ide.hook.core.HookCore;
 import com.liferay.ide.hook.core.dd.HookDescriptorHelper;
 import com.liferay.ide.hook.core.model.CustomJspDir;

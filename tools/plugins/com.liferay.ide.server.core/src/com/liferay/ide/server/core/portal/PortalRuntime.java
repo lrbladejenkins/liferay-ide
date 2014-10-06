@@ -104,8 +104,7 @@ public class PortalRuntime extends RuntimeDelegate implements ILiferayRuntime
 
     public IPath getLiferayHome()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return getPortalBundle().getLiferayHome();
     }
 
     public String getPortalVersion()

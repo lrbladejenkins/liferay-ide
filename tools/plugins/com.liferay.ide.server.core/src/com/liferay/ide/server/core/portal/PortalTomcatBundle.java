@@ -27,6 +27,7 @@ public class PortalTomcatBundle implements PortalBundle
 {
 
     private final IPath autoDeployPath;
+    private final IPath liferayHome;
     private final IPath modulesPath;
     private final PortalRuntime runtime;
     private final IPath tomcatPath;
@@ -34,6 +35,7 @@ public class PortalTomcatBundle implements PortalBundle
     public PortalTomcatBundle()
     {
         this.autoDeployPath = null;
+        this.liferayHome = null;
         this.modulesPath = null;
         this.runtime = null;
         this.tomcatPath = null;
@@ -52,6 +54,7 @@ public class PortalTomcatBundle implements PortalBundle
         final IPath location = this.runtime.getRuntime().getLocation();
 
         this.autoDeployPath = location.append( "deploy" );
+        this.liferayHome = location;
         this.modulesPath = location.append( "osgi" );
         this.tomcatPath = location.append( "tomcat-7.0.42" );
     }
@@ -129,6 +132,11 @@ public class PortalTomcatBundle implements PortalBundle
     public IPath getModulesPath()
     {
         return this.modulesPath;
+    }
+
+    public IPath getLiferayHome()
+    {
+        return this.liferayHome;
     }
 
 }

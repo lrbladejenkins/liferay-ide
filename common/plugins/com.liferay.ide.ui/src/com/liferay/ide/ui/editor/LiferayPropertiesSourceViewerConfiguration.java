@@ -18,7 +18,6 @@ import com.liferay.ide.core.ILiferayConstants;
 import com.liferay.ide.core.ILiferayProject;
 import com.liferay.ide.core.LiferayCore;
 import com.liferay.ide.core.properties.PortalPropertiesConfiguration;
-import com.liferay.ide.core.util.CoreUtil;
 import com.liferay.ide.server.core.ILiferayRuntime;
 import com.liferay.ide.server.util.ServerUtil;
 import com.liferay.ide.ui.LiferayUIPlugin;
@@ -238,7 +237,7 @@ public class LiferayPropertiesSourceViewerConfiguration extends PropertiesFileSo
     {
         final ILiferayProject lr = LiferayCore.create( project );
 
-        return lr != null && CoreUtil.getDescriptorFile( project, ILiferayConstants.LIFERAY_HOOK_XML_FILE ) != null;
+        return lr != null && lr.getDescriptorFile( ILiferayConstants.LIFERAY_HOOK_XML_FILE ) != null;
     }
 
     private PropKey[] parseKeys( InputStream inputStream ) throws ConfigurationException, IOException

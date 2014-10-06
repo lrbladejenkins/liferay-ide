@@ -25,16 +25,18 @@ public interface PortalBundle
 
     String EXTENSION_ID = "com.liferay.ide.server.core.portalBundles";
 
-    String[] getRuntimeProgArgs( String launchMode );
+    IPath getAutoDeployPath();
 
-    String getType();
+    IPath getLiferayHome();
 
-    String[] getRuntimeVMArgs();
+    IPath getModulesPath();
 
     IPath[] getRuntimeClasspath();
 
-    IPath getAutoDeployPath();
+    String[] getRuntimeProgArgs( String launchMode );
 
-    IPath getModulesPath();
+    String[] getRuntimeVMArgs();
+
+    String getType();
 
 }

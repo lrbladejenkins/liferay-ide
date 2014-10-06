@@ -15,7 +15,7 @@
 
 package com.liferay.ide.portlet.ui.jsf;
 
-import com.liferay.ide.core.util.CoreUtil;
+import com.liferay.ide.core.LiferayCore;
 import com.liferay.ide.portlet.core.jsf.INewJSFPortletClassDataModelProperties;
 import com.liferay.ide.portlet.core.jsf.NewJSFPortletClassDataModelProvider;
 import com.liferay.ide.portlet.ui.PortletUIPlugin;
