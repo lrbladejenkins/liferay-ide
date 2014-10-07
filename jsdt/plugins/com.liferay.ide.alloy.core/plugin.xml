@@ -99,4 +99,11 @@
              class="com.liferay.ide.alloy.core.jsp.AlloyFinderTypeProvider">
        </provider>
     </extension>
+    <extension
+          point="org.eclipse.a.wst.html.webresources.core.webResourcesValidators">
+       <validator
+             class="com.liferay.ide.alloy.core.webresources.JSPWebResourcesValidator"
+             types="LINK_HREF,IMG_SRC,SCRIPT_SRC">
+       </validator>
+    </extension>
 </plugin>
