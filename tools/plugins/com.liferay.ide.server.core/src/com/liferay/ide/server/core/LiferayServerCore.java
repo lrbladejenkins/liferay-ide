@@ -15,13 +15,19 @@
 
 package com.liferay.ide.server.core;
 
+import com.liferay.ide.core.LiferayCore;
 import com.liferay.ide.core.util.CoreUtil;
 import com.liferay.ide.core.util.StringPool;
+import com.liferay.ide.sdk.core.ISDKListener;
+import com.liferay.ide.sdk.core.SDKManager;
 import com.liferay.ide.server.remote.IRemoteServer;
 import com.liferay.ide.server.remote.IServerManagerConnection;
 import com.liferay.ide.server.remote.ServerManagerConnection;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,9 +41,16 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.wst.server.core.IRuntime;
+import org.eclipse.wst.server.core.IRuntimeLifecycleListener;
+import org.eclipse.wst.server.core.IRuntimeType;
 import org.eclipse.wst.server.core.IServer;
 import org.eclipse.wst.server.core.IServerLifecycleListener;
+import org.eclipse.wst.server.core.IServerType;
 import org.eclipse.wst.server.core.ServerCore;
+import org.eclipse.wst.server.core.internal.Base;
+import org.eclipse.wst.server.core.internal.IMemento;
+import org.eclipse.wst.server.core.internal.XMLMemento;
 import org.eclipse.wst.server.core.model.RuntimeDelegate;
 import org.osgi.framework.BundleContext;
 
@@ -47,6 +60,7 @@ import org.osgi.framework.BundleContext;
  * @author Greg Amerson
  * @author Simon Jiang
  */
+@SuppressWarnings( "restriction" )
 public class LiferayServerCore extends Plugin
 {
 
@@ -203,32 +217,6 @@ public class LiferayServerCore extends Plugin
         if( connections == null )
         {
             connections = new HashMap<String, IServerManagerConnection>();
-
-            ServerCore.addServerLifecycleListener( new IServerLifecycleListener()
-            {
-
-                public void serverAdded( IServer server )
-                {
-                }
-
-                public void serverChanged( IServer server )
-                {
-                }
-
-                public void serverRemoved( IServer s )
-                {
-                    if( server.equals( s ) )
-                    {
-                        IServerManagerConnection service = connections.get( server.getId() );
-
-                        if( service != null )
-                        {
-                            service = null;
-                            connections.put( server.getId(), null );
-                        }
-                    }
-                }
-            } );
         }
 
         IServerManagerConnection service = connections.get( server.getId() );
@@ -419,12 +407,155 @@ public class LiferayServerCore extends Plugin
         return Status.OK_STATUS;
     }
 
+    private IServerLifecycleListener serverLifecycleListener;
+
+    private IRuntimeLifecycleListener runtimeLifecycleListener;
+
+    private ISDKListener sdkListener;
+
     /**
      * The constructor
      */
     public LiferayServerCore()
     {
     }
+
+    private synchronized void saveGlobalRuntimeSettings( IRuntime runtime )
+    {
+        final IRuntimeType runtimeType = runtime.getRuntimeType();
+
+        if( runtimeType != null && runtimeType.getId().startsWith( "com.liferay" ) )
+        {
+            try
+            {
+                LiferayCore.GLOBAL_SETTINGS_PATH.toFile().mkdirs();
+
+                final Map<String, IMemento> mementos = new HashMap<String, IMemento>();
+
+                final XMLMemento runtimeMementos = XMLMemento.createWriteRoot( "runtimes" );
+
+                final IMemento runtimeMemento = runtimeMementos.createChild( "runtime" );
+
+                addRuntimeToMemento( runtime, runtimeMemento );
+
+                mementos.put( runtime.getId(), runtimeMemento );
+
+                for( IRuntime r : ServerCore.getRuntimes() )
+                {
+                    if( mementos.get( r.getId() ) == null && r.getRuntimeType() != null )
+                    {
+                        final IMemento rMemento = runtimeMementos.createChild( "runtime" );
+
+                        addRuntimeToMemento( r, rMemento );
+
+                        mementos.put( r.getId(), rMemento );
+                    }
+                }
+
+                final FileOutputStream fos =
+                    new FileOutputStream( LiferayCore.GLOBAL_SETTINGS_PATH.append( "runtimes.xml" ).toFile() );
+
+                runtimeMementos.save( fos );
+            }
+            catch( Exception e )
+            {
+                LiferayServerCore.logError( "Unable to save global runtime settings", e );
+            }
+        }
+    }
+
+    private void addRuntimeToMemento( IRuntime runtime, IMemento memento )
+    {
+        memento.putString( "id", runtime.getId() );
+        memento.putString( "typeId", runtime.getRuntimeType().getId() );
+        memento.putString( "name", runtime.getName() );
+        memento.putString( "location", runtime.getLocation().toOSString() );
+        memento.putBoolean( "isStub", runtime.isStub() );
+    }
+
+    private synchronized void saveGlobalServerSettings( IServer server )
+    {
+        final IServerType serverType = server.getServerType();
+
+        if( serverType != null && serverType.getId().startsWith( "com.liferay" ) )
+        {
+            try
+            {
+                LiferayCore.GLOBAL_SETTINGS_PATH.toFile().mkdirs();
+
+                final Map<String, IMemento> mementos = new HashMap<String, IMemento>();
+
+                final XMLMemento serverMementos = XMLMemento.createWriteRoot( "servers" );
+
+                final IMemento serverMemento = serverMementos.createChild( "server" );
+
+                addServerToMemento( server, serverMemento );
+
+                mementos.put( server.getId(), serverMemento );
+
+                for( IServer s : ServerCore.getServers() )
+                {
+                    if( mementos.get( s.getId() ) == null && s.getServerType() != null )
+                    {
+                        final IMemento sMemento = serverMementos.createChild( "server" );
+
+                        addServerToMemento( s, sMemento );
+
+                        mementos.put( s.getId(), sMemento );
+                    }
+                }
+
+                final FileOutputStream fos =
+                    new FileOutputStream( LiferayCore.GLOBAL_SETTINGS_PATH.append( "servers.xml" ).toFile() );
+
+                serverMementos.save( fos );
+            }
+            catch( Exception e )
+            {
+                LiferayServerCore.logError( "Unable to save global server settings", e );
+            }
+        }
+    }
+
+    private void addServerToMemento( IServer server, IMemento memento )
+    {
+        if( server instanceof Base )
+        {
+            final Base base = (Base) server;
+            try
+            {
+                final Method save = Base.class.getDeclaredMethod( "save", IMemento.class );
+
+                save.invoke( base, memento );
+            }
+            catch( NoSuchMethodException e )
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            catch( SecurityException e )
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            catch( IllegalAccessException e )
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            catch( IllegalArgumentException e )
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            catch( InvocationTargetException e )
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     /*
      * (non-Javadoc)
@@ -436,6 +567,49 @@ public class LiferayServerCore extends Plugin
 
         plugin = this;
 
+        this.runtimeLifecycleListener = new IRuntimeLifecycleListener()
+        {
+            public void runtimeAdded( IRuntime runtime )
+            {
+                saveGlobalRuntimeSettings( runtime );
+            }
+
+            public void runtimeChanged( IRuntime runtime )
+            {
+                saveGlobalRuntimeSettings( runtime );
+            }
+
+            public void runtimeRemoved( IRuntime runtime )
+            {
+                saveGlobalRuntimeSettings( runtime );
+            }
+        };
+
+        this.serverLifecycleListener = new IServerLifecycleListener()
+        {
+            public void serverAdded( IServer server )
+            {
+                saveGlobalServerSettings( server );
+            }
+
+            public void serverChanged( IServer server )
+            {
+                saveGlobalServerSettings( server );
+            }
+
+            public void serverRemoved( IServer server )
+            {
+                saveGlobalServerSettings( server );
+
+                if( connections.get( server.getId() ) != null )
+                {
+                    connections.put( server.getId(), null );
+                }
+            }
+        };
+
+        ServerCore.addRuntimeLifecycleListener( this.runtimeLifecycleListener );
+        ServerCore.addServerLifecycleListener( this.serverLifecycleListener );
     }
 
     /*
@@ -448,5 +622,8 @@ public class LiferayServerCore extends Plugin
 
         super.stop( context );
 
+        SDKManager.getInstance().removeSDKListener( this.sdkListener );
+        ServerCore.removeRuntimeLifecycleListener( runtimeLifecycleListener );
+        ServerCore.removeServerLifecycleListener( serverLifecycleListener );
     }
 }

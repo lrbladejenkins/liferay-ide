@@ -19,10 +19,13 @@ import com.liferay.ide.core.LiferayCore;
 import com.liferay.ide.core.util.FileUtil;
 
 import java.io.File;
+import java.io.FileOutputStream;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.wst.server.core.internal.IMemento;
+import org.eclipse.wst.server.core.internal.XMLMemento;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -30,6 +33,7 @@ import org.osgi.framework.BundleContext;
  *
  * @author Greg Amerson
  */
+@SuppressWarnings( "restriction" )
 public class SDKCorePlugin extends Plugin
 {
 
@@ -78,11 +82,45 @@ public class SDKCorePlugin extends Plugin
         getDefault().getLog().log( createErrorStatus( PLUGIN_ID, msg, t ) );
     }
 
+    private ISDKListener sdkListener;
+
     /**
      * The constructor
      */
     public SDKCorePlugin()
     {
+    }
+
+    private synchronized void saveGlobalSDKSettings( SDK[] sdks )
+    {
+        try
+        {
+            LiferayCore.GLOBAL_SETTINGS_PATH.toFile().mkdirs();
+
+            final XMLMemento sdkMementos = XMLMemento.createWriteRoot( "sdks" );
+
+            for( SDK sdk : sdks )
+            {
+                final IMemento memento = sdkMementos.createChild( "sdk" );
+
+                addSDKToMemento( sdk, memento );
+            }
+
+            final FileOutputStream fos =
+                new FileOutputStream( LiferayCore.GLOBAL_SETTINGS_PATH.append( "sdks.xml" ).toFile() );
+
+            sdkMementos.save( fos );
+        }
+        catch( Exception e )
+        {
+            logError( "Unable to save global sdk settings", e );
+        }
+    }
+
+    private void addSDKToMemento( SDK sdk, IMemento memento )
+    {
+        memento.putString( "name", sdk.getName() );
+        memento.putString( "location", sdk.getLocation().toOSString() );
     }
 
     /*
@@ -93,6 +131,26 @@ public class SDKCorePlugin extends Plugin
     {
         super.start( context );
         plugin = this;
+
+        this.sdkListener = new ISDKListener()
+        {
+            public void sdksRemoved( SDK[] sdks )
+            {
+                saveGlobalSDKSettings( sdks );
+            }
+
+            public void sdksChanged( SDK[] sdks )
+            {
+                saveGlobalSDKSettings( sdks );
+            }
+
+            public void sdksAdded( SDK[] sdks )
+            {
+                saveGlobalSDKSettings( sdks );
+            }
+        };
+
+        SDKManager.getInstance().addSDKListener( this.sdkListener );
     }
 
     /*

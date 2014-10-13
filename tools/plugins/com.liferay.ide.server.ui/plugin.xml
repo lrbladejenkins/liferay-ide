@@ -306,6 +306,13 @@
             type="java.lang.Object">
       </propertyTester>
    </extension>
+   <extension
+         point="org.eclipse.wst.server.core.internalStartup">
+      <startup
+            class="com.liferay.ide.server.ui.ServerStartup"
+            id="com.liferay.ide.server.ui.startup">
+      </startup>
+   </extension>
 
    <!--
    <extension
