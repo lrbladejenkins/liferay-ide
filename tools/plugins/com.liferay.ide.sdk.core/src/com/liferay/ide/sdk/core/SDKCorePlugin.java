@@ -121,6 +121,7 @@ public class SDKCorePlugin extends Plugin
     {
         memento.putString( "name", sdk.getName() );
         memento.putString( "location", sdk.getLocation().toOSString() );
+        memento.putBoolean( "default", sdk.isDefault() );
     }
 
     /*
