@@ -42,6 +42,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.wst.server.core.IRuntime;
 import org.eclipse.wst.server.core.IServer;
+import org.eclipse.wst.server.core.ServerCore;
 import org.eclipse.wst.server.core.internal.Base;
 import org.eclipse.wst.server.core.internal.IMemento;
 import org.eclipse.wst.server.core.internal.IStartup;
@@ -115,6 +116,7 @@ public class ServerStartup implements IStartup
             @Override
             public void open()
             {
+
                 boolean importSettings = MessageDialog.openQuestion(
                     PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
                     "Previous Liferay IDE Settings Detected",
@@ -216,13 +218,18 @@ public class ServerStartup implements IStartup
                                 loadFromMemento.setAccessible( true );
                                 loadFromMemento.invoke( server, memento, null );
 
-                                final Method addServer =
-                                    ResourceManager.class.getDeclaredMethod( "addServer", IServer.class );
-
-                                if( addServer != null )
+                                if( ServerCore.findServer( server.getId() ) == null )
                                 {
-                                    addServer.setAccessible( true );
-                                    addServer.invoke( resourceManager, server );
+                                    final Method addServer =
+                                        ResourceManager.class.getDeclaredMethod( "addServer", IServer.class );
+
+                                    if( addServer != null )
+                                    {
+                                        addServer.setAccessible( true );
+                                        addServer.invoke( resourceManager, server );
+
+                                        server.createWorkingCopy().save( true, null );
+                                    }
                                 }
                             }
                         }
@@ -269,13 +276,16 @@ public class ServerStartup implements IStartup
                                 loadFromMemento.setAccessible( true );
                                 loadFromMemento.invoke( runtime, memento, null );
 
-                                final Method addRuntime =
-                                    ResourceManager.class.getDeclaredMethod( "addRuntime", IRuntime.class );
-
-                                if( addRuntime != null )
+                                if( ServerCore.findRuntime( runtime.getId() ) == null )
                                 {
-                                    addRuntime.setAccessible( true );
-                                    addRuntime.invoke( resourceManager, runtime );
+                                    final Method addRuntime =
+                                        ResourceManager.class.getDeclaredMethod( "addRuntime", IRuntime.class );
+
+                                    if( addRuntime != null )
+                                    {
+                                        addRuntime.setAccessible( true );
+                                        addRuntime.invoke( resourceManager, runtime );
+                                    }
                                 }
                             }
                         }
@@ -297,6 +307,7 @@ public class ServerStartup implements IStartup
     {
         try
         {
+            final SDKManager manager = SDKManager.getInstance();
             final IMemento sdksMemento = XMLMemento.loadMemento( new FileInputStream ( sdksFile ) );
 
             if( sdksMemento != null )
@@ -311,7 +322,12 @@ public class ServerStartup implements IStartup
 
                         if( newSDK != null )
                         {
-                            SDKManager.getInstance().addSDK( newSDK );
+                            final SDK existingSDK = manager.getSDK( newSDK.getName() );
+
+                            if( existingSDK == null )
+                            {
+                                manager.addSDK( newSDK );
+                            }
                         }
                     }
                 }

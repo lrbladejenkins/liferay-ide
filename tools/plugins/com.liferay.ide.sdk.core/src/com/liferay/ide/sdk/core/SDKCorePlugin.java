@@ -16,12 +16,18 @@
 package com.liferay.ide.sdk.core;
 
 import com.liferay.ide.core.LiferayCore;
+import com.liferay.ide.core.util.CoreUtil;
 import com.liferay.ide.core.util.FileUtil;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.wst.server.core.internal.IMemento;
@@ -97,7 +103,59 @@ public class SDKCorePlugin extends Plugin
         {
             LiferayCore.GLOBAL_SETTINGS_PATH.toFile().mkdirs();
 
+            final File sdkGlobalFile = LiferayCore.GLOBAL_SETTINGS_PATH.append( "sdks.xml" ).toFile();
+
+            final Set<IMemento> existing = new HashSet<IMemento>();
+
+            if( sdkGlobalFile.exists() )
+            {
+                try
+                {
+                    final IMemento existingMemento = XMLMemento.loadMemento( new FileInputStream( sdkGlobalFile ) );
+
+                    if( existingMemento != null )
+                    {
+                        final IMemento[] children = existingMemento.getChildren( "sdk" );
+
+                        if( ! CoreUtil.isNullOrEmpty( children ) )
+                        {
+                            for( IMemento child : children )
+                            {
+                                final IPath loc = Path.fromPortableString( child.getString( "location" ) );
+
+                                if( loc != null && loc.toFile().exists() )
+                                {
+                                    boolean duplicate = false;
+
+                                    for( SDK sdk : sdks )
+                                    {
+                                        if( sdk.getLocation().toFile().equals( loc.toFile() ) )
+                                        {
+                                            duplicate = true;
+                                            break;
+                                        }
+                                    }
+
+                                    if( ! duplicate )
+                                    {
+                                        existing.add( child );
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                catch( Exception e )
+                {
+                }
+            }
+
             final XMLMemento sdkMementos = XMLMemento.createWriteRoot( "sdks" );
+
+            for( IMemento exist : existing )
+            {
+                copyMemento( exist, sdkMementos.createChild( "sdk" ) );
+            }
 
             for( SDK sdk : sdks )
             {
@@ -106,14 +164,21 @@ public class SDKCorePlugin extends Plugin
                 addSDKToMemento( sdk, memento );
             }
 
-            final FileOutputStream fos =
-                new FileOutputStream( LiferayCore.GLOBAL_SETTINGS_PATH.append( "sdks.xml" ).toFile() );
+            final FileOutputStream fos = new FileOutputStream( sdkGlobalFile );
 
             sdkMementos.save( fos );
         }
         catch( Exception e )
         {
             logError( "Unable to save global sdk settings", e );
+        }
+    }
+
+    private void copyMemento( IMemento from, IMemento to )
+    {
+        for( String name : from.getNames() )
+        {
+            to.putString( name, from.getString( name ) );
         }
     }
 

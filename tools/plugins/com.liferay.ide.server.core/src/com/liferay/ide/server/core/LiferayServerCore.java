@@ -24,19 +24,24 @@ import com.liferay.ide.server.remote.IRemoteServer;
 import com.liferay.ide.server.remote.IServerManagerConnection;
 import com.liferay.ide.server.remote.ServerManagerConnection;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
@@ -484,16 +489,57 @@ public class LiferayServerCore extends Plugin
             try
             {
                 LiferayCore.GLOBAL_SETTINGS_PATH.toFile().mkdirs();
+                final File runtimesGlobalFile =
+                    LiferayCore.GLOBAL_SETTINGS_PATH.append( "runtimes.xml" ).toFile();
+
+                final Set<IMemento> existing = new HashSet<IMemento>();
+
+                if( runtimesGlobalFile.exists() )
+                {
+                    try
+                    {
+                        final IMemento existingMemento =
+                            XMLMemento.loadMemento( new FileInputStream( runtimesGlobalFile ) );
+
+                        if( existingMemento != null )
+                        {
+                            final IMemento[] children = existingMemento.getChildren( "runtime" );
+
+                            if( ! CoreUtil.isNullOrEmpty( children ) )
+                            {
+                                for( IMemento child : children )
+                                {
+                                    final IPath loc = Path.fromPortableString( child.getString( "location" ) );
+
+                                    if( loc != null && loc.toFile().exists() )
+                                    {
+                                        boolean duplicate =
+                                            ServerCore.findRuntime( child.getString( "id" ) ) != null;
+
+                                        if( ! duplicate )
+                                        {
+                                            existing.add( child );
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch( Exception e )
+                    {
+                    }
+                }
 
                 final Map<String, IMemento> mementos = new HashMap<String, IMemento>();
 
                 final XMLMemento runtimeMementos = XMLMemento.createWriteRoot( "runtimes" );
 
-                final IMemento runtimeMemento = runtimeMementos.createChild( "runtime" );
-
-                if( addRuntimeToMemento( runtime, runtimeMemento ) )
+                for( IMemento exist : existing )
                 {
-                    mementos.put( runtime.getId(), runtimeMemento );
+                    final IMemento copy = runtimeMementos.createChild( "runtime" );
+                    copyMemento( exist, copy );
+
+                    mementos.put( copy.getString( "id" ), copy );
                 }
 
                 for( IRuntime r : ServerCore.getRuntimes() )
@@ -509,8 +555,7 @@ public class LiferayServerCore extends Plugin
                     }
                 }
 
-                final FileOutputStream fos =
-                    new FileOutputStream( LiferayCore.GLOBAL_SETTINGS_PATH.append( "runtimes.xml" ).toFile() );
+                final FileOutputStream fos = new FileOutputStream( runtimesGlobalFile );
 
                 runtimeMementos.save( fos );
             }
@@ -518,6 +563,14 @@ public class LiferayServerCore extends Plugin
             {
                 LiferayServerCore.logError( "Unable to save global runtime settings", e );
             }
+        }
+    }
+
+    private void copyMemento( IMemento from, IMemento to )
+    {
+        for( String name : from.getNames() )
+        {
+            to.putString( name, from.getString( name ) );
         }
     }
 
@@ -530,16 +583,49 @@ public class LiferayServerCore extends Plugin
             try
             {
                 LiferayCore.GLOBAL_SETTINGS_PATH.toFile().mkdirs();
+                final File globalServersFile = LiferayCore.GLOBAL_SETTINGS_PATH.append( "servers.xml" ).toFile();
+                final Set<IMemento> existing = new HashSet<IMemento>();
+
+                if( globalServersFile.exists() )
+                {
+                    try
+                    {
+                        final IMemento existingMemento =
+                            XMLMemento.loadMemento( new FileInputStream( globalServersFile ) );
+
+                        if( existingMemento != null )
+                        {
+                            final IMemento[] children = existingMemento.getChildren( "server" );
+
+                            if( ! CoreUtil.isNullOrEmpty( children ) )
+                            {
+                                for( IMemento child : children )
+                                {
+                                    final boolean duplicate =
+                                        ServerCore.findServer( child.getString( "id" ) ) != null;
+
+                                    if( ! duplicate )
+                                    {
+                                        existing.add( child );
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch( Exception e )
+                    {
+                    }
+                }
 
                 final Map<String, IMemento> mementos = new HashMap<String, IMemento>();
 
                 final XMLMemento serverMementos = XMLMemento.createWriteRoot( "servers" );
 
-                final IMemento serverMemento = serverMementos.createChild( "server" );
-
-                if( addServerToMemento( server, serverMemento ) )
+                for( IMemento exist : existing )
                 {
-                    mementos.put( server.getId(), serverMemento );
+                    final IMemento copy = serverMementos.createChild( "server" );
+                    copyMemento( exist, copy );
+                    mementos.put( copy.getString( "id" ), copy );
                 }
 
                 for( IServer s : ServerCore.getServers() )
@@ -557,8 +643,7 @@ public class LiferayServerCore extends Plugin
 
                 if( mementos.size() > 0 )
                 {
-                    final FileOutputStream fos =
-                        new FileOutputStream( LiferayCore.GLOBAL_SETTINGS_PATH.append( "servers.xml" ).toFile() );
+                    final FileOutputStream fos = new FileOutputStream( globalServersFile );
 
                     serverMementos.save( fos );
                 }

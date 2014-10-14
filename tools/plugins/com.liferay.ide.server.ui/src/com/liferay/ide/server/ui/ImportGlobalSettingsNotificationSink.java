@@ -21,8 +21,13 @@ import java.util.List;
 import org.eclipse.mylyn.commons.notifications.core.AbstractNotification;
 import org.eclipse.mylyn.internal.commons.notifications.ui.popup.NotificationPopup;
 import org.eclipse.mylyn.internal.commons.notifications.ui.popup.PopupNotificationSink;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.events.IHyperlinkListener;
+import org.eclipse.ui.forms.widgets.Hyperlink;
 
 
 /**
@@ -47,14 +52,62 @@ public class ImportGlobalSettingsNotificationSink extends PopupNotificationSink
         }
 
         Shell shell = new Shell( PlatformUI.getWorkbench().getDisplay() );
-        popup = new NotificationPopup( shell );
+
+        popup = new NotificationPopup( shell )
+        {
+            @Override
+            protected void createContentArea( Composite parent )
+            {
+                super.createContentArea( parent );
+
+                hookHyperlink( parent );
+            }
+
+            private void hookHyperlink( Composite parent )
+            {
+                Hyperlink hyperlink = null;
+
+                for( Control child : parent.getChildren() )
+                {
+                    if( child instanceof Hyperlink )
+                    {
+                        hyperlink = (Hyperlink) child;
+
+                        hyperlink.addHyperlinkListener( new IHyperlinkListener()
+                        {
+                            public void linkExited( HyperlinkEvent e )
+                            {
+                            }
+
+                            public void linkEntered( HyperlinkEvent e )
+                            {
+                            }
+
+                            public void linkActivated( HyperlinkEvent e )
+                            {
+                                if( popup != null )
+                                {
+                                    popup.closeFade();
+                                }
+                            }
+                        });
+
+                        return;
+                    }
+                    else if( child instanceof Composite )
+                    {
+                        hookHyperlink( (Composite) child );
+                    }
+                }
+            }
+        };
         popup.setFadingEnabled( isAnimationsEnabled() );
         List<AbstractNotification> toDisplay = new ArrayList<AbstractNotification>( getNotifications() );
         Collections.sort( toDisplay );
         popup.setContents( toDisplay );
         getNotifications().clear();
         popup.setBlockOnOpen( false );
-        popup.setDelayClose( 15 * 1000 );
+        popup.setDelayClose( 60 * 1000 );
         popup.open();
     }
 
