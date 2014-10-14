@@ -26,7 +26,6 @@ import com.liferay.ide.server.remote.ServerManagerConnection;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
@@ -407,17 +406,73 @@ public class LiferayServerCore extends Plugin
         return Status.OK_STATUS;
     }
 
-    private IServerLifecycleListener serverLifecycleListener;
-
     private IRuntimeLifecycleListener runtimeLifecycleListener;
 
     private ISDKListener sdkListener;
+
+    private IServerLifecycleListener serverLifecycleListener;
 
     /**
      * The constructor
      */
     public LiferayServerCore()
     {
+    }
+
+    private boolean addRuntimeToMemento( IRuntime runtime, IMemento memento )
+    {
+        if( runtime instanceof Base )
+        {
+            final Base base = (Base) runtime;
+
+            try
+            {
+                final Method save = Base.class.getDeclaredMethod( "save", IMemento.class );
+
+                if( save != null )
+                {
+                    save.setAccessible( true );
+                    save.invoke( base, memento );
+                }
+
+                return true;
+            }
+            catch( Exception e )
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        return false;
+    }
+
+    private boolean addServerToMemento( IServer server, IMemento memento )
+    {
+        if( server instanceof Base )
+        {
+            final Base base = (Base) server;
+
+            try
+            {
+                final Method save = Base.class.getDeclaredMethod( "save", IMemento.class );
+
+                if( save != null )
+                {
+                    save.setAccessible( true );
+                    save.invoke( base, memento );
+                }
+
+                return true;
+            }
+            catch( Exception e )
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        return false;
     }
 
     private synchronized void saveGlobalRuntimeSettings( IRuntime runtime )
@@ -436,9 +491,10 @@ public class LiferayServerCore extends Plugin
 
                 final IMemento runtimeMemento = runtimeMementos.createChild( "runtime" );
 
-                addRuntimeToMemento( runtime, runtimeMemento );
-
-                mementos.put( runtime.getId(), runtimeMemento );
+                if( addRuntimeToMemento( runtime, runtimeMemento ) )
+                {
+                    mementos.put( runtime.getId(), runtimeMemento );
+                }
 
                 for( IRuntime r : ServerCore.getRuntimes() )
                 {
@@ -446,9 +502,10 @@ public class LiferayServerCore extends Plugin
                     {
                         final IMemento rMemento = runtimeMementos.createChild( "runtime" );
 
-                        addRuntimeToMemento( r, rMemento );
-
-                        mementos.put( r.getId(), rMemento );
+                        if( addRuntimeToMemento( r, rMemento ) )
+                        {
+                            mementos.put( r.getId(), rMemento );
+                        }
                     }
                 }
 
@@ -462,15 +519,6 @@ public class LiferayServerCore extends Plugin
                 LiferayServerCore.logError( "Unable to save global runtime settings", e );
             }
         }
-    }
-
-    private void addRuntimeToMemento( IRuntime runtime, IMemento memento )
-    {
-        memento.putString( "id", runtime.getId() );
-        memento.putString( "typeId", runtime.getRuntimeType().getId() );
-        memento.putString( "name", runtime.getName() );
-        memento.putString( "location", runtime.getLocation().toOSString() );
-        memento.putBoolean( "isStub", runtime.isStub() );
     }
 
     private synchronized void saveGlobalServerSettings( IServer server )
@@ -489,9 +537,10 @@ public class LiferayServerCore extends Plugin
 
                 final IMemento serverMemento = serverMementos.createChild( "server" );
 
-                addServerToMemento( server, serverMemento );
-
-                mementos.put( server.getId(), serverMemento );
+                if( addServerToMemento( server, serverMemento ) )
+                {
+                    mementos.put( server.getId(), serverMemento );
+                }
 
                 for( IServer s : ServerCore.getServers() )
                 {
@@ -499,59 +548,24 @@ public class LiferayServerCore extends Plugin
                     {
                         final IMemento sMemento = serverMementos.createChild( "server" );
 
-                        addServerToMemento( s, sMemento );
-
-                        mementos.put( s.getId(), sMemento );
+                        if( addServerToMemento( s, sMemento ) )
+                        {
+                            mementos.put( s.getId(), sMemento );
+                        }
                     }
                 }
 
-                final FileOutputStream fos =
-                    new FileOutputStream( LiferayCore.GLOBAL_SETTINGS_PATH.append( "servers.xml" ).toFile() );
+                if( mementos.size() > 0 )
+                {
+                    final FileOutputStream fos =
+                        new FileOutputStream( LiferayCore.GLOBAL_SETTINGS_PATH.append( "servers.xml" ).toFile() );
 
-                serverMementos.save( fos );
+                    serverMementos.save( fos );
+                }
             }
             catch( Exception e )
             {
                 LiferayServerCore.logError( "Unable to save global server settings", e );
-            }
-        }
-    }
-
-    private void addServerToMemento( IServer server, IMemento memento )
-    {
-        if( server instanceof Base )
-        {
-            final Base base = (Base) server;
-            try
-            {
-                final Method save = Base.class.getDeclaredMethod( "save", IMemento.class );
-
-                save.invoke( base, memento );
-            }
-            catch( NoSuchMethodException e )
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            catch( SecurityException e )
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            catch( IllegalAccessException e )
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            catch( IllegalArgumentException e )
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            catch( InvocationTargetException e )
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
             }
         }
     }
