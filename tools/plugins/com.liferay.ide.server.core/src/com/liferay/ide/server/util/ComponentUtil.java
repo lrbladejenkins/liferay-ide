@@ -14,7 +14,7 @@
  *******************************************************************************/
 package com.liferay.ide.server.util;
 
-import com.liferay.ide.core.LiferayCore;
+import com.liferay.ide.server.core.LiferayServerCore;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -214,6 +214,18 @@ public class ComponentUtil
         return retval;
     }
 
+    public static void validateFile( IFile file, IProgressMonitor monitor )
+    {
+        try
+        {
+            ValidationRunner.validate( file, ValType.Manual, monitor, false );
+        }
+        catch( CoreException e )
+        {
+            LiferayServerCore.logError( "Error while validating file: " + file.getFullPath(), e ); //$NON-NLS-1$
+        }
+    }
+
     public static void validateFolder( IFolder folder, IProgressMonitor monitor )
     {
         try
@@ -242,7 +254,7 @@ public class ComponentUtil
         }
         catch( CoreException e )
         {
-            LiferayCore.logError( "Error while validating folder: " + folder.getFullPath(), e ); //$NON-NLS-1$
+            LiferayServerCore.logError( "Error while validating folder: " + folder.getFullPath(), e );
         }
     }
 }

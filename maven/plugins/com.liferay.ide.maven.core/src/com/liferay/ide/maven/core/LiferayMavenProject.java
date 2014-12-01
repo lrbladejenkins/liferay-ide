@@ -33,8 +33,8 @@ import java.util.Properties;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.project.MavenProject;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
@@ -292,21 +292,21 @@ public class LiferayMavenProject extends WTPLiferayProject
 
     public IFolder getSourceFolder( String classification )
     {
-        IFolder sourceFolder = super.getSourceFolder( classification );
+        IFolder retval = super.getSourceFolder( classification );
 
-        IFolder[] sourceFolders = CoreUtil.getSrcFolders( getProject() );
+        final IFolder[] sourceFolders = ProjectUtil.getSourceFolders( getProject() );
 
         for( IFolder folder : sourceFolders )
         {
             if( folder.getName().equals( classification ) )
             {
-                sourceFolder = folder;
+                retval = folder;
 
                 break;
             }
         }
 
-        return sourceFolder;
+        return retval;
     }
 
     public IPath[] getUserLibs()

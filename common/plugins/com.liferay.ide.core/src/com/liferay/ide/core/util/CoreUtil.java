@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -616,50 +617,6 @@ public class CoreUtil
             {
                 node.removeChild( node.getFirstChild() );
             }
-        }
-    }
-
-    public static void validateFile( IFile file, IProgressMonitor monitor )
-    {
-        try
-        {
-            ValidationRunner.validate( file, ValType.Manual, monitor, false );
-        }
-        catch( CoreException e )
-        {
-            LiferayCore.logError( "Error while validating file: " + file.getFullPath(), e ); //$NON-NLS-1$
-        }
-    }
-
-    public static void validateFolder( IFolder folder, IProgressMonitor monitor )
-    {
-        try
-        {
-            Map<IProject, Set<IResource>> projects = new HashMap<IProject, Set<IResource>>();
-            final Set<IResource> resources = new HashSet<IResource>();
-
-            folder.accept
-            (
-                new IResourceVisitor()
-                {
-                    public boolean visit( IResource resource ) throws CoreException
-                    {
-                        if( resource instanceof IFile || resource instanceof IFile )
-                        {
-                            resources.add( resource );
-                        }
-
-                        return true;
-                    }
-                }
-            );
-
-            projects.put( folder.getProject(), resources );
-            ValidationRunner.validate( projects, ValType.Manual, monitor, false );
-        }
-        catch( CoreException e )
-        {
-            LiferayCore.logError( "Error while validating folder: " + folder.getFullPath(), e ); //$NON-NLS-1$
         }
     }
 

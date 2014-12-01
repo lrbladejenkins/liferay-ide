@@ -14,11 +14,11 @@
  *******************************************************************************/
 package com.liferay.ide.portlet.ui.util;
 
-import com.liferay.ide.core.LiferayCore;
 import com.liferay.ide.core.properties.PropertiesFileLookup;
 import com.liferay.ide.core.properties.PropertiesFileLookup.KeyInfo;
 import com.liferay.ide.core.util.CoreUtil;
 import com.liferay.ide.core.util.PropertiesUtil;
+import com.liferay.ide.project.core.util.ProjectUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +54,7 @@ public class NodeUtils
             {
                 final List<MessageKey> keys = new ArrayList<MessageKey>();
 
-                for( final IFolder src : LiferayCore.create( project.getProject() ).getSrcFolders() )
+                for( final IFolder src : ProjectUtil.getSourceFolders( project.getProject() ) )
                 {
                     final IFile[] props = PropertiesUtil.visitPropertiesFiles( src, ".*" );
 
