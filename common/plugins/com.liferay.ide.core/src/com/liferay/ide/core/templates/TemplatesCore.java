@@ -1,5 +1,5 @@
 
-package com.liferay.ide.templates.core;
+package com.liferay.ide.core.templates;
 
 import freemarker.template.Configuration;
 import freemarker.template.ObjectWrapper;

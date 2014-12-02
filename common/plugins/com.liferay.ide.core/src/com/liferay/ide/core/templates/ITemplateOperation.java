@@ -10,33 +10,30 @@
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
+ *
+ * Contributors:
+ * 		Gregory Amerson - initial implementation and ongoing maintenance
  *******************************************************************************/
 
-package com.liferay.ide.templates.core;
+package com.liferay.ide.core.templates;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * @author Cindy Li
+ * @author Gregory Amerson
  */
-public class TemplateContext implements ITemplateContext
+public interface ITemplateOperation
 {
-    private Map<String, Object> context = new HashMap<String, Object>();
 
-    public boolean containsKey( String key )
-    {
-        return context.containsKey( key );
-    }
+    public boolean canExecute();
 
-    public Map<String, Object> getMap()
-    {
-        return context;
-    }
+    public void execute( IProgressMonitor monitor ) throws Exception;
 
-    public Object put( String key, Object value )
-    {
-        return context.put( key, value );
-    }
+    public ITemplateContext getContext();
+
+    public void setOutputBuffer( StringBuffer buffer );
+
+    public void setOutputFile( IFile file );
 
 }

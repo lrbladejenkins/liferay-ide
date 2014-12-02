@@ -10,30 +10,17 @@
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
- *
- * Contributors:
- * 		Gregory Amerson - initial implementation and ongoing maintenance
  *******************************************************************************/
 
-package com.liferay.ide.templates.core;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IProgressMonitor;
+package com.liferay.ide.core.templates;
 
 /**
- * @author Gregory Amerson
+ * @author Cindy Li
  */
-public interface ITemplateOperation
+public interface ITemplateContext
 {
+    boolean containsKey( String name );
 
-    public boolean canExecute();
-
-    public void execute( IProgressMonitor monitor ) throws Exception;
-
-    public ITemplateContext getContext();
-
-    public void setOutputBuffer( StringBuffer buffer );
-
-    public void setOutputFile( IFile file );
+    public Object put( String string, Object object );
 
 }

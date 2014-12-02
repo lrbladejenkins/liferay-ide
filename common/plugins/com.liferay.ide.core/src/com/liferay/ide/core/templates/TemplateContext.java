@@ -10,47 +10,33 @@
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
- *
- * Contributors:
- * 		Gregory Amerson - initial implementation and ongoing maintenance
  *******************************************************************************/
 
-package com.liferay.ide.templates.core;
+package com.liferay.ide.core.templates;
 
-import com.liferay.ide.core.util.CoreUtil;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * @author Gregory Amerson
+ * @author Cindy Li
  */
-public class TemplateVariable
+public class TemplateContext implements ITemplateContext
 {
+    private Map<String, Object> context = new HashMap<String, Object>();
 
-    private String name;
-
-    private boolean required;
-
-    public TemplateVariable( String varName, String reqVal )
+    public boolean containsKey( String key )
     {
-        this.name = varName;
-
-        if( CoreUtil.isNullOrEmpty( reqVal ) )
-        {
-            this.required = Boolean.FALSE;
-        }
-        else
-        {
-            this.required = Boolean.parseBoolean( reqVal );
-        }
+        return context.containsKey( key );
     }
 
-    public String getName()
+    public Map<String, Object> getMap()
     {
-        return name;
+        return context;
     }
 
-    public boolean isRequired()
+    public Object put( String key, Object value )
     {
-        return required;
+        return context.put( key, value );
     }
 
 }

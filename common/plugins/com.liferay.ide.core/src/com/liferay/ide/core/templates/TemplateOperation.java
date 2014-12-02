@@ -15,7 +15,7 @@
  *      Gregory Amerson - initial implementation and ongoing maintenance
  *******************************************************************************/
 
-package com.liferay.ide.templates.core;
+package com.liferay.ide.core.templates;
 
 import com.liferay.ide.core.util.CoreUtil;
 

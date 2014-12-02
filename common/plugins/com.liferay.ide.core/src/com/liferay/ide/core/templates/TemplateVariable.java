@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
 /*******************************************************************************
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -13,21 +11,46 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
+ * Contributors:
+ * 		Gregory Amerson - initial implementation and ongoing maintenance
  *******************************************************************************/
- -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>com.liferay.ide.common.plugins</groupId>
-        <artifactId>common-plugins</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
-    </parent>
+package com.liferay.ide.core.templates;
 
-    <artifactId>com.liferay.ide.templates.core</artifactId>
-    <packaging>eclipse-plugin</packaging>
+import com.liferay.ide.core.util.CoreUtil;
 
-    <name>Liferay IDE Template Core</name>
+/**
+ * @author Gregory Amerson
+ */
+public class TemplateVariable
+{
 
-</project>
+    private String name;
+
+    private boolean required;
+
+    public TemplateVariable( String varName, String reqVal )
+    {
+        this.name = varName;
+
+        if( CoreUtil.isNullOrEmpty( reqVal ) )
+        {
+            this.required = Boolean.FALSE;
+        }
+        else
+        {
+            this.required = Boolean.parseBoolean( reqVal );
+        }
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public boolean isRequired()
+    {
+        return required;
+    }
+
+}
