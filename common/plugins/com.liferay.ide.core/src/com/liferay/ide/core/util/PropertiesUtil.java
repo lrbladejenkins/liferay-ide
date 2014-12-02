@@ -720,6 +720,11 @@ public class PropertiesUtil
             project = CoreUtil.getLiferayProject( project );
         }
 
+        if( project == null )
+        {
+            return false;
+        }
+
         try
         {
             final ILiferayProject liferayProject = LiferayCore.create( project );
