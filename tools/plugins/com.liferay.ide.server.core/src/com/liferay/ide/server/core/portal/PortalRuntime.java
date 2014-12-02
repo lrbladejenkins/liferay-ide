@@ -109,8 +109,7 @@ public class PortalRuntime extends RuntimeDelegate implements ILiferayRuntime
 
     public String getPortalVersion()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return "7.0.0";
     }
 
     public Properties getPortletCategories()
