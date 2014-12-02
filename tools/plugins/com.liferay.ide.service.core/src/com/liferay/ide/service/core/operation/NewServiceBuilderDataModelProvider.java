@@ -460,7 +460,9 @@ public class NewServiceBuilderDataModelProvider extends ArtifactEditOperationDat
         }
 
         // IDE-110 IDE-648
-        final IResource serviceXmlResource = LiferayCore.create( getTargetProject() ).findDocrootResource( "WEB-INF/" + serviceFileProperty );
+        final IResource serviceXmlResource =
+            LiferayCore.create( getTargetProject() ).findDocrootResource(
+                new Path( "WEB-INF/" + serviceFileProperty ) );
 
         if( serviceXmlResource != null && serviceXmlResource.exists() && serviceXmlResource instanceof IFile )
         {

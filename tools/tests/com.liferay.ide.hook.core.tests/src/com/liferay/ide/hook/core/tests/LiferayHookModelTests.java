@@ -18,6 +18,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import com.liferay.ide.core.ILiferayPortal;
 import com.liferay.ide.core.ILiferayProject;
 import com.liferay.ide.core.LiferayCore;
 import com.liferay.ide.hook.core.model.Hook;
@@ -70,8 +71,9 @@ public class LiferayHookModelTests extends ProjectCoreBase
         assertNotNull( hook );
 
         final ILiferayProject liferayProject = LiferayCore.create( hookProject );
+        final ILiferayPortal portal = liferayProject.adapt( ILiferayPortal.class );
 
-        final IPath strutsConfigPath = liferayProject.getAppServerPortalDir().append( "WEB-INF/struts-config.xml" );
+        final IPath strutsConfigPath = portal.getAppServerPortalDir().append( "WEB-INF/struts-config.xml" );
 
         final StrutsAction strutsAction = hook.getStrutsActions().insert();
 

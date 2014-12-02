@@ -377,7 +377,7 @@ public class PropertiesUtil
 
         if( ( portletXml != null ) && ( portletXml.exists() ) )
         {
-            final IFolder[] srcFolders = LiferayCore.create( proj ).getSrcFolders();
+            final IFolder[] srcFolders = LiferayCore.create( proj ).getSourceFolders();
             final ResourceNodeInfo resourceNodeInfo = getResourceNodeInfo( portletXml );
 
             final Set<String> resourceBundles = resourceNodeInfo.getResourceBundles();
@@ -509,7 +509,7 @@ public class PropertiesUtil
             return new IFile[0];
         }
 
-        final IFolder[] srcFolders = LiferayCore.create( proj ).getSrcFolders();
+        final IFolder[] srcFolders = LiferayCore.create( proj ).getSourceFolders();
 
         if( srcFolders.length < 1 )
         {
@@ -549,7 +549,7 @@ public class PropertiesUtil
             return new IFile[0];
         }
 
-        final IFolder[] srcFolders = LiferayCore.create( proj ).getSrcFolders();
+        final IFolder[] srcFolders = LiferayCore.create( proj ).getSourceFolders();
 
         if( srcFolders.length < 1 )
         {
@@ -772,7 +772,7 @@ public class PropertiesUtil
         final ILiferayProject liferayProject = LiferayCore.create( project );
         final IFile portletXml = liferayProject.getDescriptorFile( ILiferayConstants.PORTLET_XML_FILE );
         final IFile liferayHookXml = liferayProject.getDescriptorFile( ILiferayConstants.LIFERAY_HOOK_XML_FILE );
-        final IFolder[] srcFolders = liferayProject.getSrcFolders();
+        final IFolder[] srcFolders = liferayProject.getSourceFolders();
         final IPath targetFileLocation = targetFile.getLocation();
 
         try

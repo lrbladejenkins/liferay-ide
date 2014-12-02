@@ -16,6 +16,8 @@
 package com.liferay.ide.layouttpl.ui.wizard;
 
 import com.liferay.ide.core.ILiferayConstants;
+import com.liferay.ide.core.ILiferayPortal;
+import com.liferay.ide.core.ILiferayProject;
 import com.liferay.ide.core.LiferayCore;
 import com.liferay.ide.core.util.CoreUtil;
 import com.liferay.ide.core.util.StringPool;
@@ -216,9 +218,17 @@ public class AddLayoutTplOperation extends LiferayDataModelOperation implements 
 
     private boolean isBootstrapStyle()
     {
-        final Version version = new Version( LiferayCore.create( getTargetProject() ).getPortalVersion() );
+        final ILiferayProject lrproject = LiferayCore.create( getTargetProject() );
+        final ILiferayPortal portal = lrproject.adapt( ILiferayPortal.class );
 
-        return CoreUtil.compareVersions( version, ILiferayConstants.V620 ) >= 0 ;
+        if( portal != null )
+        {
+            final Version version = new Version( portal.getVersion() );
+
+            return CoreUtil.compareVersions( version, ILiferayConstants.V620 ) >= 0 ;
+        }
+
+        return true;
     }
 
 }

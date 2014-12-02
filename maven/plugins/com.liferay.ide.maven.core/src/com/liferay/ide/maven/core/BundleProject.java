@@ -60,7 +60,7 @@ public class BundleProject extends BaseLiferayProject
         return null;
     }
 
-    public IResource findDocrootResource( String path )
+    public IResource findDocrootResource( IPath path )
     {
         // TODO Auto-generated method stub
         return null;
@@ -120,7 +120,7 @@ public class BundleProject extends BaseLiferayProject
         return null;
     }
 
-    public IFolder[] getSrcFolders()
+    public IFolder[] getSourceFolders()
     {
         // TODO Auto-generated method stub
         return null;

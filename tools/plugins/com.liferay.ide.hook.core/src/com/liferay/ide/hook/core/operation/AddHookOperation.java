@@ -16,6 +16,7 @@
 package com.liferay.ide.hook.core.operation;
 
 import com.liferay.ide.core.ILiferayConstants;
+import com.liferay.ide.core.ILiferayPortal;
 import com.liferay.ide.core.ILiferayProject;
 import com.liferay.ide.core.LiferayCore;
 import com.liferay.ide.core.StringBufferOutputStream;
@@ -195,39 +196,51 @@ public class AddHookOperation extends AbstractDataModelOperation implements INew
 
         final List<String[]> customJsps = (List<String[]>) dm.getProperty( CUSTOM_JSPS_ITEMS );
         final ILiferayProject liferayProject = LiferayCore.create( getTargetProject() );
-        final IPath portalDir = liferayProject.getAppServerPortalDir();
 
-        if( customJsps != null && portalDir != null )
+        final ILiferayPortal portal = liferayProject.adapt( ILiferayPortal.class );
+
+        IStatus status = null;
+
+        if( portal != null )
         {
-            for( String[] customJsp : customJsps )
+            final IPath portalDir = portal.getAppServerPortalDir();
+
+            if( customJsps != null && portalDir != null )
             {
-                try
+                for( String[] customJsp : customJsps )
                 {
-                    IFile copiedFile = copyPortalJSPToProject( portalDir, customJsp[0], customFolder );
-
-                    if( copiedFile != null )
+                    try
                     {
-                        Set<IFile> jspFilesCreated = (Set<IFile>) dm.getProperty( CUSTOM_JSPS_FILES_CREATED );
+                        IFile copiedFile = copyPortalJSPToProject( portalDir, customJsp[0], customFolder );
 
-                        jspFilesCreated.add( copiedFile );
+                        if( copiedFile != null )
+                        {
+                            Set<IFile> jspFilesCreated = (Set<IFile>) dm.getProperty( CUSTOM_JSPS_FILES_CREATED );
 
-                        dm.setProperty( CUSTOM_JSPS_FILES_CREATED, jspFilesCreated );
+                            jspFilesCreated.add( copiedFile );
+
+                            dm.setProperty( CUSTOM_JSPS_FILES_CREATED, jspFilesCreated );
+                        }
+                    }
+                    catch( Exception e )
+                    {
+                        HookCore.logError( e );
                     }
                 }
-                catch( Exception e )
-                {
-                    HookCore.logError( e );
-                }
+            }
+
+            HookDescriptorHelper hookDescHelper = new HookDescriptorHelper( getTargetProject() );
+
+            status = hookDescHelper.setCustomJSPDir( this.model );
+
+            if( this.model.getBooleanProperty( DISABLE_CUSTOM_JSP_FOLDER_VALIDATION ) )
+            {
+                HookUtil.configureJSPSyntaxValidationExclude( getTargetProject(), customFolder, true );
             }
         }
-
-        HookDescriptorHelper hookDescHelper = new HookDescriptorHelper( getTargetProject() );
-
-        IStatus status = hookDescHelper.setCustomJSPDir( this.model );
-
-        if( this.model.getBooleanProperty( DISABLE_CUSTOM_JSP_FOLDER_VALIDATION ) )
+        else
         {
-            HookUtil.configureJSPSyntaxValidationExclude( getTargetProject(), customFolder, true );
+            status = HookCore.createErrorStatus( "Could not get portal info from project " + project.getName() );
         }
 
         return status;

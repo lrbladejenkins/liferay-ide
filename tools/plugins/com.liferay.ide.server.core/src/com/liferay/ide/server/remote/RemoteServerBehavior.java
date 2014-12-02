@@ -862,14 +862,20 @@ public class RemoteServerBehavior extends ServerBehaviourDelegate
 
                     if( resourceFile != null )
                     {
-                        if( LiferayCore.create( resourceFile.getProject() ).pathInDocroot( resourceFile.getFullPath() ) )
+                        final ILiferayProject lrproject = LiferayCore.create( resourceFile.getProject() );
+
+                        final IPath docrootPath = lrproject.getDefaultDocrootFolder().getFullPath();
+
+                        if( lrproject.findDocrootResource(
+                                resourceFile.getFullPath().makeRelativeTo( docrootPath ) ) != null )
                         {
-                            if( resource.getName().equals( "web.xml" ) || //$NON-NLS-1$
-                                            resource.getName().equals( ILiferayConstants.LIFERAY_PLUGIN_PACKAGE_PROPERTIES_FILE ) )
+                            if( resource.getName().equals( "web.xml" ) ||
+                                resource.getName().equals(
+                                    ILiferayConstants.LIFERAY_PLUGIN_PACKAGE_PROPERTIES_FILE ) )
                             {
                                 break;
                             }
-                            else if( resource.getName().equals( "portlet.xml" ) ) //$NON-NLS-1$
+                            else if( resource.getName().equals( "portlet.xml" ) )
                             {
                                 break;
                             }

@@ -14,38 +14,25 @@
  *******************************************************************************/
 package com.liferay.ide.core;
 
-import java.util.Collection;
+import java.util.Properties;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 
 
 /**
  * @author Gregory Amerson
  */
-public interface ILiferayProject
+public interface ILiferayPortal
 {
 
-    <T> T adapt( Class<T> adapterType );
+    IPath getAppServerPortalDir();
 
-    IResource findDocrootResource( IPath path );
+    String[] getHookSupportedProperties();
 
-    IFolder getDefaultDocrootFolder();
+    Properties getPortletCategories();
 
-    IFile getDescriptorFile( String name );
+    Properties getPortletEntryCategories();
 
-    IPath getLibraryPath( String filename );
-
-    String getProperty( String key, String defaultValue );
-
-    IFolder getSourceFolder( String classification );
-
-    IFolder[] getSourceFolders();
-
-    Collection<IFile> getOutputs( boolean build, IProgressMonitor monitor ) throws CoreException;
+    String getVersion();
 
 }

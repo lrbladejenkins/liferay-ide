@@ -17,6 +17,7 @@ package com.liferay.ide.hook.ui.editor;
 
 import static com.liferay.ide.core.util.CoreUtil.empty;
 
+import com.liferay.ide.core.ILiferayPortal;
 import com.liferay.ide.core.ILiferayProject;
 import com.liferay.ide.core.LiferayCore;
 import com.liferay.ide.core.util.CoreUtil;
@@ -213,11 +214,16 @@ public class HookXmlEditor extends SapphireEditorForXml
             final ElementList<CustomJsp> customJsps = hook.getCustomJsps();
 
             final ILiferayProject liferayProject = LiferayCore.create( getProject() );
-            IPath portalDir = liferayProject.getAppServerPortalDir();
+            final ILiferayPortal portal = liferayProject.adapt( ILiferayPortal.class );
 
-            if( portalDir != null )
+            if( portal != null )
             {
-                copyCustomJspsToProject( portalDir, customJsps );
+                final IPath portalDir = portal.getAppServerPortalDir();
+
+                if( portalDir != null )
+                {
+                    copyCustomJspsToProject( portalDir, customJsps );
+                }
             }
 
             this.customModelDirty = false;

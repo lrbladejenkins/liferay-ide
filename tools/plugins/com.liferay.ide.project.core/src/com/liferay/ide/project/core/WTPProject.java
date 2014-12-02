@@ -36,16 +36,16 @@ import org.eclipse.wst.common.componentcore.resources.IVirtualResource;
 /**
  * @author Gregory Amerson
  */
-public abstract class WTPLiferayProject extends BaseLiferayProject
+public abstract class WTPProject extends BaseLiferayProject
 {
 
-    public WTPLiferayProject( IProject project )
+    public WTPProject( IProject project )
     {
         super( project );
     }
 
     @Override
-    public IResource findDocrootResource( String path )
+    public IResource findDocrootResource( IPath path )
     {
         IFile retval = null;
 
@@ -115,7 +115,8 @@ public abstract class WTPLiferayProject extends BaseLiferayProject
         return retval;
     }
 
-    public IFolder[] getSrcFolders()
+    @Override
+    public IFolder[] getSourceFolders()
     {
         final List<IFolder> retval = new ArrayList<IFolder>();
 
@@ -136,7 +137,6 @@ public abstract class WTPLiferayProject extends BaseLiferayProject
         return retval.toArray( new IFolder[retval.size()] );
     }
 
-    @Override
     public boolean pathInDocroot( IPath path )
     {
         if( path != null )

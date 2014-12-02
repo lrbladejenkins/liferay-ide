@@ -14,6 +14,7 @@
  *******************************************************************************/
 package com.liferay.ide.project.core;
 
+import com.liferay.ide.core.ILiferayPortal;
 import com.liferay.ide.core.util.CoreUtil;
 import com.liferay.ide.core.util.FileUtil;
 import com.liferay.ide.project.core.util.ProjectUtil;
@@ -27,7 +28,6 @@ import com.liferay.ide.server.util.ServerUtil;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Properties;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -45,12 +45,12 @@ import org.w3c.dom.NodeList;
  * @author Gregory Amerson
  * @author Simon Jiang
  */
-public class LiferayPluginsSDKProject extends WTPLiferayProject
+public class PluginsSDKProject extends WTPProject
 {
 
     private ILiferayRuntime liferayRuntime;
 
-    public LiferayPluginsSDKProject( IProject project, ILiferayRuntime liferayRuntime )
+    public PluginsSDKProject( IProject project, ILiferayRuntime liferayRuntime )
     {
         super( project );
 
@@ -77,8 +77,7 @@ public class LiferayPluginsSDKProject extends WTPLiferayProject
                 return adapterType.cast( projectBuilder );
             }
         }
-
-        if( IRemoteServerPublisher.class.equals( adapterType ) )
+        else if( IRemoteServerPublisher.class.equals( adapterType ) )
         {
             final SDK sdk = getSDK();
 
@@ -89,18 +88,14 @@ public class LiferayPluginsSDKProject extends WTPLiferayProject
                 return adapterType.cast( remotePublisher );
             }
         }
+        else if( ILiferayPortal.class.equals( adapterType ) )
+        {
+            final ILiferayPortal portal = new PluginsSDKPortal( this.liferayRuntime );
+
+            return adapterType.cast( portal );
+        }
 
         return null;
-    }
-
-    public IPath getAppServerPortalDir()
-    {
-        return this.liferayRuntime.getAppServerPortalDir();
-    }
-
-    public String[] getHookSupportedProperties()
-    {
-        return liferayRuntime.getHookSupportedProperties();
     }
 
     public IPath getLibraryPath( String filename )
@@ -154,21 +149,6 @@ public class LiferayPluginsSDKProject extends WTPLiferayProject
         }
 
         return retval;
-    }
-
-    public String getPortalVersion()
-    {
-        return liferayRuntime.getPortalVersion();
-    }
-
-    public Properties getPortletCategories()
-    {
-        return this.liferayRuntime.getPortletCategories();
-    }
-
-    public Properties getPortletEntryCategories()
-    {
-        return this.liferayRuntime.getPortletEntryCategories();
     }
 
     protected SDK getSDK()

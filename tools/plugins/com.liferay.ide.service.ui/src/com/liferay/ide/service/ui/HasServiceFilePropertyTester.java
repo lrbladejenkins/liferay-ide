@@ -21,6 +21,7 @@ import com.liferay.ide.core.util.CoreUtil;
 
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Path;
 
 /**
  * @author Gregory Amerson
@@ -41,7 +42,9 @@ public class HasServiceFilePropertyTester extends PropertyTester
                 try
                 {
                     // IDE-110 IDE-648
-                    IResource serviceResource = LiferayCore.create( resource.getProject() ).findDocrootResource( "WEB-INF/" + ILiferayConstants.LIFERAY_SERVICE_BUILDER_XML_FILE );
+                    final IResource serviceResource =
+                        LiferayCore.create( resource.getProject() ).findDocrootResource(
+                            new Path( "WEB-INF/" + ILiferayConstants.LIFERAY_SERVICE_BUILDER_XML_FILE ) );
 
                     if( serviceResource != null && serviceResource.exists() )
                     {

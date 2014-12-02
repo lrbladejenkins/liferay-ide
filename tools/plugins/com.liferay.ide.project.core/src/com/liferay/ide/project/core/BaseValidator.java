@@ -34,6 +34,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IScopeContext;
@@ -246,7 +247,8 @@ public abstract class BaseValidator extends AbstractValidator
         if( resourceValue != null && resourceValue.length() > 0 )
         {
             // IDE-110 IDE-648
-            final IResource resource = LiferayCore.create( project ).findDocrootResource( resourceValue );
+            final IResource resource =
+                LiferayCore.create( project ).findDocrootResource( new Path( resourceValue ) );
 
             if( resource == null || ! resource.exists() )
             {

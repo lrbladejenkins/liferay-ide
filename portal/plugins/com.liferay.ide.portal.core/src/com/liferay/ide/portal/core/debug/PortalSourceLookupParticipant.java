@@ -136,8 +136,8 @@ public class PortalSourceLookupParticipant extends AbstractSourceLookupParticipa
 
                 // first lets see if we can find
 
-                final String diffsPath = "_diffs/" +  resourcePath; //$NON-NLS-1$
-                final IResource diffsResourceFile = liferayProject.findDocrootResource( diffsPath );
+                final String diffsPath = "_diffs/" +  resourcePath;
+                final IResource diffsResourceFile = liferayProject.findDocrootResource( new Path( diffsPath ) );
 
                 if( diffsResourceFile.exists() )
                 {
@@ -145,7 +145,7 @@ public class PortalSourceLookupParticipant extends AbstractSourceLookupParticipa
                 }
                 else
                 {
-                    final IResource resourceFile = liferayProject.findDocrootResource( resourcePath );
+                    final IResource resourceFile = liferayProject.findDocrootResource( new Path( resourcePath ) );
 
                     if( resourceFile.exists() )
                     {

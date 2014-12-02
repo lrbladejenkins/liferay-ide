@@ -16,6 +16,7 @@
 package com.liferay.ide.server.util;
 
 import com.liferay.ide.core.ILiferayConstants;
+import com.liferay.ide.core.ILiferayPortal;
 import com.liferay.ide.core.ILiferayProject;
 import com.liferay.ide.core.LiferayCore;
 import com.liferay.ide.core.util.CoreUtil;
@@ -406,7 +407,12 @@ public class ServerUtil
 
         if( liferayProject != null )
         {
-            retval = liferayProject.getAppServerPortalDir();
+            final ILiferayPortal portal = liferayProject.adapt( ILiferayPortal.class );
+
+            if( portal != null )
+            {
+                retval = portal.getAppServerPortalDir();
+            }
         }
 
         return retval;
@@ -554,9 +560,19 @@ public class ServerUtil
         {
             final ILiferayProject liferayProject = LiferayCore.create( project );
 
-            if( liferayProject != null && liferayProject.getPortalVersion() != null )
+            if( liferayProject != null )
             {
-                retval = new Version( liferayProject.getPortalVersion() );
+                final ILiferayPortal portal = liferayProject.adapt( ILiferayPortal.class );
+
+                if( portal != null )
+                {
+                    final String version = portal.getVersion();
+
+                    if( version != null )
+                    {
+                        retval = new Version( version );
+                    }
+                }
             }
         }
 
@@ -774,7 +790,7 @@ public class ServerUtil
     public static ILiferayServer getLiferayServer( IServer server, IProgressMonitor monitor )
     {
         ILiferayServer retval = null;
-    
+
         if( server != null )
         {
             try
@@ -785,7 +801,7 @@ public class ServerUtil
             {
             }
         }
-    
+
         return retval;
     }
 }

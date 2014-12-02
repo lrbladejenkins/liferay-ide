@@ -16,6 +16,7 @@
 package com.liferay.ide.theme.core;
 
 import com.liferay.ide.core.ILiferayConstants;
+import com.liferay.ide.core.ILiferayPortal;
 import com.liferay.ide.core.ILiferayProject;
 import com.liferay.ide.core.LiferayCore;
 import com.liferay.ide.core.util.CoreUtil;
@@ -140,7 +141,9 @@ public class ThemeDiffResourceListener implements IResourceChangeListener
                 }
 
                 // IDE-110 IDE-648
-                IResource res = LiferayCore.create( project ).findDocrootResource( "WEB-INF/" + ILiferayConstants.LIFERAY_LOOK_AND_FEEL_XML_FILE );
+                final IResource res =
+                    LiferayCore.create( project ).findDocrootResource(
+                        new Path( "WEB-INF/" + ILiferayConstants.LIFERAY_LOOK_AND_FEEL_XML_FILE ) );
 
                 IFile lookAndFeelFile = null;
 
@@ -154,7 +157,9 @@ public class ThemeDiffResourceListener implements IResourceChangeListener
                     String id =
                         project.getName().replaceAll( ISDKConstants.THEME_PLUGIN_PROJECT_SUFFIX, StringPool.EMPTY );
 
-                    IResource propsRes = LiferayCore.create( project ).findDocrootResource( "WEB-INF/" + ILiferayConstants.LIFERAY_PLUGIN_PACKAGE_PROPERTIES_FILE );
+                    final IResource propsRes =
+                        LiferayCore.create( project ).findDocrootResource(
+                            new Path( "WEB-INF/" + ILiferayConstants.LIFERAY_PLUGIN_PACKAGE_PROPERTIES_FILE ) );
                     String name = id;
 
                     if( propsRes instanceof IFile && propsRes.exists() )
@@ -182,8 +187,17 @@ public class ThemeDiffResourceListener implements IResourceChangeListener
                     final ILiferayProject lProject = LiferayCore.create( project );
                     final String type = lProject.getProperty( "theme.type", "vm" );
 
+                    String version = "6.2.0";
+
+                    final ILiferayPortal portal = lProject.adapt( ILiferayPortal.class );
+
+                    if( portal != null )
+                    {
+                        version = portal.getVersion();
+                    }
+
                     themeDescriptorHelper.createDefaultFile(
-                        lProject.getDefaultDocrootFolder(), lProject.getPortalVersion(), id, name, type );
+                        lProject.getDefaultDocrootFolder(), version, id, name, type );
 
                     try
                     {

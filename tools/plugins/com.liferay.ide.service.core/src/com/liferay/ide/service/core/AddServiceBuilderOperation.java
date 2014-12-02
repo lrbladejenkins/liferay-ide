@@ -15,6 +15,7 @@
 
 package com.liferay.ide.service.core;
 
+import com.liferay.ide.core.ILiferayPortal;
 import com.liferay.ide.core.ILiferayProject;
 import com.liferay.ide.core.LiferayCore;
 import com.liferay.ide.project.core.ProjectCore;
@@ -57,9 +58,9 @@ public class AddServiceBuilderOperation extends AbstractDataModelOperation
 
         try
         {
-            ILiferayProject liferayProject = LiferayCore.create( serviceBuilderFile.getProject() );
-
-            Version portalVersion = new Version( liferayProject.getPortalVersion() );
+            final ILiferayProject liferayProject = LiferayCore.create( serviceBuilderFile.getProject() );
+            final ILiferayPortal portal = liferayProject.adapt( ILiferayPortal.class );
+            final Version portalVersion = new Version( portal.getVersion() );
 
             descriptorVersion = portalVersion.getMajor() + "." + portalVersion.getMinor() + ".0";  //$NON-NLS-1$//$NON-NLS-2$
         }

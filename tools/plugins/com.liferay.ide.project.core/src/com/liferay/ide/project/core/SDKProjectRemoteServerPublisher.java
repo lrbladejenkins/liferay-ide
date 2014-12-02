@@ -91,7 +91,7 @@ public class SDKProjectRemoteServerPublisher extends AbstractRemoteServerPublish
 
             final IPath pluginPropertiesPath = new Path( "WEB-INF/liferay-plugin-package.properties" );
             final IResource propsRes =
-                LiferayCore.create( getProject() ).findDocrootResource( pluginPropertiesPath.toPortableString() );
+                LiferayCore.create( getProject() ).findDocrootResource( pluginPropertiesPath );
 
             if( propsRes instanceof IFile && propsRes.exists() )
             {

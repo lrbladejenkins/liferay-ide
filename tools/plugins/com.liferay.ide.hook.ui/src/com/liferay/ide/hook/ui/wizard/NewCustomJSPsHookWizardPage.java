@@ -15,6 +15,7 @@
 
 package com.liferay.ide.hook.ui.wizard;
 
+import com.liferay.ide.core.ILiferayPortal;
 import com.liferay.ide.core.ILiferayProject;
 import com.liferay.ide.core.LiferayCore;
 import com.liferay.ide.core.util.CoreUtil;
@@ -102,11 +103,16 @@ public class NewCustomJSPsHookWizardPage extends DataModelWizardPage implements 
 
         if( liferayProject != null )
         {
-            IPath portalDir = liferayProject.getAppServerPortalDir();
+            final ILiferayPortal portal = liferayProject.adapt( ILiferayPortal.class );
 
-            if( portalDir != null && portalDir.toFile().exists() )
+            if( portal != null )
             {
-                jspItemsSection.setPortalDir( portalDir.toFile() );
+                final IPath portalDir = portal.getAppServerPortalDir();
+
+                if( portalDir != null && portalDir.toFile().exists() )
+                {
+                    jspItemsSection.setPortalDir( portalDir.toFile() );
+                }
             }
         }
     }

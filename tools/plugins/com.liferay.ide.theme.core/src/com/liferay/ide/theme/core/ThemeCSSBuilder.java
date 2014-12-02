@@ -16,6 +16,7 @@
 package com.liferay.ide.theme.core;
 
 import com.liferay.ide.core.ILiferayConstants;
+import com.liferay.ide.core.ILiferayPortal;
 import com.liferay.ide.core.ILiferayProject;
 import com.liferay.ide.core.LiferayCore;
 import com.liferay.ide.core.util.CoreUtil;
@@ -101,7 +102,9 @@ public class ThemeCSSBuilder extends IncrementalProjectBuilder
 
         IFile lookAndFeelFile = null;
 
-        final IResource res = lrProject.findDocrootResource( "WEB-INF/" + ILiferayConstants.LIFERAY_LOOK_AND_FEEL_XML_FILE );
+        final IResource res =
+            lrProject.findDocrootResource( new Path( "WEB-INF/" +
+                ILiferayConstants.LIFERAY_LOOK_AND_FEEL_XML_FILE ) );
 
         if( res instanceof IFile && res.exists() )
         {
@@ -113,7 +116,9 @@ public class ThemeCSSBuilder extends IncrementalProjectBuilder
             // need to generate a new lnf file in deafult docroot
             String id = project.getName().replaceAll( ISDKConstants.THEME_PLUGIN_PROJECT_SUFFIX, StringPool.EMPTY );
 
-            final IResource propertiesFileRes = lrProject.findDocrootResource( "WEB-INF/" + ILiferayConstants.LIFERAY_PLUGIN_PACKAGE_PROPERTIES_FILE );
+            final IResource propertiesFileRes =
+                lrProject.findDocrootResource( new Path( "WEB-INF/" +
+                    ILiferayConstants.LIFERAY_PLUGIN_PACKAGE_PROPERTIES_FILE ) );
             String name = id;
 
             if( propertiesFileRes instanceof IFile && propertiesFileRes.exists() )
@@ -138,11 +143,18 @@ public class ThemeCSSBuilder extends IncrementalProjectBuilder
                     final ThemeDescriptorHelper themeDescriptorHelper = new ThemeDescriptorHelper( project );
 
                     final ILiferayProject lProject = lrProject;
+                    final ILiferayPortal portal = lProject.adapt( ILiferayPortal.class );
+                    String version = "6.2.0";
+
+                    if( portal != null )
+                    {
+                        version = portal.getVersion();
+                    }
 
                     final String themeType = lProject.getProperty( "theme.type", "vm" );
 
                     themeDescriptorHelper.createDefaultFile(
-                        lrProject.getDefaultDocrootFolder(), lProject.getPortalVersion(), id, name, themeType );
+                        lrProject.getDefaultDocrootFolder(), version, id, name, themeType );
                 }
                 catch( IOException e )
                 {
@@ -179,45 +191,48 @@ public class ThemeCSSBuilder extends IncrementalProjectBuilder
 
         final String themeParent = liferayProject.getProperty( "theme.parent", "_styled" );
 
-        IPath themesPath = liferayProject.getAppServerPortalDir().append( "html/themes" ); //$NON-NLS-1$
+        final ILiferayPortal portal = liferayProject.adapt( ILiferayPortal.class );
 
-        final List<IPath> restorePaths = new ArrayList<IPath>();
-
-        for( int i = 0; i < IPluginProjectDataModelProperties.THEME_PARENTS.length; i++ )
+        if( portal != null )
         {
-            if( IPluginProjectDataModelProperties.THEME_PARENTS[i].equals( themeParent ) )
+            final IPath themesPath = portal.getAppServerPortalDir().append( "html/themes" );
+            final List<IPath> restorePaths = new ArrayList<IPath>();
+
+            for( int i = 0; i < IPluginProjectDataModelProperties.THEME_PARENTS.length; i++ )
             {
-                restorePaths.add( themesPath.append( IPluginProjectDataModelProperties.THEME_PARENTS[i] ) );
-            }
-            else
-            {
-                if( restorePaths.size() > 0 )
+                if( IPluginProjectDataModelProperties.THEME_PARENTS[i].equals( themeParent ) )
                 {
                     restorePaths.add( themesPath.append( IPluginProjectDataModelProperties.THEME_PARENTS[i] ) );
                 }
+                else
+                {
+                    if( restorePaths.size() > 0 )
+                    {
+                        restorePaths.add( themesPath.append( IPluginProjectDataModelProperties.THEME_PARENTS[i] ) );
+                    }
+                }
             }
-        }
 
-        new Job( "publish theme delta" ) //$NON-NLS-1$
-        {
-            @Override
-            protected IStatus run( IProgressMonitor monitor )
+            new Job( "publish theme delta" ) //$NON-NLS-1$
             {
-                buildHelper.publishDelta( delta, path, restorePaths.toArray( new IPath[0] ), monitor );
-
-                try
+                @Override
+                protected IStatus run( IProgressMonitor monitor )
                 {
-                    docroot.refreshLocal( IResource.DEPTH_INFINITE, monitor );
-                }
-                catch( Exception e )
-                {
-                    ThemeCore.logError( e );
-                }
+                    buildHelper.publishDelta( delta, path, restorePaths.toArray( new IPath[0] ), monitor );
 
-                return Status.OK_STATUS;
-            }
-        }.schedule();
+                    try
+                    {
+                        docroot.refreshLocal( IResource.DEPTH_INFINITE, monitor );
+                    }
+                    catch( Exception e )
+                    {
+                        ThemeCore.logError( e );
+                    }
 
+                    return Status.OK_STATUS;
+                }
+            }.schedule();
+        }
     }
 
     @Override

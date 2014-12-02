@@ -15,6 +15,7 @@
 
 package com.liferay.ide.project.core.descriptor;
 
+import com.liferay.ide.core.ILiferayPortal;
 import com.liferay.ide.core.ILiferayProject;
 import com.liferay.ide.core.LiferayCore;
 import com.liferay.ide.core.util.CoreUtil;
@@ -186,7 +187,8 @@ public abstract class LiferayDescriptorHelper
 
             if( lProject != null )
             {
-                final String versionStr = lProject.getPortalVersion();
+                final ILiferayPortal portal = lProject.adapt( ILiferayPortal.class );
+                final String versionStr = portal.getVersion();
                 retval = getDescriptorVersionFromPortalVersion( versionStr );
             }
         }
