@@ -1,6 +1,8 @@
 
 package com.liferay.ide.core.templates;
 
+import com.liferay.ide.core.LiferayCore;
+
 import freemarker.template.Configuration;
 import freemarker.template.ObjectWrapper;
 
@@ -14,21 +16,14 @@ import java.util.Map;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin;
-import org.eclipse.core.runtime.Status;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
 
 /**
  * The activator class controls the plugin life cycle
  */
-public class TemplatesCore extends Plugin
+public class TemplatesCore
 {
-
-    // The plugin ID
-    public static final String PLUGIN_ID = "com.liferay.ide.templates.core"; //$NON-NLS-1$
 
     // The shared instance
     private static TemplatesCore plugin;
@@ -36,16 +31,6 @@ public class TemplatesCore extends Plugin
     private static Map<String, TemplateModel> templateModels = new HashMap<String, TemplateModel>();
 
     private static IConfigurationElement[] tplDefinitionElements;
-
-    public static IStatus createErrorStatus( Exception e )
-    {
-        return new Status( IStatus.ERROR, PLUGIN_ID, e.getMessage(), e );
-    }
-
-    public static IStatus createErrorStatus( String msg )
-    {
-        return new Status( IStatus.ERROR, PLUGIN_ID, msg );
-    }
 
     /**
      * Returns the shared instance
@@ -67,16 +52,6 @@ public class TemplatesCore extends Plugin
         TemplateModel model = getTemplateModel( templateId );
 
         return new TemplateOperation( model );
-    }
-
-    public static void logError( Exception e )
-    {
-        getDefault().getLog().log( createErrorStatus( e ) );
-    }
-
-    public static void logError( String msg )
-    {
-        getDefault().getLog().log( createErrorStatus( msg ) );
     }
 
     private static TemplateModel createTemplateModel( IConfigurationElement element, String pluginName )
@@ -119,7 +94,7 @@ public class TemplatesCore extends Plugin
         }
         catch( Exception e )
         {
-            TemplatesCore.logError( e );
+            LiferayCore.logError( e );
         }
 
         return templateModel;
@@ -146,7 +121,7 @@ public class TemplatesCore extends Plugin
             }
             catch( Exception e )
             {
-                logError( e );
+                LiferayCore.logError( e );
                 model = null;
             }
 
@@ -187,7 +162,7 @@ public class TemplatesCore extends Plugin
         if( tplDefinitionElements == null )
         {
             tplDefinitionElements =
-                Platform.getExtensionRegistry().getConfigurationElementsFor( PLUGIN_ID + ".templateDefinition" ); //$NON-NLS-1$
+                Platform.getExtensionRegistry().getConfigurationElementsFor( LiferayCore.PLUGIN_ID + ".templateDefinitions" );
         }
 
         return tplDefinitionElements;
@@ -201,7 +176,7 @@ public class TemplatesCore extends Plugin
 
         if( bundle == null )
         {
-            logError( "Could not initialize template model: could not find bundle " + bundleId ); //$NON-NLS-1$
+            LiferayCore.logError( "Could not initialize template model: could not find bundle " + bundleId ); //$NON-NLS-1$
         }
 
         final URL loaderRoot = bundle.getEntry( templateModel.getTemplateFolder() );
@@ -215,28 +190,8 @@ public class TemplatesCore extends Plugin
     /**
      * The constructor
      */
-    public TemplatesCore()
+    private TemplatesCore()
     {
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-     */
-    public void start( BundleContext context ) throws Exception
-    {
-        super.start( context );
-        plugin = this;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-     */
-    public void stop( BundleContext context ) throws Exception
-    {
-        plugin = null;
-        super.stop( context );
     }
 
 }
