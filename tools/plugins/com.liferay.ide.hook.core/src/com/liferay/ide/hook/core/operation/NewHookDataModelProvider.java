@@ -20,6 +20,7 @@ import static org.eclipse.jst.j2ee.internal.common.operations.INewJavaClassDataM
 import static org.eclipse.jst.j2ee.internal.common.operations.INewJavaClassDataModelProperties.PROJECT;
 import static org.eclipse.jst.j2ee.internal.common.operations.INewJavaClassDataModelProperties.SOURCE_FOLDER;
 
+import com.liferay.ide.core.IWebProject;
 import com.liferay.ide.core.LiferayCore;
 import com.liferay.ide.core.util.CoreUtil;
 import com.liferay.ide.hook.core.HookCore;
@@ -74,7 +75,8 @@ public class NewHookDataModelProvider extends ArtifactEditOperationDataModelProv
             // custom_jsps out of that
             IProject targetProject = getTargetProject();
 
-            final IFolder defaultWebappRootFolder = LiferayCore.create( targetProject ).getDefaultDocrootFolder();
+            final IFolder defaultWebappRootFolder =
+                LiferayCore.create( IWebProject.class, targetProject ).getDefaultDocrootFolder();
 
             String defaultWebappRootPath = defaultWebappRootFolder.getFullPath().toPortableString();
 
@@ -87,7 +89,8 @@ public class NewHookDataModelProvider extends ArtifactEditOperationDataModelProv
                 {
                     // folder should be relative to the web app folder root
                     // IDE-110 IDE-648
-                    final IFolder defaultDocroot = LiferayCore.create( targetProject ).getDefaultDocrootFolder();
+                    final IFolder defaultDocroot =
+                        LiferayCore.create( IWebProject.class, targetProject ).getDefaultDocrootFolder();
 
                     if( defaultDocroot != null )
                     {
@@ -145,10 +148,11 @@ public class NewHookDataModelProvider extends ArtifactEditOperationDataModelProv
         else if( WEB_ROOT_FOLDER.equals( propertyName ) )
         {
             IProject targetProject = getTargetProject();
+            IWebProject webproject = LiferayCore.create( IWebProject.class, targetProject );
 
-            if( targetProject != null )
+            if( targetProject != null && webproject != null )
             {
-                return LiferayCore.create( targetProject ).getDefaultDocrootFolder().getName();
+                return webproject.getDefaultDocrootFolder().getName();
             }
         }
         else if( propertyName.equals( PROJECT ) )
@@ -235,13 +239,13 @@ public class NewHookDataModelProvider extends ArtifactEditOperationDataModelProv
                 return HookCore.createErrorStatus( Msgs.customJSPsFolderNotConfigured );
             }
 
-            IProject project = getTargetProject();
+            final IProject project = getTargetProject();
+            final IWebProject webproject = LiferayCore.create( IWebProject.class, project );
 
-            IFolder defaultWebappRootFolder = LiferayCore.create( project ).getDefaultDocrootFolder();
-
-            if( defaultWebappRootFolder != null )
+            if( webproject != null )
             {
-                String jspFolderPath = defaultWebappRootFolder.getFullPath().append( jspFolder ).toPortableString();
+                final IFolder defaultWebappRootFolder = webproject.getDefaultDocrootFolder();
+                final String jspFolderPath = defaultWebappRootFolder.getFullPath().append( jspFolder ).toPortableString();
 
                 IStatus validateStatus = CoreUtil.getWorkspace().validatePath( jspFolderPath, IResource.FOLDER );
 

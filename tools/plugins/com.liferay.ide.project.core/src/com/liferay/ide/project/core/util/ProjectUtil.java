@@ -15,6 +15,7 @@
 
 package com.liferay.ide.project.core.util;
 
+import com.liferay.ide.core.IWebProject;
 import com.liferay.ide.core.LiferayCore;
 import com.liferay.ide.core.util.CoreUtil;
 import com.liferay.ide.core.util.FileUtil;
@@ -686,7 +687,7 @@ public class ProjectUtil
     {
         if( project != null && ProjectUtil.isLiferayFacetedProject( project ) )
         {
-            IFolder defaultDocrootFolder = LiferayCore.create( project ).getDefaultDocrootFolder();
+            IFolder defaultDocrootFolder = LiferayCore.create( IWebProject.class, project ).getDefaultDocrootFolder();
 
             if( defaultDocrootFolder != null )
             {
@@ -748,7 +749,7 @@ public class ProjectUtil
 
     public static String getRelativePathFromDocroot( IProject project, String path )
     {
-        IFolder docroot = LiferayCore.create( project ).getDefaultDocrootFolder();
+        IFolder docroot = LiferayCore.create( IWebProject.class, project ).getDefaultDocrootFolder();
 
         IPath pathValue = new Path( path );
 

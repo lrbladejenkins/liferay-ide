@@ -18,6 +18,7 @@ package com.liferay.ide.hook.core.operation;
 import com.liferay.ide.core.ILiferayConstants;
 import com.liferay.ide.core.ILiferayPortal;
 import com.liferay.ide.core.ILiferayProject;
+import com.liferay.ide.core.IWebProject;
 import com.liferay.ide.core.LiferayCore;
 import com.liferay.ide.core.StringBufferOutputStream;
 import com.liferay.ide.core.util.CoreUtil;
@@ -115,7 +116,7 @@ public class AddHookOperation extends AbstractDataModelOperation implements INew
 
     protected IStatus checkDescriptorFile( IProject project )
     {
-        final IFolder webappRoot = LiferayCore.create( project ).getDefaultDocrootFolder();
+        final IFolder webappRoot = LiferayCore.create( IWebProject.class, project ).getDefaultDocrootFolder();
 
         if( webappRoot == null )
         {
@@ -177,7 +178,7 @@ public class AddHookOperation extends AbstractDataModelOperation implements INew
     {
         IProject project = getTargetProject();
 
-        IFolder defaultWebappRootFolder = LiferayCore.create( project ).getDefaultDocrootFolder();
+        IFolder defaultWebappRootFolder = LiferayCore.create( IWebProject.class, project ).getDefaultDocrootFolder();
 
         String customJSPsFolder = dm.getStringProperty( CUSTOM_JSPS_FOLDER );
 

@@ -15,7 +15,7 @@
 package com.liferay.ide.project.core;
 
 import com.liferay.ide.core.BaseLiferayProject;
-import com.liferay.ide.core.LiferayCore;
+import com.liferay.ide.core.IWebProject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +39,7 @@ import org.eclipse.wst.common.componentcore.resources.IVirtualResource;
 /**
  * @author Gregory Amerson
  */
-public abstract class FlexibleProject extends BaseLiferayProject
+public abstract class FlexibleProject extends BaseLiferayProject implements IWebProject
 {
 
     private static IFolder getDefaultDocroot( IProject project )
@@ -126,7 +126,7 @@ public abstract class FlexibleProject extends BaseLiferayProject
 //            project = CoreUtil.getLiferayProject( project );
 //        }
 
-        final IFolder defaultDocrootFolder = LiferayCore.create( getProject() ).getDefaultDocrootFolder();
+        final IFolder defaultDocrootFolder = getDefaultDocrootFolder();
 
         if( defaultDocrootFolder != null && defaultDocrootFolder.exists() )
         {

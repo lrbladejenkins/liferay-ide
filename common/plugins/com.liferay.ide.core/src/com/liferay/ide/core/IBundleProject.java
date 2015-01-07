@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 /**
  * @author Gregory Amerson
  */
-public interface IBundleProject
+public interface IBundleProject extends ILiferayProject
 {
 
     IFile getOutputJar( boolean buildIfNeeded, IProgressMonitor monitor ) throws CoreException;

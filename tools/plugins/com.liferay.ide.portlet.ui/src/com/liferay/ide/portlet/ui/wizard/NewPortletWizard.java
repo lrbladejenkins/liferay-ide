@@ -15,6 +15,7 @@
 
 package com.liferay.ide.portlet.ui.wizard;
 
+import com.liferay.ide.core.IWebProject;
 import com.liferay.ide.core.LiferayCore;
 import com.liferay.ide.portlet.core.operation.INewPortletClassDataModelProperties;
 import com.liferay.ide.portlet.core.operation.NewPortletClassDataModelProvider;
@@ -191,7 +192,7 @@ public class NewPortletWizard extends NewWebArtifactWizard
                 String jspsFolder = getDataModel().getStringProperty( CREATE_JSPS_FOLDER );
 
                 // IDE-110 IDE-648
-                IFolder defaultDocroot = LiferayCore.create( project ).getDefaultDocrootFolder();
+                IFolder defaultDocroot = LiferayCore.create( IWebProject.class, project ).getDefaultDocrootFolder();
 
                 if( defaultDocroot != null )
                 {
