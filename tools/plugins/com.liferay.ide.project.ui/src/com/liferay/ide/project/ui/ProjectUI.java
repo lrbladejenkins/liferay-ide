@@ -15,10 +15,7 @@
 
 package com.liferay.ide.project.ui;
 
-import java.net.URL;
-
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -38,7 +35,8 @@ public class ProjectUI extends AbstractUIPlugin
 {
 
     // Shared images
-    public static final String IMAGE_ID = "war.image"; //$NON-NLS-1$
+    public static final String IMAGE_PROPERTIES = "properties";
+    public static final String IMAGE_WAR = "war.image";
 
     public static final String LAST_SDK_IMPORT_LOCATION_PREF = "last.sdk.import.location"; //$NON-NLS-1$
 
@@ -137,10 +135,16 @@ public class ProjectUI extends AbstractUIPlugin
     protected void initializeImageRegistry( ImageRegistry registry )
     {
         Bundle bundle = Platform.getBundle( PLUGIN_ID );
-        IPath path = new Path( "icons/e16/war.gif" ); //$NON-NLS-1$
-        URL url = FileLocator.find( bundle, path, null );
-        ImageDescriptor desc = ImageDescriptor.createFromURL( url );
-        registry.put( IMAGE_ID, desc );
+
+        registry.put(
+            IMAGE_WAR,
+            ImageDescriptor.createFromURL( FileLocator.find( bundle, new Path( "icons/e16/war.gif" ), null ) ) );
+
+        registry.put(
+            IMAGE_PROPERTIES,
+            ImageDescriptor.createFromURL(
+                FileLocator.find( bundle, new Path( "icons/e16/properties.png" ), null ) ) );
+
     }
 
     /*
@@ -150,7 +154,6 @@ public class ProjectUI extends AbstractUIPlugin
     @Override
     public void start( BundleContext context ) throws Exception
     {
-
         super.start( context );
 
         plugin = this;
@@ -163,7 +166,6 @@ public class ProjectUI extends AbstractUIPlugin
     @Override
     public void stop( BundleContext context ) throws Exception
     {
-
         plugin = null;
 
         super.stop( context );

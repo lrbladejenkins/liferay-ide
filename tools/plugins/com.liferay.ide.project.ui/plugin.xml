@@ -1109,6 +1109,27 @@
             commandId="com.liferay.ide.project.ui.command.war">
       </handler>
    </extension>
+   <extension
+         id="component.properties.proposal"
+         name="OSGi Component Properties Proposal Computer"
+         point="org.eclipse.jdt.ui.javaCompletionProposalComputer">
+      <proposalCategory
+            icon="icons/e16/hook.png">
+      </proposalCategory>
+   </extension>
+   <extension
+         id="component.properties.proposal.computer"
+         point="org.eclipse.jdt.ui.javaCompletionProposalComputer">
+      <javaCompletionProposalComputer
+            activate="false"
+            categoryId="com.liferay.ide.project.ui.component.properties.proposal"
+            class="com.liferay.ide.project.ui.jdt.ComponentPropertiesCompletionProposalComputer"
+            needsSortingAfterFiltering="false">
+         <partition
+               type="__java_string">
+         </partition>
+      </javaCompletionProposalComputer>
+   </extension>
 <!--
 
    <extension
