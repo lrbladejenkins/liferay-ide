@@ -25,7 +25,8 @@ public interface INewSpringPortletClassDataModelProperties extends INewPortletCl
 
     String DEFAULT_PORTLET_CONTROLLER_NAME = "PortletViewController";
 
-    String DEFAULT_VIEW_CONTROLLER_CLASS = "INewSpringPortletClassDataModelProperties.DEFAULT_VIEW_CONTROLLER_CLASS";
+    String DEFAULT_VIEW_CONTROLLER_CLASS =
+        "INewSpringPortletClassDataModelProperties.DEFAULT_VIEW_CONTROLLER_CLASS";
 
     String SPRING_VIEW_MODE_TEMPLATE = "com.liferay.ide.templates.portlet.spring.view";
 
