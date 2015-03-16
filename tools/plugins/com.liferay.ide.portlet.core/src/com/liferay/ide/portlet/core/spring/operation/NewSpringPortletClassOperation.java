@@ -28,8 +28,8 @@ import org.eclipse.wst.common.frameworks.datamodel.IDataModel;
 public class NewSpringPortletClassOperation extends NewWebClassOperation
     implements INewPortletClassDataModelProperties
 {
-    protected static final String TEMPLATE_DIR = "/templates/"; //$NON-NLS-1$
-    protected static final String TEMPLATE_FILE = TEMPLATE_DIR + "springportlet.javajet"; //$NON-NLS-1$
+    protected static final String TEMPLATE_DIR = "/templates/";
+    protected static final String TEMPLATE_FILE = TEMPLATE_DIR + "springportlet.javajet";
 
     public NewSpringPortletClassOperation( IDataModel dataModel )
     {

@@ -51,10 +51,10 @@ public class CreateSpringPortletTemplateModel extends CreateWebClassTemplateMode
     {
         Collection<String> collection = super.getImports();
 
-        collection.add( "org.springframework.stereotype.Controller" ); //$NON-NLS-1$
-        collection.add( "org.springframework.ui.Model" ); //$NON-NLS-1$
-        collection.add( "org.springframework.web.bind.annotation.RequestMapping" ); //$NON-NLS-1$
-        collection.add( "org.springframework.web.portlet.bind.annotation.RenderMapping" ); //$NON-NLS-1$
+        collection.add( "org.springframework.stereotype.Controller" );
+        collection.add( "org.springframework.ui.Model" );
+        collection.add( "org.springframework.web.bind.annotation.RequestMapping" );
+        collection.add( "org.springframework.web.portlet.bind.annotation.RenderMapping" );
 
         return collection;
     }
