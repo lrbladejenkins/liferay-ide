@@ -49,34 +49,11 @@ public class NewSpringPortletClassDataModelProvider extends NewPortletClassDataM
     }
 
     @Override
-    public boolean isPropertyEnabled( String propertyName )
-    {
-        if( INewPortletClassDataModelProperties.CREATE_JSPS.equals( propertyName ) )
-        {
-            return false;
-        }
-        else if( CREATE_JSPS_FOLDER.equals( propertyName ) )
-        {
-            return false;
-        }
-        else if( EDIT_MODE.equals( propertyName ) )
-        {
-            return false;
-        }
-        else if( HELP_MODE.equals( propertyName ) )
-        {
-            return false;
-        }
-
-        return super.isPropertyEnabled( propertyName );
-    }
-
-    @Override
     public Object getDefaultProperty( String propertyName )
     {
         if( CLASS_NAME.equals( propertyName ) )
         {
-            return "NewSpringMVCPortlet"; //$NON-NLS-1$
+            return "NewSpringMVCPortlet";
         }
         else if( DEFAULT_VIEW_CONTROLLER_CLASS.equals( propertyName ) )
         {
@@ -84,7 +61,7 @@ public class NewSpringPortletClassDataModelProvider extends NewPortletClassDataM
         }
         else if( CREATE_JSPS_FOLDER.equals( propertyName ) )
         {
-            return "/WEB-INF/jsp/" + getProperty( PORTLET_NAME ).toString().toLowerCase(); //$NON-NLS-1$
+            return "/WEB-INF/jsp/" + getProperty( PORTLET_NAME ).toString().toLowerCase();
         }
         else if( SHOW_NEW_CLASS_OPTION.equals( propertyName ) )
         {
@@ -128,6 +105,29 @@ public class NewSpringPortletClassDataModelProvider extends NewPortletClassDataM
         propertyNames.add( DEFAULT_VIEW_CONTROLLER_CLASS );
 
         return propertyNames;
+    }
+
+    @Override
+    public boolean isPropertyEnabled( String propertyName )
+    {
+        if( INewPortletClassDataModelProperties.CREATE_JSPS.equals( propertyName ) )
+        {
+            return false;
+        }
+        else if( CREATE_JSPS_FOLDER.equals( propertyName ) )
+        {
+            return false;
+        }
+        else if( EDIT_MODE.equals( propertyName ) )
+        {
+            return false;
+        }
+        else if( HELP_MODE.equals( propertyName ) )
+        {
+            return false;
+        }
+
+        return super.isPropertyEnabled( propertyName );
     }
 
     @Override
