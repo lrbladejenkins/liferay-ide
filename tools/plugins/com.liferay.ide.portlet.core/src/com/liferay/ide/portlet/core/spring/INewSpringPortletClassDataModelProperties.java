@@ -23,10 +23,10 @@ import com.liferay.ide.portlet.core.operation.INewPortletClassDataModelPropertie
 public interface INewSpringPortletClassDataModelProperties extends INewPortletClassDataModelProperties
 {
 
-    String SPRING_VIEW_MODE_TEMPLATE = "com.liferay.ide.templates.portlet.spring.view"; //$NON-NLS-1$
+    String DEFAULT_PORTLET_CONTROLLER_NAME = "PortletViewController"; //$NON-NLS-1$
 
     String DEFAULT_VIEW_CONTROLLER_CLASS = "INewSpringPortletClassDataModelProperties.DEFAULT_VIEW_CONTROLLER_CLASS"; //$NON-NLS-1$
 
-    String DEFAULT_PORTLET_CONTROLLER_NAME = "PortletViewController"; //$NON-NLS-1$
+    String SPRING_VIEW_MODE_TEMPLATE = "com.liferay.ide.templates.portlet.spring.view"; //$NON-NLS-1$
 
 }
