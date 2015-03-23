@@ -32,7 +32,7 @@
                 <!--<module>../velocity</module>-->
                 <module>../mobile</module>
                 <module>../jsdt</module>
-                <module>../bndtools</module>
+                <module>../gradle</module>
                 <module>releng</module>
             </modules>
         </profile>

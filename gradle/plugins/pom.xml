@@ -35,5 +35,6 @@
 
     <modules>
         <module>com.liferay.ide.gradle.core</module>
+        <module>com.liferay.ide.gradle.ui</module>
     </modules>
 </project>

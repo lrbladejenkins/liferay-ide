@@ -13,7 +13,7 @@
  *
  *******************************************************************************/
 
-package com.liferay.ide.maven.ui;
+package com.liferay.ide.gradle.ui;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
@@ -23,21 +23,21 @@ import org.osgi.framework.BundleContext;
 /**
  * @author Gregory Amerson
  */
-public class LiferayMavenUI extends Plugin
+public class LRGradleUI extends Plugin
 {
 
     // The plug-in ID
-    public static final String PLUGIN_ID = "com.liferay.ide.maven.ui"; //$NON-NLS-1$
+    public static final String PLUGIN_ID = "com.liferay.ide.gradle.ui"; //$NON-NLS-1$
 
     // The shared instance
-    private static LiferayMavenUI plugin;
+    private static LRGradleUI plugin;
 
     /**
      * Returns the shared instance
      *
      * @return the shared instance
      */
-    public static LiferayMavenUI getDefault()
+    public static LRGradleUI getDefault()
     {
         return plugin;
     }
@@ -55,7 +55,7 @@ public class LiferayMavenUI extends Plugin
     /**
      * The constructor
      */
-    public LiferayMavenUI()
+    public LRGradleUI()
     {
     }
 

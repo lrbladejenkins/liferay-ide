@@ -20,15 +20,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.liferay.ide.maven.plugins</groupId>
-        <artifactId>maven-plugins</artifactId>
+        <groupId>com.liferay.ide.gradle.plugins</groupId>
+        <artifactId>gradle-plugins</artifactId>
         <version>3.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>com.liferay.ide.maven.branding</artifactId>
+    <artifactId>com.liferay.ide.gradle.ui</artifactId>
     <packaging>eclipse-plugin</packaging>
 
-    <name>m2e-liferay Branding</name>
+    <name>Liferay IDE Gradle UI</name>
 
     <build>
         <plugins>

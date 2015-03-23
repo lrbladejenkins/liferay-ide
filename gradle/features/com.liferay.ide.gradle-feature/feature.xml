@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="com.liferay.ide.maven"
-      label="m2e-liferay - Maven Integration for Liferay IDE"
+      id="com.liferay.ide.gradle"
+      label="Gradle IDE integration for Liferay IDE"
       version="3.0.0.qualifier"
       provider-name="Liferay, Inc."
-      plugin="com.liferay.ide.maven.ui">
+      plugin="com.liferay.ide.gradle.ui">
 
    <description url="http://www.liferay.com/community/liferay-projects/liferay-ide/overview">
-      Maven integration for Liferay IDE. Extends m2e-core and m2e-wtp plugins to support Liferay IDE development
-            and also provide lifecycle metadata mapping for liferay-maven-plugin executions.
+      Gradle IDE integration for Liferay IDE. 
    </description>
 
    <copyright url="http://www.liferay.com/products/liferay-portal/lgpl">
@@ -33,21 +32,19 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.m2e.wtp.feature" version="1.2.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.m2e.wtp.jsf.feature" version="1.2.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.m2e.feature" version="1.6.0" match="greaterOrEqual"/>
+      <import feature="org.springsource.ide.eclipse.gradle.feature" version="3.6.0" match="greaterOrEqual"/>
       <import feature="com.liferay.ide.eclipse.tools" version="3.0.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
-         id="com.liferay.ide.maven.core"
+         id="com.liferay.ide.gradle.core"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
-    <plugin
-         id="com.liferay.ide.maven.ui"
+   <plugin
+         id="com.liferay.ide.gradle.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
