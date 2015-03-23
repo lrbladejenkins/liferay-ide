@@ -15,21 +15,31 @@
 package com.liferay.ide.gradle.core;
 
 import com.liferay.ide.core.BaseLiferayProject;
+import com.liferay.ide.core.IBundleProject;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 
 /**
  * @author Gregory Amerson
  */
-public class GradleBndPluginProject extends BaseLiferayProject
+public class GradleBndPluginProject extends BaseLiferayProject implements IBundleProject
 {
 
     public GradleBndPluginProject( IProject project )
     {
         super( project );
+    }
+
+    @Override
+    public boolean filterResource( IPath moduleRelativePath )
+    {
+        // TODO Auto-generated method stub
+        return false;
     }
 
     @Override
@@ -47,7 +57,21 @@ public class GradleBndPluginProject extends BaseLiferayProject
     }
 
     @Override
+    public IPath getOutputJar( boolean buildIfNeeded, IProgressMonitor monitor ) throws CoreException
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
     public String getProperty( String key, String defaultValue )
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getSymbolicName() throws CoreException
     {
         // TODO Auto-generated method stub
         return null;

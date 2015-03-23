@@ -18,27 +18,25 @@ package com.liferay.ide.gradle.core;
 import com.liferay.ide.core.AbstractLiferayProjectProvider;
 import com.liferay.ide.core.ILiferayProject;
 import com.liferay.ide.core.ILiferayProjectProvider;
+import com.liferay.ide.gradle.toolingapi.custom.CustomModel;
 
-import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.gradle.tooling.model.DomainObjectSet;
-import org.gradle.tooling.model.eclipse.EclipseProject;
-import org.gradle.tooling.model.eclipse.EclipseProjectDependency;
-import org.springsource.ide.eclipse.gradle.core.ClassPath;
 import org.springsource.ide.eclipse.gradle.core.GradleCore;
 import org.springsource.ide.eclipse.gradle.core.GradleNature;
 import org.springsource.ide.eclipse.gradle.core.GradleProject;
-import org.springsource.ide.eclipse.gradle.core.classpathcontainer.FastOperationFailedException;
+import org.springsource.ide.eclipse.gradle.core.modelmanager.IGradleModelListener;
 
 
 /**
  * @author Gregory Amerson
  */
-public class GradleProjectProvider extends AbstractLiferayProjectProvider implements ILiferayProjectProvider
+public class GradleProjectProvider extends AbstractLiferayProjectProvider implements ILiferayProjectProvider, IGradleModelListener
 {
+
+    private final Map<GradleProject, String> projectToPluginMap = new WeakHashMap<GradleProject, String>();
 
     public GradleProjectProvider()
     {
@@ -46,7 +44,7 @@ public class GradleProjectProvider extends AbstractLiferayProjectProvider implem
     }
 
     @Override
-    public ILiferayProject provide( Object adaptable )
+    public synchronized ILiferayProject provide( Object adaptable )
     {
         ILiferayProject retval = null;
 
@@ -58,7 +56,7 @@ public class GradleProjectProvider extends AbstractLiferayProjectProvider implem
             {
                 final GradleProject gradleProject = GradleCore.create( project );
 
-                if( hasGradleBundlePlugin( gradleProject ) )
+                if( hasPlugin( gradleProject, "org.dm.gradle.plugins.bundle.BundlePlugin" ) )
                 {
                     return new GradleBundlePluginProject( project );
                 }
@@ -74,35 +72,38 @@ public class GradleProjectProvider extends AbstractLiferayProjectProvider implem
 
     private boolean hasGradleBndPlugin( GradleProject gradleProject )
     {
-
-
         return false;
     }
 
-    private boolean hasGradleBundlePlugin( GradleProject gradleProject )
+    private boolean hasPlugin( GradleProject gradleProject, String pluginClass )
     {
-        try
-        {
-            ClassPath cp = gradleProject.getClassPath();
-            for( IClasspathEntry cpe : cp.getLibraryEntries() )
-            {
-                System.out.println(cpe);
-            }
-            EclipseProject eclipseProject = gradleProject.requestGradleModel();
-            DomainObjectSet<? extends EclipseProjectDependency> projectDeps = eclipseProject.getProjectDependencies();
-            List<? extends EclipseProjectDependency> allDeps = projectDeps.getAll();
+        boolean retval = false;
 
-            for( EclipseProjectDependency dep : allDeps )
+        final String pluginId = this.projectToPluginMap.get( gradleProject );
+
+        if( pluginId != null )
+        {
+            retval = pluginClass.equals( pluginId );
+        }
+        else
+        {
+            final CustomModel model = LRGradleCore.getToolingModel( CustomModel.class, gradleProject );
+
+            if( model != null )
             {
-                System.out.println(dep);
+                retval = model.hasPlugin( pluginClass );
+                this.projectToPluginMap.put( gradleProject, pluginClass );
+                gradleProject.addModelListener( this );
             }
         }
-        catch( FastOperationFailedException | CoreException e )
-        {
-            e.printStackTrace();
-        }
 
-        return false;
+        return retval;
+    }
+
+    @Override
+    public synchronized <T> void modelChanged( GradleProject project, Class<T> type, T model )
+    {
+        this.projectToPluginMap.remove( project );
     }
 
 }
