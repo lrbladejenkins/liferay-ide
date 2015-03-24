@@ -20,6 +20,7 @@ import com.liferay.ide.core.ILiferayProject;
 import com.liferay.ide.core.ILiferayProjectProvider;
 import com.liferay.ide.gradle.toolingapi.custom.CustomModel;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -36,11 +37,66 @@ import org.springsource.ide.eclipse.gradle.core.modelmanager.IGradleModelListene
 public class GradleProjectProvider extends AbstractLiferayProjectProvider implements ILiferayProjectProvider, IGradleModelListener
 {
 
-    private final Map<GradleProject, String> projectToPluginMap = new WeakHashMap<GradleProject, String>();
+    private final Map<GradleProject, Map<String, Boolean>> projectPluginsMap =
+        new WeakHashMap<GradleProject, Map<String, Boolean>>();
 
     public GradleProjectProvider()
     {
         super( new Class<?>[] { IProject.class } );
+    }
+
+    private Boolean checkModel( GradleProject gradleProject, String pluginClass )
+    {
+        final CustomModel model = LRGradleCore.getToolingModel( CustomModel.class, gradleProject );
+
+        return model != null && model.hasPlugin( pluginClass );
+    }
+
+    private boolean hasGradleBndPlugin( GradleProject gradleProject )
+    {
+        return false;
+    }
+
+    private boolean hasPlugin( GradleProject gradleProject, String pluginClass )
+    {
+        Boolean retval = null;
+
+        final Map<String, Boolean> projectPlugins = this.projectPluginsMap.get( gradleProject );
+
+        if( projectPlugins != null )
+        {
+            System.out.println("projectPlugins>>>>>>>>>>>>>>>>HIT");
+            if( projectPlugins.containsKey( pluginClass ) )
+            {
+                System.out.println("pluginClass>>>>>>>>>>>>>>>>HIT");
+                retval = projectPlugins.get( pluginClass );
+            }
+            else
+            {
+                System.out.println("pluginClass>>>>>>>>>>>>>>>>MISS");
+                retval = checkModel( gradleProject, pluginClass );
+                projectPlugins.put( pluginClass, retval );
+            }
+        }
+        else
+        {
+            System.out.println("projectPlugins>>>>>>>>>>>>>>>>MISS");
+            retval = checkModel( gradleProject, pluginClass );
+
+            final Map<String, Boolean> plugins = new HashMap<String, Boolean>();
+            plugins.put( pluginClass, retval );
+            this.projectPluginsMap.put( gradleProject, plugins );
+
+            gradleProject.addModelListener( this );
+        }
+
+        return retval == null ? false : retval;
+    }
+
+    @Override
+    public synchronized <T> void modelChanged( GradleProject project, Class<T> type, T model )
+    {
+        this.projectPluginsMap.remove( project );
     }
 
     @Override
@@ -68,42 +124,6 @@ public class GradleProjectProvider extends AbstractLiferayProjectProvider implem
         }
 
         return retval;
-    }
-
-    private boolean hasGradleBndPlugin( GradleProject gradleProject )
-    {
-        return false;
-    }
-
-    private boolean hasPlugin( GradleProject gradleProject, String pluginClass )
-    {
-        boolean retval = false;
-
-        final String pluginId = this.projectToPluginMap.get( gradleProject );
-
-        if( pluginId != null )
-        {
-            retval = pluginClass.equals( pluginId );
-        }
-        else
-        {
-            final CustomModel model = LRGradleCore.getToolingModel( CustomModel.class, gradleProject );
-
-            if( model != null )
-            {
-                retval = model.hasPlugin( pluginClass );
-                this.projectToPluginMap.put( gradleProject, pluginClass );
-                gradleProject.addModelListener( this );
-            }
-        }
-
-        return retval;
-    }
-
-    @Override
-    public synchronized <T> void modelChanged( GradleProject project, Class<T> type, T model )
-    {
-        this.projectToPluginMap.remove( project );
     }
 
 }

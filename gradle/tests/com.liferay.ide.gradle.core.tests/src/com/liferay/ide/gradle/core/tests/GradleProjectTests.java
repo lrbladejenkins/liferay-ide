@@ -18,31 +18,40 @@ package com.liferay.ide.gradle.core.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import com.liferay.ide.core.IBundleProject;
 import com.liferay.ide.core.LiferayCore;
 import com.liferay.ide.core.tests.TestUtil;
+import com.liferay.ide.core.util.CoreUtil;
 import com.liferay.ide.gradle.core.GradleBundlePluginProject;
 import com.liferay.ide.gradle.core.LRGradleCore;
 import com.liferay.ide.gradle.toolingapi.custom.CustomModel;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IConsole;
+import org.eclipse.ui.console.IConsoleListener;
 import org.gradle.tooling.model.eclipse.HierarchicalEclipseProject;
 import org.junit.Test;
 import org.springsource.ide.eclipse.gradle.core.GradleCore;
 import org.springsource.ide.eclipse.gradle.core.GradleNature;
 import org.springsource.ide.eclipse.gradle.core.GradleProject;
+import org.springsource.ide.eclipse.gradle.core.modelmanager.IGradleModelListener;
 import org.springsource.ide.eclipse.gradle.core.util.NatureUtils;
 import org.springsource.ide.eclipse.gradle.core.wizards.FlatPrecomputedProjectMapper;
 import org.springsource.ide.eclipse.gradle.core.wizards.GradleImportOperation;
@@ -90,6 +99,99 @@ public class GradleProjectTests
         TestUtil.copyDir( src, dst );
 
         return GradleCore.create( dst );
+    }
+
+    @Test
+    public void gradleProjectProviderCache() throws Exception
+    {
+        final int[] consolesAdded = new int[1];
+
+        IConsoleListener consoleListener = new IConsoleListener()
+        {
+            @Override
+            public void consolesRemoved( IConsole[] consoles )
+            {
+            }
+
+            @Override
+            public void consolesAdded( IConsole[] consoles )
+            {
+                consolesAdded[0]++;
+            }
+        };
+
+        ConsolePlugin.getDefault().getConsoleManager().addConsoleListener( consoleListener );;
+
+        GradleProject gradleProject = fullImportGradleProject( "projects/cacheTest" );
+
+        assertNotNull( gradleProject );
+
+        IBundleProject bundleProject = LiferayCore.create( IBundleProject.class, gradleProject.getProject() );
+
+        assertNotNull( bundleProject );
+
+        assertEquals( GradleBundlePluginProject.class, bundleProject.getClass() );
+
+        assertEquals( 1, consolesAdded[0] );
+
+        bundleProject = LiferayCore.create( IBundleProject.class, gradleProject.getProject() );
+
+        assertNotNull( bundleProject );
+
+        assertEquals( GradleBundlePluginProject.class, bundleProject.getClass() );
+
+        assertEquals( 1, consolesAdded[0] );
+
+        IFile buildFile = gradleProject.getProject().getFile( "build.gradle" );
+        String buildFileContents = CoreUtil.readStreamToString( buildFile.getContents( true ), true );
+        String updatedContents = buildFileContents.replaceAll( "apply plugin: 'org.dm.bundle'", "" );
+
+        buildFile.setContents(
+            new ByteArrayInputStream( updatedContents.getBytes() ), IResource.FORCE, new NullProgressMonitor() );
+
+        final Object lock = new Object();
+
+        IGradleModelListener gradleModelListener = new IGradleModelListener()
+        {
+            @Override
+            public <T> void modelChanged( GradleProject project, Class<T> type, T model )
+            {
+                synchronized( lock )
+                {
+                    lock.notify();
+                }
+            }
+        };
+
+        gradleProject.addModelListener( gradleModelListener );
+        gradleProject.requestGradleModelRefresh();
+
+        synchronized( lock )
+        {
+            lock.wait();
+        }
+
+        bundleProject = LiferayCore.create( IBundleProject.class, gradleProject.getProject() );
+
+        assertNull( bundleProject );
+
+        assertEquals( 2, consolesAdded[0] );
+
+        buildFile.setContents(
+            new ByteArrayInputStream( buildFileContents.getBytes() ), IResource.FORCE, new NullProgressMonitor() );
+
+        gradleProject.requestGradleModelRefresh();
+
+        synchronized( lock )
+        {
+            lock.wait();
+        }
+
+        bundleProject = LiferayCore.create( IBundleProject.class, gradleProject.getProject() );
+
+        assertNotNull( bundleProject );
+
+        assertEquals( 3, consolesAdded[0] );
     }
 
     @Test
