@@ -28,6 +28,6 @@
     <artifactId>com.liferay.ide.maven</artifactId>
     <packaging>eclipse-feature</packaging>
 
-    <name>m2e-liferay Feature</name>
+    <name>Liferay IDE Maven Feature</name>
 
 </project>

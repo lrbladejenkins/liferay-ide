@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="com.liferay.ide.gradle"
-      label="Gradle IDE integration for Liferay IDE"
+      label="Liferay IDE Gradle Support (includes Gradle IDE plugins)"
       version="3.0.0.qualifier"
       provider-name="Liferay, Inc."
       plugin="com.liferay.ide.gradle.ui">
 
    <description url="http://www.liferay.com/community/liferay-projects/liferay-ide/overview">
-      Gradle IDE integration for Liferay IDE. 
+      Gradle IDE integration for Liferay IDE.
    </description>
 
    <copyright url="http://www.liferay.com/products/liferay-portal/lgpl">
@@ -32,7 +32,7 @@
    </license>
 
    <requires>
-      <import feature="org.springsource.ide.eclipse.gradle.feature" version="3.6.0" match="greaterOrEqual"/>
+      <import feature="org.springsource.ide.eclipse.gradle.feature" version="3.7.0" match="greaterOrEqual"/>
       <import feature="com.liferay.ide.eclipse.tools" version="3.0.0" match="greaterOrEqual"/>
    </requires>
 

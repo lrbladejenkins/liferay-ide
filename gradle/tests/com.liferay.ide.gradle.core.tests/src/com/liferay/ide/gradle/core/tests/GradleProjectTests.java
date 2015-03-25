@@ -40,6 +40,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.JavaCore;
@@ -99,6 +100,60 @@ public class GradleProjectTests
         TestUtil.copyDir( src, dst );
 
         return GradleCore.create( dst );
+    }
+
+    @Test
+    public void getSymbolicName() throws Exception
+    {
+        GradleProject gradleProject = fullImportGradleProject( "projects/getSymbolicName" );
+
+        assertNotNull( gradleProject );
+
+        IBundleProject bundleProject = LiferayCore.create( IBundleProject.class, gradleProject.getProject() );
+
+        assertNotNull( bundleProject );
+
+        NullProgressMonitor monitor = new NullProgressMonitor();
+
+        IPath outputJar = bundleProject.getOutputJar( false, monitor );
+
+        if( outputJar != null && outputJar.toFile().exists() )
+        {
+            outputJar = bundleProject.getOutputJar( true, monitor );
+        }
+
+        assertTrue( outputJar.toFile().exists() );
+
+        assertEquals( "com.liferay.test.bsn", bundleProject.getSymbolicName() );
+    }
+
+    @Test
+    public void getOutputJar() throws Exception
+    {
+        GradleProject gradleProject = fullImportGradleProject( "projects/getOutputJar" );
+
+        assertNotNull( gradleProject );
+
+        IBundleProject bundleProject = LiferayCore.create( IBundleProject.class, gradleProject.getProject() );
+
+        assertNotNull( bundleProject );
+
+        NullProgressMonitor monitor = new NullProgressMonitor();
+
+        IPath outputJar = bundleProject.getOutputJar( false, monitor );
+
+        if( outputJar != null && outputJar.toFile().exists() )
+        {
+            outputJar.toFile().delete();
+        }
+
+        assertTrue( !outputJar.toFile().exists() );
+
+        outputJar = bundleProject.getOutputJar( true, monitor );
+
+        assertNotNull( outputJar );
+
+        assertTrue( outputJar.toFile().exists() );
     }
 
     @Test

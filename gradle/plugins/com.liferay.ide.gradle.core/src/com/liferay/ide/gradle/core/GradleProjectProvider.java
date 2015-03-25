@@ -65,22 +65,18 @@ public class GradleProjectProvider extends AbstractLiferayProjectProvider implem
 
         if( projectPlugins != null )
         {
-            System.out.println("projectPlugins>>>>>>>>>>>>>>>>HIT");
             if( projectPlugins.containsKey( pluginClass ) )
             {
-                System.out.println("pluginClass>>>>>>>>>>>>>>>>HIT");
                 retval = projectPlugins.get( pluginClass );
             }
             else
             {
-                System.out.println("pluginClass>>>>>>>>>>>>>>>>MISS");
                 retval = checkModel( gradleProject, pluginClass );
                 projectPlugins.put( pluginClass, retval );
             }
         }
         else
         {
-            System.out.println("projectPlugins>>>>>>>>>>>>>>>>MISS");
             retval = checkModel( gradleProject, pluginClass );
 
             final Map<String, Boolean> plugins = new HashMap<String, Boolean>();

@@ -28,6 +28,6 @@
     <artifactId>com.liferay.ide.gradle</artifactId>
     <packaging>eclipse-feature</packaging>
 
-    <name>Gradle IDE Liferay Feature</name>
+    <name>Liferay IDE Gradle Feature</name>
 
 </project>

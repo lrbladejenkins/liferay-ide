@@ -1,10 +1,14 @@
 package com.liferay.ide.gradle.toolingapi.custom;
 
+import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.inject.Inject;
-import java.util.List;
-import java.util.ArrayList;
+
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.Task;
 import org.gradle.tooling.provider.model.ToolingModelBuilder;
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry;
 
@@ -31,13 +35,20 @@ public class CustomModelPlugin implements Plugin<Project> {
 
         @Override
         public Object buildAll(String modelName, Project project) {
-            List<String> pluginClassNames = new ArrayList<String>();
+            Set<String> pluginClassNames = new HashSet<String>();
 
             for(Plugin plugin : project.getPlugins()) {
                 pluginClassNames.add(plugin.getClass().getName());
             }
 
-            return new DefaultModel(pluginClassNames);
+            Set<Task> jarTasks = project.getTasksByName( "jar", true );
+            Set<File> outputFiles = new HashSet<File>();
+
+            for(Task jarTask : jarTasks) {
+                outputFiles.addAll( jarTask.getOutputs().getFiles().getFiles() );
+            }
+
+            return new DefaultModel(pluginClassNames, outputFiles);
         }
     }
 }

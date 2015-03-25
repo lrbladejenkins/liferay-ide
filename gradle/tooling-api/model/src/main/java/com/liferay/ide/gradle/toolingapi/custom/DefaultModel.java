@@ -1,7 +1,8 @@
 package com.liferay.ide.gradle.toolingapi.custom;
 
+import java.io.File;
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 /**
  * @author Gregory Amerson
@@ -9,13 +10,19 @@ import java.util.List;
 @SuppressWarnings("serial")
 public class DefaultModel implements Serializable {
 
-    private final List<String> pluginClassNames;
+    private final Set<String> pluginClassNames;
+    private final Set<File> outputFiles;
 
-    public DefaultModel(List<String> pluginClassNames) {
+    public DefaultModel(Set<String> pluginClassNames, Set<File> outputFiles) {
         this.pluginClassNames = pluginClassNames;
+        this.outputFiles = outputFiles;
     }
 
     public boolean hasPlugin(String pluginClassName) {
-    	return pluginClassNames.contains(pluginClassName);
+        return pluginClassNames.contains(pluginClassName);
+    }
+
+    public Set<File> getOutputFiles() {
+        return this.outputFiles;
     }
 }
