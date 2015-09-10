@@ -12,22 +12,28 @@
  * details.
  *
  *******************************************************************************/
-
 package com.liferay.ide.project.ui.migration;
 
-import org.eclipse.jface.viewers.DecoratingLabelProvider;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-/**
- * @author Gregory Amerson
- */
-public class MigrationLabelProvider extends DecoratingLabelProvider
+import org.eclipse.jface.viewers.BaseLabelProvider;
+import org.eclipse.jface.viewers.IDecoration;
+import org.eclipse.jface.viewers.ILightweightLabelDecorator;
+
+
+public class MigrationDecorator extends BaseLabelProvider implements ILightweightLabelDecorator
 {
 
-    public MigrationLabelProvider()
+    @Override
+    public void decorate( Object element, IDecoration decoration )
     {
-        super( new WorkbenchLabelProvider(), PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator() );
+        if( element instanceof MigrationTask )
+        {
+            final MigrationTask task = (MigrationTask) element;
+
+            decoration.addSuffix( " [" + new SimpleDateFormat().format( new Date( task.getTimestamp() ) ) + "]" );
+        }
     }
 
 }
