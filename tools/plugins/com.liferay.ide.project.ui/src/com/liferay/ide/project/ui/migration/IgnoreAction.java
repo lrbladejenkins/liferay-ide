@@ -14,29 +14,17 @@
  *******************************************************************************/
 package com.liferay.ide.project.ui.migration;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import org.eclipse.jface.viewers.BaseLabelProvider;
-import org.eclipse.jface.viewers.IDecoration;
-import org.eclipse.jface.viewers.ILightweightLabelDecorator;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.ui.actions.SelectionProviderAction;
 
 
-/**
- * @author Gregory Amerson
- */
-public class MigrationDecorator extends BaseLabelProvider implements ILightweightLabelDecorator
+public class IgnoreAction extends SelectionProviderAction implements IAction
 {
 
-    @Override
-    public void decorate( Object element, IDecoration decoration )
+    protected IgnoreAction( ISelectionProvider provider, String text )
     {
-        if( element instanceof MigrationTask )
-        {
-            final MigrationTask task = (MigrationTask) element;
-
-            decoration.addSuffix( " [" + new SimpleDateFormat().format( new Date( task.getTimestamp() ) ) + "]" );
-        }
+        super( provider, text );
     }
 
 }

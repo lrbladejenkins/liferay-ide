@@ -59,7 +59,7 @@ import org.osgi.framework.BundleContext;
 public class ProjectUI extends AbstractUIPlugin
 {
 
-    private static final String MIGRATION_TASKS_ROOT = "MigrationTasks";
+    private static final String MIGRATION_ROOT = "Migration";
 
     // Shared images
     public static final String IMAGE_ID = "war.image"; //$NON-NLS-1$
@@ -207,7 +207,7 @@ public class ProjectUI extends AbstractUIPlugin
             {
                 _migrationFile.createNewFile();
 
-                memento = XMLMemento.createWriteRoot( MIGRATION_TASKS_ROOT );
+                memento = XMLMemento.createWriteRoot( MIGRATION_ROOT );
             }
             catch( IOException e )
             {

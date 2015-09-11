@@ -67,6 +67,7 @@ public class IDEReporter implements Reporter
                 marker.setAttribute( IMarker.CHAR_END, problem.endOffset );
                 marker.setAttribute( "summary", problem.summary );
                 marker.setAttribute( "ticket", problem.ticket );
+                marker.setAttribute( "problem", problem );
             }
             catch( CoreException e )
             {

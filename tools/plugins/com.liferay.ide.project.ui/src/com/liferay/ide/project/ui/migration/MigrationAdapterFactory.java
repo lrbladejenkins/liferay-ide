@@ -50,14 +50,15 @@ public class MigrationAdapterFactory implements IAdapterFactory, IWorkbenchAdapt
     @Override
     public ImageDescriptor getImageDescriptor( Object element )
     {
-
         if( element instanceof MigrationTask )
         {
-            return ImageDescriptor.createFromImage( PlatformUI.getWorkbench().getSharedImages().getImage( ISharedImages.IMG_OBJ_FOLDER ) );
+            return ImageDescriptor.createFromImage( PlatformUI.getWorkbench().getSharedImages().getImage(
+                ISharedImages.IMG_OBJ_FOLDER ) );
         }
         else if( element instanceof MXMNode )
         {
-            return ImageDescriptor.createFromImage( PlatformUI.getWorkbench().getSharedImages().getImage( ISharedImages.IMG_OBJ_FOLDER ) );
+            return ImageDescriptor.createFromImage( PlatformUI.getWorkbench().getSharedImages().getImage(
+                ISharedImages.IMG_OBJ_FOLDER ) );
         }
 
         return null;

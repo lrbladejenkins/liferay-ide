@@ -1109,7 +1109,7 @@
             point="org.eclipse.ui.views">
         <view
             allowMultiple="false"
-            class="com.liferay.ide.project.ui.migration.MigrationView2"
+            class="com.liferay.ide.project.ui.migration.MigrationView"
             icon="icons/e16/liferay.png"
             id="com.liferay.ide.project.ui.migrationView"
             name="Liferay Plugin Migration"
@@ -1203,6 +1203,11 @@
                </instanceof>
             </or>
          </possibleChildren>
+         <actionProvider
+               class="com.liferay.ide.project.ui.migration.MigrationActionProvider"
+               id="com.liferay.ide.project.ui.migration.MigrationActionProvider"
+               priority="highest">
+         </actionProvider>
       </navigatorContent>
    </extension>
    <extension

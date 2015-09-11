@@ -37,11 +37,60 @@ public class MigrationContentProvider implements ITreeContentProvider
 
     MigrationTask[] _tasks;
     Map<MigrationTask, MXMTree> _fileTrees;
-    Map<IFile, List<Problem>> _problemsMap;
+    Map<ProblemKey, List<Problem>> _problemsMap;
 
     @Override
     public void dispose()
     {
+    }
+
+    public static class ProblemKey
+    {
+        MigrationTask _task;
+        IFile _file;
+
+        public ProblemKey( MigrationTask task, IFile file )
+        {
+            _task = task;
+            _file = file;
+        }
+
+        @Override
+        public int hashCode()
+        {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ( ( _file == null ) ? 0 : _file.hashCode() );
+            result = prime * result + ( ( _task == null ) ? 0 : _task.hashCode() );
+            return result;
+        }
+
+        @Override
+        public boolean equals( Object obj )
+        {
+            if( this == obj )
+                return true;
+            if( obj == null )
+                return false;
+            if( getClass() != obj.getClass() )
+                return false;
+            ProblemKey other = (ProblemKey) obj;
+            if( _file == null )
+            {
+                if( other._file != null )
+                    return false;
+            }
+            else if( !_file.equals( other._file ) )
+                return false;
+            if( _task == null )
+            {
+                if( other._task != null )
+                    return false;
+            }
+            else if( !_task.equals( other._task ) )
+                return false;
+            return true;
+        }
     }
 
     @Override
@@ -77,12 +126,13 @@ public class MigrationContentProvider implements ITreeContentProvider
 
                 for( IFile file : files )
                 {
-                    List<Problem> fileProblems = _problemsMap.get( file );
+                    final ProblemKey key = new ProblemKey( task, file );
+                    List<Problem> fileProblems = _problemsMap.get( key );
 
                     if( fileProblems == null )
                     {
                         fileProblems = new ArrayList<>();
-                        _problemsMap.put( file, fileProblems );
+                        _problemsMap.put( key, fileProblems );
 
                         tree.addElement( file.getFullPath().toPortableString() );
                     }
@@ -149,6 +199,10 @@ public class MigrationContentProvider implements ITreeContentProvider
             final TaskProblem problem = (TaskProblem) element;
 
             return problem.getParent();
+        }
+        else if( element instanceof IFile )
+        {
+
         }
 
         return null;

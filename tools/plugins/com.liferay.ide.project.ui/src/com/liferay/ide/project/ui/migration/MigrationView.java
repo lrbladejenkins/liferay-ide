@@ -12,54 +12,44 @@
  * details.
  *
  *******************************************************************************/
-
 package com.liferay.ide.project.ui.migration;
 
-import blade.migrate.api.MigrationListener;
 import blade.migrate.api.Problem;
 
 import com.liferay.ide.project.ui.ProjectUI;
+import com.liferay.ide.project.ui.migration.MigrationContentProvider.ProblemKey;
 
-import java.util.Dictionary;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.IOpenListener;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.OpenEvent;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.navigator.CommonNavigator;
+import org.eclipse.ui.navigator.INavigatorContentExtension;
 import org.eclipse.ui.texteditor.ITextEditor;
-import org.osgi.framework.ServiceRegistration;
+
 
 /**
  * @author Gregory Amerson
  */
-public class MigrationView extends ViewPart implements MigrationListener
+public class MigrationView extends CommonNavigator implements IDoubleClickListener
 {
-    private TreeViewer _viewer;
-    private List<MigrationTask> _tasks;
-    private ServiceRegistration<MigrationListener> _listenerRef;
+
     private FormText _form;
 
     @Override
@@ -67,52 +57,11 @@ public class MigrationView extends ViewPart implements MigrationListener
     {
         SashForm viewParent = new SashForm( parent, SWT.HORIZONTAL );
 
-        _viewer = new TreeViewer( viewParent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL );
-        _viewer.setContentProvider( new MigrationContentProvider() );
-        _viewer.setLabelProvider( new MigrationLabelProvider() );
-        _viewer.setInput( _tasks.toArray( new MigrationTask[0] ) );
-        _viewer.addOpenListener( new IOpenListener()
-        {
-            @Override
-            public void open( OpenEvent event )
-            {
-                TaskProblem taskProblem = getTaskProblemFromSelection( event.getSelection() );
-
-                if( taskProblem != null )
-                {
-                    try
-                    {
-                        IEditorPart editor = IDE.openEditor( getSite().getPage(), getIFileFromTaskProblem( taskProblem ) );
-
-                        if( editor instanceof ITextEditor )
-                        {
-                            ITextEditor textEditor = (ITextEditor) editor;
-                            textEditor.selectAndReveal( taskProblem.startOffset, taskProblem.endOffset - taskProblem.startOffset );
-                        }
-                    }
-                    catch( PartInitException e )
-                    {
-                    }
-                }
-            }
-        });
-
-        MenuManager menuMgr = new MenuManager();
-        menuMgr.setRemoveAllWhenShown( true );
-        menuMgr.addMenuListener( new IMenuListener()
-        {
-            public void menuAboutToShow( IMenuManager manager )
-            {
-                MigrationView.this.fillContextMenu( manager );
-            }
-        });
-        Menu menu = menuMgr.createContextMenu( _viewer.getControl() );
-        _viewer.getControl().setMenu( menu );
-        getSite().registerContextMenu( menuMgr, _viewer );
+        super.createPartControl( viewParent );
 
         _form = new FormText( viewParent, SWT.NONE );
 
-        _viewer.addSelectionChangedListener( new ISelectionChangedListener()
+        getCommonViewer().addSelectionChangedListener( new ISelectionChangedListener()
         {
             @Override
             public void selectionChanged( SelectionChangedEvent event )
@@ -120,23 +69,8 @@ public class MigrationView extends ViewPart implements MigrationListener
                 updateForm( event );
             }
         });
-    }
 
-    protected void fillContextMenu( IMenuManager manager )
-    {
-        manager.add( new OpenAction( _viewer, "Open" ) );
-        manager.add( new OpenAction( _viewer, "Auto-migrate" ) );
-        manager.add( new Separator() );
-        manager.add( new OpenAction( _viewer, "Mark done" ) );
-        manager.add( new OpenAction( _viewer, "Mark undone" ) );
-        manager.add( new OpenAction( _viewer, "Ignore" ) );
-        manager.add( new Separator() );
-        manager.add( new OpenAction( _viewer, "Remove from task" ) );
-    }
-
-    protected IFile getIFileFromTaskProblem( TaskProblem taskProblem )
-    {
-        return ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI( taskProblem.file.toURI() )[0];
+        getCommonViewer().addDoubleClickListener( this );
     }
 
     private void updateForm( SelectionChangedEvent event )
@@ -149,7 +83,66 @@ public class MigrationView extends ViewPart implements MigrationListener
         {
             _form.setText( generateFormText( taskProblem ), true, false );
         }
+        else
+        {
+            _form.setText( "", false, false );
+        }
     }
+
+    private TaskProblem getTaskProblemFromSelection( ISelection selection )
+    {
+        if( selection instanceof IStructuredSelection )
+        {
+            final IStructuredSelection ss = (IStructuredSelection) selection;
+
+            Object element = ss.getFirstElement();
+
+            if( element instanceof IFile )
+            {
+                Set<?> exts = getCommonViewer().getNavigatorContentService().findRootContentExtensions( this );
+
+                if( exts != null && exts.size() > 0 )
+                {
+                    INavigatorContentExtension ext = (INavigatorContentExtension) exts.iterator().next();
+
+                    ITreeContentProvider provider = ext.getContentProvider();
+
+                    if( provider instanceof MigrationContentProvider )
+                    {
+                        MigrationContentProvider migrationProvider = (MigrationContentProvider) provider;
+
+                        Object parent = provider.getParent( element );
+
+                        while( parent != null && (! ( parent instanceof MigrationTask ) ) )
+                        {
+                            parent = provider.getParent( parent );
+                        }
+
+                        if( parent instanceof MigrationTask )
+                        {
+                            MigrationTask task = (MigrationTask) parent;
+
+                            ProblemKey key = new ProblemKey( task, (IFile) element );
+
+                            List<Problem> problems = migrationProvider._problemsMap.get( key );
+
+                            return (TaskProblem) problems.get( 0 );
+                        }
+
+
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private IFile getIFileFromTaskProblem( TaskProblem taskProblem )
+    {
+        return ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI( taskProblem.file.toURI() )[0];
+    }
+
 
     private String generateFormText( TaskProblem taskProblem )
     {
@@ -180,66 +173,45 @@ public class MigrationView extends ViewPart implements MigrationListener
         return sb.toString();
     }
 
-    private TaskProblem getTaskProblemFromSelection( ISelection selection )
+
+    protected Object getInitialInput()
     {
-        if( selection instanceof IStructuredSelection )
-        {
-            final IStructuredSelection ss = (IStructuredSelection) selection;
-
-            Object element = ss.getFirstElement();
-
-            if( element instanceof TaskProblem )
-            {
-                return (TaskProblem) element;
-            }
-        }
-
-        return null;
-    }
-
-    @Override
-    public void init( IViewSite site, IMemento memento ) throws PartInitException
-    {
-        super.init( site, memento );
-
         try
         {
-            _tasks = ProjectUI.getDefault().getMigrationTasks( false );
+            return ProjectUI.getDefault().getMigrationTasks( false );
         }
         catch( CoreException e )
         {
-            throw new PartInitException( e.getStatus() );
+
         }
 
-        Dictionary<String, ?> properties = new Hashtable<>();
-        _listenerRef =
-            ProjectUI.getDefault().getBundle().getBundleContext().registerService(
-                MigrationListener.class, this, properties );
+        return super.getInitialInput();
     }
 
     @Override
-    public void dispose()
+    public void doubleClick( DoubleClickEvent event )
     {
-        super.dispose();
+        TaskProblem taskProblem = getTaskProblemFromSelection( event.getSelection() );
 
-        if( _listenerRef != null )
+        if( taskProblem != null )
         {
-            _listenerRef.unregister();
-        }
-    }
+            try
+            {
+                final IEditorPart editor =
+                    IDE.openEditor( getSite().getPage(), getIFileFromTaskProblem( taskProblem ) );
 
-    @Override
-    public void setFocus()
-    {
-        if( _viewer != null && _viewer.getControl() != null )
-        {
-            _viewer.getControl().setFocus();
-        }
-    }
+                if( editor instanceof ITextEditor )
+                {
+                    final ITextEditor textEditor = (ITextEditor) editor;
 
-    @Override
-    public void problemsFound( List<Problem> problems )
-    {
-    }
+                    textEditor.selectAndReveal( taskProblem.startOffset, taskProblem.endOffset -
+                        taskProblem.startOffset );
+                }
+            }
+            catch( PartInitException e )
+            {
+            }
+        }
+    };
 
 }
