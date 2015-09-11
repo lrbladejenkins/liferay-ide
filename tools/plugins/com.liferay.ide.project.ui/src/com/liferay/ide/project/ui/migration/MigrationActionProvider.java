@@ -78,7 +78,7 @@ public class MigrationActionProvider extends CommonActionProvider
                 CommonViewer cv = (CommonViewer) v;
                 ICommonViewerWorkbenchSite wsSite = (ICommonViewerWorkbenchSite) viewerSite;
 
-                makeActions( cv, wsSite.getSelectionProvider() );
+                makeActions( wsSite.getSelectionProvider() );
 
                 addListeners( cv );
             }
@@ -111,7 +111,7 @@ public class MigrationActionProvider extends CommonActionProvider
         } );
     }
 
-    private void makeActions( CommonViewer tableViewer, ISelectionProvider provider )
+    public MigrationActionProvider makeActions( ISelectionProvider provider )
     {
         // create the open action
         _openAction = new OpenAction( provider, "Open" );
@@ -120,5 +120,7 @@ public class MigrationActionProvider extends CommonActionProvider
         _markUndoneAction = new MarkUndoneAction( provider, "Mark undone" );
         _ignoreAction = new IgnoreAction( provider, "Ignore" );
         _removeAction = new RemoveAction( provider, "Remove from task" );
+
+        return this;
     }
 }

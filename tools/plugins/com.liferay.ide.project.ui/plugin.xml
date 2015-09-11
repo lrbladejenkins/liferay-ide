@@ -1174,7 +1174,7 @@
          <triggerPoints>
             <or>
                <instanceof
-                     value="com.liferay.ide.project.ui.migration.MigrationTask">
+                     value="com.liferay.ide.project.ui.migration.MXMTree">
                </instanceof>
                <instanceof
                      value="com.liferay.ide.project.ui.migration.MXMNode">
@@ -1190,7 +1190,7 @@
          <possibleChildren>
              <or>
                <instanceof
-                     value="com.liferay.ide.project.ui.migration.MigrationTask">
+                     value="com.liferay.ide.project.ui.migration.MXMTree">
                </instanceof>
                <instanceof
                      value="com.liferay.ide.project.ui.migration.MXMNode">
@@ -1233,7 +1233,7 @@
          <enablement>
             <or>
                <objectClass
-                     name="com.liferay.ide.project.ui.migration.MigrationTask">
+                     name="com.liferay.ide.project.ui.migration.MXMTree">
                </objectClass>
                <objectClass
                      name="com.liferay.ide.project.ui.migration.MXMNode">
@@ -1245,7 +1245,7 @@
    <extension
          point="org.eclipse.core.runtime.adapters">
       <factory
-            adaptableType="com.liferay.ide.project.ui.migration.MigrationTask"
+            adaptableType="com.liferay.ide.project.ui.migration.MXMTree"
             class="com.liferay.ide.project.ui.migration.MigrationAdapterFactory">
          <adapter
                type="org.eclipse.ui.model.IWorkbenchAdapter">

@@ -38,7 +38,7 @@ public class MigrationAdapterFactory implements IAdapterFactory, IWorkbenchAdapt
     @Override
     public Class[] getAdapterList()
     {
-        return new Class[] { MXMNode.class, MigrationTask.class };
+        return new Class[] { MXMNode.class, MXMTree.class };
     }
 
     @Override
@@ -50,7 +50,7 @@ public class MigrationAdapterFactory implements IAdapterFactory, IWorkbenchAdapt
     @Override
     public ImageDescriptor getImageDescriptor( Object element )
     {
-        if( element instanceof MigrationTask )
+        if( element instanceof MXMTree )
         {
             return ImageDescriptor.createFromImage( PlatformUI.getWorkbench().getSharedImages().getImage(
                 ISharedImages.IMG_OBJ_FOLDER ) );
@@ -67,9 +67,9 @@ public class MigrationAdapterFactory implements IAdapterFactory, IWorkbenchAdapt
     @Override
     public String getLabel( Object element )
     {
-        if( element instanceof MigrationTask )
+        if( element instanceof MXMTree )
         {
-            return "Migration Task";
+            return "Migration Problems";
         }
         else if( element instanceof MXMNode )
         {

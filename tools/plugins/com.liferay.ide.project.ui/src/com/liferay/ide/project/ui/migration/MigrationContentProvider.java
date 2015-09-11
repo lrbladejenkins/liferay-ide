@@ -15,16 +15,18 @@
 
 package com.liferay.ide.project.ui.migration;
 
-import blade.migrate.api.Problem;
+import blade.migrate.api.MigrationConstants;
 
 import com.liferay.ide.core.util.CoreUtil;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -35,135 +37,78 @@ import org.eclipse.jface.viewers.Viewer;
 public class MigrationContentProvider implements ITreeContentProvider
 {
 
-    MigrationTask[] _tasks;
-    Map<MigrationTask, MXMTree> _fileTrees;
-    Map<ProblemKey, List<Problem>> _problemsMap;
+    List<IFile> _files;
+    private MXMTree _root;
 
     @Override
     public void dispose()
     {
     }
 
-    public static class ProblemKey
-    {
-        MigrationTask _task;
-        IFile _file;
-
-        public ProblemKey( MigrationTask task, IFile file )
-        {
-            _task = task;
-            _file = file;
-        }
-
-        @Override
-        public int hashCode()
-        {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ( ( _file == null ) ? 0 : _file.hashCode() );
-            result = prime * result + ( ( _task == null ) ? 0 : _task.hashCode() );
-            return result;
-        }
-
-        @Override
-        public boolean equals( Object obj )
-        {
-            if( this == obj )
-                return true;
-            if( obj == null )
-                return false;
-            if( getClass() != obj.getClass() )
-                return false;
-            ProblemKey other = (ProblemKey) obj;
-            if( _file == null )
-            {
-                if( other._file != null )
-                    return false;
-            }
-            else if( !_file.equals( other._file ) )
-                return false;
-            if( _task == null )
-            {
-                if( other._task != null )
-                    return false;
-            }
-            else if( !_task.equals( other._task ) )
-                return false;
-            return true;
-        }
-    }
-
     @Override
     public void inputChanged( Viewer viewer, Object oldInput, Object newInput )
     {
-        if( newInput instanceof List<?> )
+        if( newInput instanceof IWorkspaceRoot )
         {
-            List<?> tasks = (List<?>) newInput;
+            final IWorkspaceRoot root = (IWorkspaceRoot) newInput;
 
-            _tasks = tasks.toArray( new MigrationTask[0] );
-        }
-        else if( newInput instanceof MigrationTask[] )
-        {
-            _tasks = (MigrationTask[]) newInput;
-        }
+            _files = new ArrayList<>();
 
-        _problemsMap = new HashMap<>();
-        _fileTrees = getFileTrees( _tasks );
+            try
+            {
+                final IMarker[] markers =
+                    root.findMarkers( MigrationConstants.MIGRATION_MARKER_TYPE, true, IResource.DEPTH_INFINITE );
+
+                _root = getFileTree( markers );
+            }
+            catch( CoreException e )
+            {
+            }
+        }
     }
 
-    private Map<MigrationTask, MXMTree> getFileTrees( MigrationTask[] tasks )
+    private MXMTree getFileTree( IMarker[] markers )
     {
-        final Map<MigrationTask, MXMTree> retval = new HashMap<>();
+        final MXMTree tree = new MXMTree( new MXMNode( "", "" ) );
 
-        for( MigrationTask task : tasks )
+        for( IMarker marker : markers )
         {
-            final MXMTree tree = new MXMTree( new MXMNode( "", "" ) );
+            final IFile file = (IFile) marker.getResource();
 
-            for( Problem problem : task.getProblems() )
+            if( ! _files.contains(  file ) )
             {
-                final IFile[] files =
-                    CoreUtil.getWorkspace().getRoot().findFilesForLocationURI( problem.file.toURI() );
-
-                for( IFile file : files )
-                {
-                    final ProblemKey key = new ProblemKey( task, file );
-                    List<Problem> fileProblems = _problemsMap.get( key );
-
-                    if( fileProblems == null )
-                    {
-                        fileProblems = new ArrayList<>();
-                        _problemsMap.put( key, fileProblems );
-
-                        tree.addElement( file.getFullPath().toPortableString() );
-                    }
-
-                    fileProblems.add( problem );
-                }
+                _files.add( file );
+                tree.addElement( file.getFullPath().toPortableString() );
             }
-
-            retval.put( task, tree );
         }
 
-        return retval;
+        return tree;
     }
 
     @Override
     public Object[] getElements( Object inputElement )
     {
-        return _tasks;
+        return new Object[] { _root };
     }
 
     @Override
     public Object[] getChildren( Object parentElement )
     {
-        if( parentElement instanceof MigrationTask )
+        if( parentElement != null && parentElement.equals( _root ) )
         {
-            final MigrationTask task = (MigrationTask) parentElement;
 
-            final MXMNode commonRoot = _fileTrees.get( task ).getCommonRoot();
+            final MXMNode commonRoot = _root.getCommonRoot();
             commonRoot.data = commonRoot.incrementalPath;
 
-            return new Object[] { commonRoot };
+            if( commonRoot.data.equals( "" ) )
+            {
+                return commonRoot.childs.toArray();
+            }
+            else
+            {
+                return new Object[] { commonRoot };
+            }
+
         }
         else if( parentElement instanceof MXMNode )
         {
@@ -194,24 +139,13 @@ public class MigrationContentProvider implements ITreeContentProvider
     @Override
     public Object getParent( Object element )
     {
-        if( element instanceof TaskProblem )
-        {
-            final TaskProblem problem = (TaskProblem) element;
-
-            return problem.getParent();
-        }
-        else if( element instanceof IFile )
-        {
-
-        }
-
         return null;
     }
 
     @Override
     public boolean hasChildren( Object element )
     {
-        if( element instanceof MigrationTask )
+        if( element instanceof MXMTree )
         {
             return true;
         }

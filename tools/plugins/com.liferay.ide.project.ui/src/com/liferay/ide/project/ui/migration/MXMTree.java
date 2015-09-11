@@ -33,7 +33,7 @@ public class MXMTree
         {
             MXMNode current = root;
 
-            while( current.leafs.size() <= 0 )
+            while( current.leafs.size() <= 0 && current.childs.size() == 1 )
             {
                 current = current.childs.get( 0 );
             }

@@ -14,26 +14,8 @@
  *******************************************************************************/
 package com.liferay.ide.project.ui.migration;
 
-import org.eclipse.jface.viewers.BaseLabelProvider;
-import org.eclipse.jface.viewers.IDecoration;
-import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 
-
-/**
- * @author Gregory Amerson
- */
-public class MigrationDecorator extends BaseLabelProvider implements ILightweightLabelDecorator
+public class MigrationProblemsRoot
 {
-
-    @Override
-    public void decorate( Object element, IDecoration decoration )
-    {
-        if( element instanceof MXMTree )
-        {
-            final MXMTree tree = (MXMTree) element;
-
-//            decoration.addSuffix( " [" + new SimpleDateFormat().format( new Date( task.getTimestamp() ) ) + "]" );
-        }
-    }
 
 }
