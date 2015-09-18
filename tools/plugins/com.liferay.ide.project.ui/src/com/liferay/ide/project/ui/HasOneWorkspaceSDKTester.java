@@ -35,13 +35,13 @@ public class HasOneWorkspaceSDKTester extends PropertyTester
         {
             SDK workspaceSDK = SDKUtil.getWorkspaceSDK();
 
-            if ( workspaceSDK != null )
+            if( workspaceSDK != null )
             {
                 retVal = true;
             }
 
         }
-        catch(Exception e)
+        catch( Exception e )
         {
             ProjectUI.logError( e );
         }

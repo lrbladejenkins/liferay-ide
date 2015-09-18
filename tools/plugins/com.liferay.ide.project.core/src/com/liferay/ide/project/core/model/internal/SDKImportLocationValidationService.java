@@ -28,6 +28,7 @@ import org.eclipse.sapphire.services.ValidationService;
  */
 public class SDKImportLocationValidationService extends ValidationService
 {
+
     @Override
     protected Status compute()
     {

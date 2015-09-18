@@ -12,6 +12,7 @@
  * details.
  *
  *******************************************************************************/
+
 package com.liferay.ide.project.ui.wizard;
 
 import com.liferay.ide.project.ui.wizard.AbstractCheckboxCustomPart.CheckboxElement;
@@ -28,8 +29,10 @@ import org.eclipse.swt.graphics.Image;
  * @author Simon Jiang
  */
 
-public abstract class ElementLabelProvider extends AbstractLabelProvider implements IColorProvider, IStyledLabelProvider
+public abstract class ElementLabelProvider extends AbstractLabelProvider
+    implements IColorProvider, IStyledLabelProvider
 {
+
     @Override
     public Color getBackground( Object element )
     {
@@ -49,9 +52,6 @@ public abstract class ElementLabelProvider extends AbstractLabelProvider impleme
     public abstract StyledString getStyledText( Object element );
 
     @Override
-    protected abstract void initalizeImageRegistry( ImageRegistry imageRegistry );
-
-    @Override
     public String getText( Object element )
     {
         if( element instanceof CheckboxElement )
@@ -61,4 +61,7 @@ public abstract class ElementLabelProvider extends AbstractLabelProvider impleme
 
         return super.getText( element );
     }
+
+    @Override
+    protected abstract void initalizeImageRegistry( ImageRegistry imageRegistry );
 }

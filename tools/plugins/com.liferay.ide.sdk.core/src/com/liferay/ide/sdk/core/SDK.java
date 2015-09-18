@@ -1062,13 +1062,15 @@ public class SDK
 
             if ( sdkProperties == null )
             {
-                status.add( SDKCorePlugin.createErrorStatus( "Could not find any sdk settting." ) );
+                status.add( SDKCorePlugin.createErrorStatus( "Could not find any sdk setttings." ) );
+
                 return status;
             }
         }
         catch( Exception e)
         {
             status.add( SDKCorePlugin.createErrorStatus( e.getMessage() ) );
+
             return status;
         }
 

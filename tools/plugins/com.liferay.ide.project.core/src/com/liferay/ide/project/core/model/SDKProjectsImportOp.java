@@ -55,7 +55,7 @@ public interface SDKProjectsImportOp extends ExecutableElement
     @Enablement( expr = "${HasWorkspaceSDK == 'false'}" )
     @Services
     (
-        value=
+        value =
         {
             @Service( impl = SDKImportLocationValidationService.class ),
             @Service( impl = SDKProjectsImportLocationInitialValueService.class )
@@ -77,7 +77,6 @@ public interface SDKProjectsImportOp extends ExecutableElement
 
     Value<String> getSdkVersion();
     void setSdkVersion( String value );
-
 
     @Type( base = NamedItem.class )
     ListProperty PROP_SELECTED_PROJECTS = new ListProperty( TYPE, "SelectedProjects" );

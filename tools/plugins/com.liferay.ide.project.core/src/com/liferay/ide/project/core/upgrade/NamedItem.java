@@ -12,6 +12,7 @@
  * details.
  *
  *******************************************************************************/
+
 package com.liferay.ide.project.core.upgrade;
 
 import org.eclipse.sapphire.Element;
@@ -19,12 +20,12 @@ import org.eclipse.sapphire.ElementType;
 import org.eclipse.sapphire.Value;
 import org.eclipse.sapphire.ValueProperty;
 
-
 /**
  * @author Simon Jiang
  */
 public interface NamedItem extends Element
 {
+
     ElementType TYPE = new ElementType( NamedItem.class );
 
     // *** Name ***
@@ -32,11 +33,12 @@ public interface NamedItem extends Element
     ValueProperty PROP_NAME = new ValueProperty( TYPE, "Name" );
 
     Value<String> getName();
-    void setName( String value );
 
+    void setName( String value );
 
     ValueProperty PROP_LOCATION = new ValueProperty( TYPE, "Location" );
 
     Value<String> getLocation();
+
     void setLocation( String value );
 }

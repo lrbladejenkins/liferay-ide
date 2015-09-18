@@ -61,7 +61,8 @@ public class SDKImportVersionDerivedValueService extends DerivedValueService
             if ( op().getSdkLocation().content() != null && !op().getSdkLocation().content().isEmpty() )
             {
                 final Path sdkPath = op().getSdkLocation().content();
-                IStatus status = ProjectImportUtil.validateSDKPath( op().getSdkLocation().content().toPortableString() );
+                final IStatus status = ProjectImportUtil.validateSDKPath(
+                    op().getSdkLocation().content().toPortableString() );
 
                 if ( status.isOK() )
                 {
@@ -71,6 +72,7 @@ public class SDKImportVersionDerivedValueService extends DerivedValueService
                 }
             }
         }
+
         return retVal;
     }
 
@@ -86,6 +88,7 @@ public class SDKImportVersionDerivedValueService extends DerivedValueService
         {
             op().property( SDKProjectsImportOp.PROP_SDK_LOCATION ).detach( this.listener );
         }
+
         super.dispose();
     }
 }

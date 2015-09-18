@@ -51,16 +51,16 @@ public class SDKImportProjectsOpMethods
 
         if( projectLocation == null || projectLocation.isEmpty() )
         {
-            return Status.createErrorStatus( "Project can not be empty" );
+            return Status.createErrorStatus( "Project cannot be empty" );
         }
 
-        final Job job = new WorkspaceJob( "Import Liferay Projects..." )
+        final Job job = new WorkspaceJob( "Importing Liferay projects..." )
         {
             @Override
             public IStatus runInWorkspace( IProgressMonitor monitor ) throws CoreException
             {
-                final MultiStatusBuilder statusBuilder = new MultiStatusBuilder(ProjectCore.PLUGIN_ID);
-                ElementList<NamedItem>  projectItems = op.getSelectedProjects();
+                final MultiStatusBuilder statusBuilder = new MultiStatusBuilder( ProjectCore.PLUGIN_ID );
+                final ElementList<NamedItem>  projectItems = op.getSelectedProjects();
 
                 for( NamedItem namedItem : projectItems )
                 {
@@ -70,7 +70,9 @@ public class SDKImportProjectsOpMethods
                         final int endPos = namedItem.getLocation().content().indexOf( ")" );
                         final String projectPath = namedItem.getLocation().content().substring( startPos + 1, endPos );
                         final String projectLocation = new Path(projectPath).toPortableString();
-                        ProjectImportUtil.importProject( PathBridge.create( new Path(projectLocation) ), new NullProgressMonitor(), null);
+
+                        ProjectImportUtil.importProject(
+                            PathBridge.create( new Path( projectLocation ) ), new NullProgressMonitor(), null );
                     }
                     catch(Exception e)
                     {

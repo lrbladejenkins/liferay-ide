@@ -36,7 +36,7 @@ public class SDKProjectsImportLocationInitialValueService extends InitialValueSe
         {
             final SDK sdk = SDKUtil.getWorkspaceSDK();
 
-            if ( sdk != null && sdk.validate().isOK() )
+            if( sdk != null && sdk.validate().isOK() )
             {
                 return sdk.getLocation().toOSString();
             }
