@@ -17,6 +17,7 @@ package com.liferay.ide.project.ui.wizard;
 import com.liferay.ide.core.util.CoreUtil;
 import com.liferay.ide.project.core.model.SDKProjectsImportOp;
 
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.sapphire.ui.def.DefinitionLoader;
@@ -30,15 +31,15 @@ import org.eclipse.ui.IWorkbenchWizard;
 /**
  * @author Simon Jiang
  */
-
 public class ImportSDKProjectsWizard extends SapphireWizard<SDKProjectsImportOp>
     implements IWorkbenchWizard, INewWizard
 {
+    private static final String INITIAL_MESSAGE = "Please select at least one project to import.";
 
     private String title;
+    private boolean supressedFirstErrorMessage = false;
 
-
-    public ImportSDKProjectsWizard(final String newTitle)
+    public ImportSDKProjectsWizard( final String newTitle )
     {
         super( createDefaultOp(), DefinitionLoader.sdef( ImportSDKProjectsWizard.class ).wizard() );
         this.title = newTitle;
@@ -58,12 +59,18 @@ public class ImportSDKProjectsWizard extends SapphireWizard<SDKProjectsImportOp>
         {
             final SapphireWizardPage wizardPage = (SapphireWizardPage) wizardPages[0];
 
-
             final String message = wizardPage.getMessage();
 
             if( CoreUtil.isNullOrEmpty( message ) )
             {
-                wizardPage.setMessage( "Please select an exsiting sdk location" );
+                wizardPage.setMessage( INITIAL_MESSAGE );
+            }
+
+            if( wizardPage.getMessageType() == IMessageProvider.ERROR && !supressedFirstErrorMessage )
+            {
+                supressedFirstErrorMessage = true;
+
+                wizardPage.setMessage( INITIAL_MESSAGE );
             }
         }
         if ( title != null)
@@ -77,7 +84,6 @@ public class ImportSDKProjectsWizard extends SapphireWizard<SDKProjectsImportOp>
     @Override
     public void init( IWorkbench workbench, IStructuredSelection selection )
     {
-
     }
 
 
