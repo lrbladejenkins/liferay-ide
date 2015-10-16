@@ -15,10 +15,12 @@
 
 package com.liferay.ide.project.ui.migration;
 
-import java.net.URL;
+import com.liferay.ide.core.util.CoreUtil;
+import com.liferay.ide.project.ui.ProjectUI;
+import com.liferay.ide.ui.util.UIUtil;
+
 import java.util.List;
 
-import org.eclipse.core.internal.resources.File;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
