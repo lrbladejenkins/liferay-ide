@@ -36,47 +36,28 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionContext;
-import org.eclipse.ui.actions.SelectionProviderAction;
-import org.eclipse.ui.browser.IWebBrowser;
-import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
-import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.internal.navigator.actions.CommonActionDescriptorManager;
 import org.eclipse.ui.internal.navigator.actions.CommonActionProviderDescriptor;
 import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.NavigatorActionService;
-import org.eclipse.wst.server.ui.internal.ServerUIPlugin;
-
-import com.liferay.ide.core.util.CoreUtil;
-import com.liferay.ide.project.ui.ProjectUI;
-import com.liferay.ide.ui.util.UIUtil;
 
 /**
  * @author Gregory Amerson
@@ -94,10 +75,11 @@ public class MigrationView extends CommonNavigator implements IDoubleClickListen
         ProjectUI.getDefault().getImageRegistry().get( ProjectUI.UNCHECKED_IMAGE_ID );
 
     private Browser _browser;
-    private FormText _form;
+//    private FormText _form;
     private TableViewer _problemsViewer;
     private MigratorComparator _comparator;
     private MigrationViewTreeUtil _treeUtil;
+
 
     private void createColumns( final TableViewer _problemsViewer )
     {
@@ -221,6 +203,8 @@ public class MigrationView extends CommonNavigator implements IDoubleClickListen
         _problemsViewer.getControl().setMenu( menu );
         getSite().registerContextMenu( menuMgr, _problemsViewer );
 
+        _treeUtil = new MigrationViewTreeUtil( getCommonViewer() );
+
         contributeToActionBars();
 
         _problemsViewer.addDoubleClickListener( this );
@@ -317,10 +301,9 @@ public class MigrationView extends CommonNavigator implements IDoubleClickListen
 
         getCommonViewer().addDoubleClickListener( this );
 
-        _treeUtil = new MigrationViewTreeUtil( getCommonViewer() );
     }
 
-    private void displayPopupHtml( final String title, final String html )
+    /*private void displayPopupHtml( final String title, final String html )
     {
         final Shell shell = new Shell( this.getViewSite().getShell(), SWT.DIALOG_TRIM | SWT.ON_TOP | SWT.RESIZE );
         shell.setText( title );
@@ -381,7 +364,7 @@ public class MigrationView extends CommonNavigator implements IDoubleClickListen
         });
 
         shell.open();
-    }
+    }*/
 
     private TableViewerColumn createTableViewerColumn( String title, int bound, TableViewer viewer )
     {
@@ -403,8 +386,8 @@ public class MigrationView extends CommonNavigator implements IDoubleClickListen
 
         final IAction migrateAction = new RunMigrationToolAction( "Run Migration Tool" , getViewSite().getShell() );
         final IAction expandAllAction = new ExpandAllAction( "Expand All", this );
-        final IAction nextAction = new NextAction( getViewSite().getSelectionProvider() );
-        final IAction upAction = new UpAction( getViewSite().getSelectionProvider() );
+        final IAction nextAction = new NextProblemAction( getCommonViewer(), _treeUtil );
+        final IAction upAction = new PreviousProblemAction( getCommonViewer(), _treeUtil );
 
         manager.add( migrateAction );
         manager.add( expandAllAction );
@@ -514,7 +497,7 @@ public class MigrationView extends CommonNavigator implements IDoubleClickListen
         };
     }
 
-    private void openBrowser( final String url )
+    /*private void openBrowser( final String url )
     {
         Display.getDefault().asyncExec( new Runnable()
         {
@@ -548,7 +531,7 @@ public class MigrationView extends CommonNavigator implements IDoubleClickListen
         MigrationView.this.getMemento().putInteger( "popupLastY", location.y );
         MigrationView.this.getMemento().putInteger( "popupSizeX", size.x );
         MigrationView.this.getMemento().putInteger( "popupSizeY", size.y );
-    }
+    }*/
 
     private void updateForm( SelectionChangedEvent event )
     {
@@ -584,132 +567,6 @@ public class MigrationView extends CommonNavigator implements IDoubleClickListen
             {*/
                 _browser.setUrl( "about:blank" );
             //}
-        }
-    };
-
-    private final class NextAction extends SelectionProviderAction implements IAction
-    {
-
-        private IStructuredSelection _selection;
-
-        public NextAction( ISelectionProvider provider )
-        {
-            super( provider, "Next" );
-
-            setImageDescriptor( ProjectUI.imageDescriptorFromPlugin( ProjectUI.PLUGIN_ID, "icons/e16/next.gif" ) );
-            setDisabledImageDescriptor( ProjectUI.imageDescriptorFromPlugin(
-                ProjectUI.PLUGIN_ID, "icons/e16/next_dis.gif" ) );
-            setToolTipText( "Next" );
-            setEnabled( true );
-        }
-
-        public void selectionChanged( IStructuredSelection selection )
-        {
-            final Object element = selection.getFirstElement();
-
-            if( ( element instanceof File || element instanceof MPTree ) )
-            {
-                setEnabled( true );
-
-                _selection = selection;
-            }
-            else
-            {
-                setEnabled( false );
-
-                _selection = null;
-            }
-        }
-
-        @Override
-        public void run()
-        {
-            getCommonViewer().expandAll();
-
-            if( _selection != null )
-            {
-                final Object element = _selection.getFirstElement();
-
-                if( element instanceof File )
-                {
-
-                    final File file = (File) element;
-
-                    StructuredSelection structuredSelection =
-                        new StructuredSelection( _treeUtil.getNextResource( file ) );
-
-                    getCommonViewer().setSelection( structuredSelection, true );
-                }
-                else if( element instanceof MPTree )
-                {
-
-                    StructuredSelection structuredSelection = new StructuredSelection( _treeUtil.getFirsttResource() );
-
-                    getCommonViewer().setSelection( structuredSelection, true );
-                }
-            }
-            else
-            {
-                StructuredSelection structuredSelection = new StructuredSelection( _treeUtil.getFirsttResource() );
-
-                getCommonViewer().setSelection( structuredSelection, true );
-            }
-        }
-    }
-
-    private final class UpAction extends SelectionProviderAction implements IAction
-    {
-
-        private IStructuredSelection _selection;
-
-        protected UpAction( ISelectionProvider provider )
-        {
-            super( provider, "Up" );
-
-            setImageDescriptor( ProjectUI.imageDescriptorFromPlugin( ProjectUI.PLUGIN_ID, "icons/e16/up.gif" ) );
-            setDisabledImageDescriptor( ProjectUI.imageDescriptorFromPlugin(
-                ProjectUI.PLUGIN_ID, "icons/e16/up_dis.gif" ) );
-            setToolTipText( "Up" );
-            setEnabled( false );
-        }
-
-        public void selectionChanged( IStructuredSelection selection )
-        {
-            final Object element = selection.getFirstElement();
-
-            if( element instanceof File )
-            {
-                setEnabled( true );
-
-                _selection = selection;
-            }
-            else
-            {
-                setEnabled( false );
-
-                _selection = null;
-            }
-        }
-
-        @Override
-        public void run()
-        {
-            if( _selection != null )
-            {
-                final Object element = _selection.getFirstElement();
-
-                if( element instanceof File )
-                {
-                    getCommonViewer().expandAll();
-
-                    final File file = (File) element;
-
-                    final StructuredSelection structuredSelection =
-                        new StructuredSelection( _treeUtil.getUpResource( file ) );
-
-                    getCommonViewer().setSelection( structuredSelection, true );
-                }
-            }
         }
     }
 
