@@ -22,7 +22,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.actions.SelectionProviderAction;
-import org.eclipse.ui.navigator.CommonViewer;
 
 /**
  * @author Gregory Amerson
@@ -31,12 +30,11 @@ import org.eclipse.ui.navigator.CommonViewer;
 public class PreviousProblemAction extends SelectionProviderAction implements IAction
 {
     private IStructuredSelection _selection;
-    private final CommonViewer _viewer;
-    private final MigrationViewTreeUtil _treeUtil;
+    private final MigrationView _view;
 
-    protected PreviousProblemAction( CommonViewer viewer, MigrationViewTreeUtil treeUtil )
+    protected PreviousProblemAction( MigrationView view )
     {
-        super( viewer, "Previous problem" );
+        super( view.getCommonViewer(), "Previous problem" );
 
         setImageDescriptor( ProjectUI.imageDescriptorFromPlugin( ProjectUI.PLUGIN_ID, "icons/e16/up.gif" ) );
         setDisabledImageDescriptor( ProjectUI.imageDescriptorFromPlugin(
@@ -44,8 +42,7 @@ public class PreviousProblemAction extends SelectionProviderAction implements IA
         setToolTipText( "Previous problem" );
         setEnabled( false );
 
-        _viewer = viewer;
-        _treeUtil = treeUtil;
+        _view = view;
     }
 
     public void selectionChanged( IStructuredSelection selection )
@@ -75,14 +72,14 @@ public class PreviousProblemAction extends SelectionProviderAction implements IA
 
             if( element instanceof IFile )
             {
-                _viewer.expandAll();
+                _view.getCommonViewer().expandAll();
 
                 final IFile file = (IFile) element;
 
                 final StructuredSelection structuredSelection =
-                    new StructuredSelection( _treeUtil.getPreResource( file ) );
+                    new StructuredSelection( _view.getPreviousTreeResource( file ) );
 
-                _viewer.setSelection( structuredSelection, true );
+                _view.getCommonViewer().setSelection( structuredSelection, true );
             }
         }
     }

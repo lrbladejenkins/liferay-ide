@@ -22,7 +22,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.actions.SelectionProviderAction;
-import org.eclipse.ui.navigator.CommonViewer;
 
 /**
  * @author Gregory Amerson
@@ -31,12 +30,11 @@ import org.eclipse.ui.navigator.CommonViewer;
 public class NextProblemAction extends SelectionProviderAction implements IAction
 {
     private IStructuredSelection _selection;
-    private final CommonViewer _viewer;
-    private final MigrationViewTreeUtil _treeUtil;
+    private final MigrationView _view;
 
-    public NextProblemAction( CommonViewer viewer, MigrationViewTreeUtil treeUtil )
+    public NextProblemAction( MigrationView view )
     {
-        super( viewer, "Next Problem" );
+        super( view.getCommonViewer(), "Next Problem" );
 
         setImageDescriptor( ProjectUI.imageDescriptorFromPlugin( ProjectUI.PLUGIN_ID, "icons/e16/next.gif" ) );
         setDisabledImageDescriptor( ProjectUI.imageDescriptorFromPlugin(
@@ -44,15 +42,14 @@ public class NextProblemAction extends SelectionProviderAction implements IActio
         setToolTipText( "Next" );
         setEnabled( true );
 
-        _viewer = viewer;
-        _treeUtil = treeUtil;
+        _view = view;
     }
 
     public void selectionChanged( IStructuredSelection selection )
     {
         final Object element = selection.getFirstElement();
 
-        if( ( element instanceof IFile || element instanceof MPTree ) )
+        if( ( element instanceof IFile || element instanceof MPNode ) )
         {
             setEnabled( true );
 
@@ -69,7 +66,7 @@ public class NextProblemAction extends SelectionProviderAction implements IActio
     @Override
     public void run()
     {
-        _viewer.expandAll();
+        _view.getCommonViewer().expandAll();
 
         if( _selection != null )
         {
@@ -80,22 +77,22 @@ public class NextProblemAction extends SelectionProviderAction implements IActio
                 final IFile file = (IFile) element;
 
                 StructuredSelection structuredSelection =
-                    new StructuredSelection( _treeUtil.getNextResource( file ) );
+                    new StructuredSelection( _view.getNextTreeResource( file ) );
 
-                _viewer.setSelection( structuredSelection, true );
+                _view.getCommonViewer().setSelection( structuredSelection, true );
             }
-            else if( element instanceof MPTree )
+            else if( element instanceof MPNode )
             {
-                StructuredSelection structuredSelection = new StructuredSelection( _treeUtil.getFirsttResource() );
+                StructuredSelection structuredSelection = new StructuredSelection( _view.getFirstTreeResource() );
 
-                _viewer.setSelection( structuredSelection, true );
+                _view.getCommonViewer().setSelection( structuredSelection, true );
             }
         }
         else
         {
-            StructuredSelection structuredSelection = new StructuredSelection( _treeUtil.getFirsttResource() );
+            StructuredSelection structuredSelection = new StructuredSelection( _view.getFirstTreeResource() );
 
-            _viewer.setSelection( structuredSelection, true );
+            _view.getCommonViewer().setSelection( structuredSelection, true );
         }
     }
 }
