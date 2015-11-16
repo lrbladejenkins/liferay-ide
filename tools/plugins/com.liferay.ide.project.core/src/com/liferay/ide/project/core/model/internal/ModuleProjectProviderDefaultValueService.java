@@ -26,7 +26,7 @@ public class ModuleProjectProviderDefaultValueService extends ProjectProviderDef
     @Override
     protected String getDefaultLastProviderType()
     {
-        return "maven-module";
+        return "gradle-module";
     }
 
     @Override
