@@ -22,9 +22,9 @@ import org.eclipse.sapphire.modeling.annotations.ValidFileSystemResourceType;
 /**
  * @author Gregory Amerson
  */
-public interface CopyPortalSettingsOp extends ExecutableElement
+public interface GetPortalSettingsOp extends ExecutableElement
 {
-    ElementType TYPE = new ElementType( CopyPortalSettingsOp.class );
+    ElementType TYPE = new ElementType( GetPortalSettingsOp.class );
 
     // *** Source Portal Name ***
 
@@ -101,7 +101,7 @@ public interface CopyPortalSettingsOp extends ExecutableElement
         @Override
         protected void initDefaultValueService()
         {
-            context( CopyPortalSettingsOp.class ).property( _prop ).attach( new FilteredListener<PropertyContentEvent>()
+            context( GetPortalSettingsOp.class ).property( _prop ).attach( new FilteredListener<PropertyContentEvent>()
             {
                 protected void handleTypedEvent( PropertyContentEvent arg0 )
                 {
@@ -113,7 +113,7 @@ public interface CopyPortalSettingsOp extends ExecutableElement
         @Override
         protected String compute()
         {
-            Path path = (Path) context( CopyPortalSettingsOp.class ).property( _prop ).content();
+            Path path = (Path) context( GetPortalSettingsOp.class ).property( _prop ).content();
 
             if( path != null )
             {
