@@ -143,6 +143,14 @@ public class GradleProjectProvider extends AbstractLiferayProjectProvider
         {
             final String[] ret = BladeCLI.execute( sb.toString() );
 
+            final String errors = checkForErrors(ret);
+
+            if( errors.length() > 0 )
+            {
+                retval = GradleCore.createErrorStatus( "Project create error: " + errors );
+                return retval;
+            }
+
             if( ret.length == 0 )
             {
                 IPath projecLocation = location;
@@ -218,7 +226,8 @@ public class GradleProjectProvider extends AbstractLiferayProjectProvider
                             }
                         }
                     }
-                } );
+                });
+
                 synchronizeGradleProjectJob.schedule();
             }
         }
@@ -226,7 +235,27 @@ public class GradleProjectProvider extends AbstractLiferayProjectProvider
         {
             retval = ProjectCore.createErrorStatus( "can't create module project.", e );
         }
+
         return retval;
+    }
+
+    private String checkForErrors( String[] lines )
+    {
+        boolean hasErrors = false;
+        final StringBuilder errors = new StringBuilder();
+
+        for( String line : lines )
+        {
+            if( line.startsWith( "Error" ) ) {
+                hasErrors = true;
+            }
+            else if( hasErrors )
+            {
+                errors.append( line );
+            }
+        }
+
+        return errors.toString();
     }
 
     @Override
