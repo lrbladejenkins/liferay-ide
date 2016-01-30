@@ -246,7 +246,7 @@
     <target name="setup-eclipse">
         <if>
             <not>
-                <available file="${eclipse.dir}/eclipse.ini" />
+                <available file="${eclipse.contents.dir}/eclipse.ini" />
             </not>
             <then>
                 <antcall target="download-eclipse" />
@@ -254,7 +254,7 @@
                     <isset property="isUnix" />
                     <then>
                         <gunzip src="${downloads.dir}/${eclipse.zip.name}" dest="${downloads.dir}" />
-                        <untar src="${downloads.dir}/${eclipse.tar.name}" dest="${eclipse.dir}/../" />
+                        <untar src="${downloads.dir}/${eclipse.tar.name}" dest="${eclipse.app.dir}/../" />
                         <if>
                             <isset property="isMac" />
                             <then>
@@ -285,7 +285,7 @@
     </target>
 
     <target name="clean-eclipse">
-        <delete dir="${eclipse.dir}" failonerror="true" includeemptydirs="true" />
+        <delete dir="${eclipse.app.dir}" failonerror="true" includeemptydirs="true" />
     </target>
 
     <target name="install-feature">
@@ -298,13 +298,13 @@
             <arg value="-installIU" />
             <arg value="${featureId}" />
             <arg value="-destination" />
-            <arg value="${eclipse.dir}" />
+            <arg value="${eclipse.contents.dir}" />
             <arg value="-profile" />
             <arg value="epp.package.jee" />
             <arg value="-profileProperties" />
             <arg value="org.eclipse.update.install.features=true" />
             <arg value="-bundlepool" />
-            <arg value="${eclipse.dir}" />
+            <arg value="${eclipse.contents.dir}" />
             <arg value="-p2.os" />
             <arg value="${os}" />
             <arg value="-p2.ws" />
