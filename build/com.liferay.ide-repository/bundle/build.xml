@@ -66,9 +66,6 @@
         <if>
             <isset property="checkParameters" />
             <then>
-                <antcall target="win64" />
-                <antcall target="win32" />
-
                 <condition property="isLinux" value="true">
                     <os family="unix" />
                 </condition>
@@ -76,8 +73,6 @@
                 <if>
                     <isset property="isLinux" />
                     <then>
-                        <antcall target="linux" />
-                        <antcall target="linux64" />
                         <antcall target="macosx64" />
                     </then>
                 </if>
@@ -425,7 +420,7 @@
         <if>
             <isset property="isMac" />
             <then>
-                <property name="eclipse.ini.dir" value="${work.dir}/Eclipse.app/Contents/MacOS/eclipse.ini" />
+                <property name="eclipse.ini.dir" value="${work.dir}/Eclipse.app/Contents/Eclipse/eclipse.ini" />
             </then>
             <else>
                 <property name="eclipse.ini.dir" value="${eclipse.dir}/eclipse.ini"/>
@@ -438,12 +433,12 @@
             <isset property="isUnix" />
             <then>
                 <if>
-                    <available file="${work.dir}/eclipse/eclipse" />
+                    <available file="${work.dir}/Eclipse.app/Contents/MacOS/eclipse" />
                     <then>
                         <exec dir="${work.dir}" executable="tar" failifexecutionfails="false" failonerror="false">
                             <arg value="cf" />
                             <arg value="${output.dir}/${output.tar.name}" />
-                            <arg value="eclipse" />
+                            <arg value="Eclipse.app" />
                         </exec>
                         <gzip destfile="${output.dir}/${output.gz.name}" src="${output.dir}/${output.tar.name}" />
                         <delete file="${output.dir}/${output.tar.name}" />
