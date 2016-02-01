@@ -23,6 +23,7 @@ import com.liferay.ide.server.core.portal.PortalServerBehavior;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,8 +46,7 @@ import org.eclipse.wst.server.core.IServer;
 public class ServiceCommand
 {
 
-    private IServer _server;
-
+    private final IServer _server;
     private String _serviceName;
 
     public ServiceCommand( IServer server )
@@ -60,11 +60,11 @@ public class ServiceCommand
         _server = server;
     }
 
-    private File checkStaticServicesFile() throws Exception
+    private File checkStaticServicesFile() throws IOException
     {
-        URL url =
+        final URL url =
             FileLocator.toFileURL( ProjectCore.getDefault().getBundle().getEntry( "OSGI-INF/services-static.json" ) );
-        File servicesFile = new File( url.getFile() );
+        final File servicesFile = new File( url.getFile() );
 
         if( servicesFile.exists() )
         {

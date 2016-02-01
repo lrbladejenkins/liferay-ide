@@ -168,32 +168,35 @@ public class NewLiferayModuleProjectOpMethods extends BaseOpMethods
     public static void addDependencies( File file, String bundleId )
     {
         IServer runningServer = null;
-        IServer[] servers = ServerCore.getServers();
+        final IServer[] servers = ServerCore.getServers();
 
-        for( IServer iServer : servers )
+        for( IServer server : servers )
         {
-            if( iServer.getServerState() == IServer.STATE_STARTED )
+            if( server.getServerState() == IServer.STATE_STARTED &&
+                server.getServerType().getId().equals( "com.liferay.ide.server.portal" ) )
             {
-                runningServer = iServer;
+                runningServer = server;
                 break;
             }
         }
 
-        ServiceCommand serviceCommand = new ServiceCommand( runningServer, bundleId );
-
-        String[] osgiService;
-        try
+        if( runningServer != null )
         {
-            osgiService = serviceCommand.execute();
+            final ServiceCommand serviceCommand = new ServiceCommand( runningServer, bundleId );
 
-            if( osgiService != null )
+            try
             {
-                setDenpendencies( file, osgiService[0], osgiService[1] );
+                final String[] osgiService = serviceCommand.execute();
+
+                if( osgiService != null )
+                {
+                    setDenpendencies( file, osgiService[0], osgiService[1] );
+                }
             }
-        }
-        catch( Exception e )
-        {
-            ProjectCore.logError( "Can't update project denpendencies. ", e );
+            catch( Exception e )
+            {
+                ProjectCore.logError( "Can't update project denpendencies. ", e );
+            }
         }
     }
 

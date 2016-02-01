@@ -41,30 +41,34 @@ public class ServicePossibleValuesService extends PossibleValuesService
     @Override
     protected void compute( final Set<String> values )
     {
-        try
-        {
-            IServer runningServer = null;
-            IServer[] servers = ServerCore.getServers();
+        IServer runningServer = null;
+        final IServer[] servers = ServerCore.getServers();
 
-            for( IServer iServer : servers )
+        for( IServer server : servers )
+        {
+            if( server.getServerState() == IServer.STATE_STARTED &&
+                server.getServerType().getId().equals( "com.liferay.ide.server.portal" ) )
             {
-                if( iServer.getServerState() == IServer.STATE_STARTED )
-                {
-                    runningServer = iServer;
-                    break;
-                }
+                runningServer = server;
+                break;
             }
-
-            ServiceCommand serviceCommand = new ServiceCommand( runningServer );
-
-            String[] allServices = serviceCommand.execute();
-
-            values.addAll( Arrays.asList( allServices ) );
-
         }
-        catch( Exception e )
+
+        if( runningServer != null )
         {
-            ProjectCore.logError( "Get services list error. ", e );
+            try
+            {
+                ServiceCommand serviceCommand = new ServiceCommand( runningServer );
+
+                String[] allServices = serviceCommand.execute();
+
+                values.addAll( Arrays.asList( allServices ) );
+
+            }
+            catch( Exception e )
+            {
+                ProjectCore.logError( "Get services list error. ", e );
+            }
         }
     }
 }
