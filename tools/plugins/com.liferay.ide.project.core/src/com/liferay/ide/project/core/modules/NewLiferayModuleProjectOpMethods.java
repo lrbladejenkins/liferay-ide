@@ -165,7 +165,7 @@ public class NewLiferayModuleProjectOpMethods extends BaseOpMethods
         }
     }
 
-    public static void addDenpendencies( File file, String bundleId )
+    public static void addDependencies( File file, String bundleId )
     {
         IServer runningServer = null;
         IServer[] servers = ServerCore.getServers();

@@ -174,7 +174,7 @@ public class GradleProjectProvider extends AbstractLiferayProjectProvider
 
             if( buildGradlePath.toFile().exists() && serviceName != null )
             {
-                NewLiferayModuleProjectOpMethods.addDenpendencies( buildGradlePath.toFile(), serviceName );
+                NewLiferayModuleProjectOpMethods.addDependencies( buildGradlePath.toFile(), serviceName );
             }
 
             boolean hasLiferayWorkspace = LiferayWorkspaceUtil.hasLiferayWorkspace();
