@@ -14,7 +14,7 @@ import org.osgi.framework.dto.BundleDTO;
 public class BundleSupervisor extends AgentSupervisor<Supervisor, Agent>implements Supervisor
 {
 
-    private String outinfo;
+    private String lastOutput;
 
     @Override
     public boolean stderr( String out ) throws Exception
@@ -111,7 +111,7 @@ public class BundleSupervisor extends AgentSupervisor<Supervisor, Agent>implemen
 
     public String getOutInfo()
     {
-        return outinfo;
+        return lastOutput;
     }
 
     @Override
@@ -123,7 +123,7 @@ public class BundleSupervisor extends AgentSupervisor<Supervisor, Agent>implemen
 
             if( !"".equals( out ) && !out.startsWith( "true" ) )
             {
-                outinfo = out;
+                lastOutput = out;
             }
         }
 
