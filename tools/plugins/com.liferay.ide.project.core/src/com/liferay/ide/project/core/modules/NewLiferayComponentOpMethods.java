@@ -17,8 +17,14 @@ package com.liferay.ide.project.core.modules;
 
 import com.liferay.ide.core.util.CoreUtil;
 import com.liferay.ide.project.core.ProjectCore;
+import com.liferay.ide.project.core.modules.template.NewLiferayComponentActivatorOperation;
+import com.liferay.ide.project.core.modules.template.NewLiferayComponentMvcPortletOperation;
+import com.liferay.ide.project.core.modules.template.NewLiferayComponentPortletOperation;
+import com.liferay.ide.project.core.modules.template.NewLiferayComponentServiceOperation;
+import com.liferay.ide.project.core.modules.template.NewLiferayComponentServiceWrapperOperation;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.sapphire.modeling.ProgressMonitor;
 import org.eclipse.sapphire.modeling.Status;
@@ -29,6 +35,39 @@ import org.eclipse.sapphire.platform.ProgressMonitorBridge;
  */
 public class NewLiferayComponentOpMethods
 {
+
+    public static void createNewModule( NewLiferayComponentOp op, IProgressMonitor monitor ) throws CoreException
+    {
+        ILiferayModuleOperation<NewLiferayComponentOp> moduleOperation = null;
+
+        final String templateName = op.getComponentTemplateName().content( true );
+
+        if( templateName.equals( "mvcportlet" ) )
+        {
+            moduleOperation = new NewLiferayComponentMvcPortletOperation( op );
+        }
+        else if( templateName.equals( "portlet" ) )
+        {
+            moduleOperation = new NewLiferayComponentPortletOperation( op );
+        }
+        else if( templateName.equals( "service" ) )
+        {
+            moduleOperation = new NewLiferayComponentServiceOperation( op );
+        }
+        else if( templateName.equals( "servicewrapper" )  )
+        {
+            moduleOperation = new NewLiferayComponentServiceWrapperOperation( op );
+        }
+        else if( templateName.equals( "activator" ) )
+        {
+            moduleOperation = new NewLiferayComponentActivatorOperation( op );
+        }
+
+        if( moduleOperation != null )
+        {
+            moduleOperation.doExecute();
+        }
+    }
 
     public static final Status execute( final NewLiferayComponentOp op, final ProgressMonitor pm )
     {
@@ -45,8 +84,7 @@ public class NewLiferayComponentOpMethods
 
             if ( project != null )
             {
-                final INewLiferayComponentProvider newLiferayComponentComponentProvider = new NewLiferayComponentProvider();
-                newLiferayComponentComponentProvider.createNewModule( op, monitor );
+                createNewModule( op, monitor );
             }
             else
             {
