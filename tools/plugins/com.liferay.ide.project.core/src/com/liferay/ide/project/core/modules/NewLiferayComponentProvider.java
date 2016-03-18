@@ -14,11 +14,11 @@
  *******************************************************************************/
 package com.liferay.ide.project.core.modules;
 
-import com.liferay.ide.project.core.modules.template.LiferayDSComponentActivatorOperation;
-import com.liferay.ide.project.core.modules.template.LiferayDSComponentMvcPortletOperation;
-import com.liferay.ide.project.core.modules.template.LiferayDSComponentPortletOperation;
-import com.liferay.ide.project.core.modules.template.LiferayDSComponentServiceOperation;
-import com.liferay.ide.project.core.modules.template.LiferayDSComponentServiceWrapperOperation;
+import com.liferay.ide.project.core.modules.template.NewLiferayComponentActivatorOperation;
+import com.liferay.ide.project.core.modules.template.NewLiferayComponentMvcPortletOperation;
+import com.liferay.ide.project.core.modules.template.NewLiferayComponentPortletOperation;
+import com.liferay.ide.project.core.modules.template.NewLiferayComponentServiceOperation;
+import com.liferay.ide.project.core.modules.template.NewLiferayComponentServiceWrapperOperation;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -27,34 +27,34 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @author Simon Jiang
  */
 
-public class DSComponentProvider implements IDSComponentProvider
+public class NewLiferayComponentProvider implements INewLiferayComponentProvider
 {
     @Override
-    public void createNewModule( NewModuleOp op, IProgressMonitor monitor ) throws CoreException
+    public void createNewModule( NewLiferayComponentOp op, IProgressMonitor monitor ) throws CoreException
     {
-        ILiferayModuleOperation<NewModuleOp> moduleOperation = null;
+        ILiferayModuleOperation<NewLiferayComponentOp> moduleOperation = null;
 
         final String templateName = op.getComponentTemplateName().content( true );
 
         if( templateName.equals( "mvcportlet" ) )
         {
-            moduleOperation = new LiferayDSComponentMvcPortletOperation( op );
+            moduleOperation = new NewLiferayComponentMvcPortletOperation( op );
         }
         else if( templateName.equals( "portlet" ) )
         {
-            moduleOperation = new LiferayDSComponentPortletOperation( op );
+            moduleOperation = new NewLiferayComponentPortletOperation( op );
         }
         else if( templateName.equals( "service" ) )
         {
-            moduleOperation = new LiferayDSComponentServiceOperation( op );
+            moduleOperation = new NewLiferayComponentServiceOperation( op );
         }
         else if( templateName.equals( "servicewrapper" )  )
         {
-            moduleOperation = new LiferayDSComponentServiceWrapperOperation( op );
+            moduleOperation = new NewLiferayComponentServiceWrapperOperation( op );
         }        
         else if( templateName.equals( "activator" ) )
         {
-            moduleOperation = new LiferayDSComponentActivatorOperation( op );
+            moduleOperation = new NewLiferayComponentActivatorOperation( op );
         }
 
         if( moduleOperation != null )

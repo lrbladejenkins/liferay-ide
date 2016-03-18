@@ -15,15 +15,15 @@
 
 package com.liferay.ide.project.core.modules.template;
 
-import com.liferay.ide.project.core.modules.NewModuleOp;
+import com.liferay.ide.project.core.modules.NewLiferayComponentOp;
 
 /**
  * @author Simon Jiang
  */
 
-public class LiferayDSComponentServiceWrapperOperation extends LiferayDSComponentServiceOperation
+public class NewLiferayComponentServiceWrapperOperation extends NewLiferayComponentServiceOperation
 {
-    public LiferayDSComponentServiceWrapperOperation( NewModuleOp op )
+    public NewLiferayComponentServiceWrapperOperation( NewLiferayComponentOp op )
     {
         super( op );
     }

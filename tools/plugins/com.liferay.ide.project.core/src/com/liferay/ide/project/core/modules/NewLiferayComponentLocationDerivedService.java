@@ -26,7 +26,7 @@ import org.eclipse.sapphire.Value;
 /**
  * @author Simon Jiang
  */
-public class NewModuleLocationDerivedService extends DerivedValueService
+public class NewLiferayComponentLocationDerivedService extends DerivedValueService
 {
 
     private FilteredListener<PropertyContentEvent> listener;
@@ -46,7 +46,7 @@ public class NewModuleLocationDerivedService extends DerivedValueService
             }
         };
 
-        op().property( NewModuleOp.PROP_PROJECT_NAME ).attach( this.listener );
+        op().property( NewLiferayComponentOp.PROP_PROJECT_NAME ).attach( this.listener );
     }
 
     @Override
@@ -74,9 +74,9 @@ public class NewModuleLocationDerivedService extends DerivedValueService
         return retVal;
     }
 
-    private NewModuleOp op()
+    private NewLiferayComponentOp op()
     {
-        return context( NewModuleOp.class );
+        return context( NewLiferayComponentOp.class );
     }
 
     @Override
@@ -84,7 +84,7 @@ public class NewModuleLocationDerivedService extends DerivedValueService
     {
         if( op() != null )
         {
-            op().property( NewModuleOp.PROP_PROJECT_NAME ).detach( this.listener );
+            op().property( NewLiferayComponentOp.PROP_PROJECT_NAME ).detach( this.listener );
         }
         super.dispose();
     }

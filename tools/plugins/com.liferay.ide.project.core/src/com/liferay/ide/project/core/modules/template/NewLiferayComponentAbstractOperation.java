@@ -15,7 +15,7 @@
 
 package com.liferay.ide.project.core.modules.template;
 
-import com.liferay.ide.project.core.modules.NewModuleOp;
+import com.liferay.ide.project.core.modules.NewLiferayComponentOp;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,10 +28,10 @@ import org.eclipse.core.runtime.CoreException;
  * @author Simon Jiang
  */
 
-public abstract class LiferayDSComponentAbstractOperation extends AbstractLiferayComponentOperation
+public abstract class NewLiferayComponentAbstractOperation extends AbstractNewLiferayComponentOperation
 {
     private static final String TEMPLATE_FILE = "template.ftl";
-    public LiferayDSComponentAbstractOperation( NewModuleOp op )
+    public NewLiferayComponentAbstractOperation( NewLiferayComponentOp op )
     {
         super( op );
     }

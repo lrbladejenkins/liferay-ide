@@ -22,7 +22,7 @@ import org.eclipse.sapphire.PropertyContentEvent;
 /**
  * @author Simon Jiang
  */
-public class NewModuleComponentDefaultValueService extends DefaultValueService
+public class NewLiferayComponentDefaultValueService extends DefaultValueService
 {
 
     private FilteredListener<PropertyContentEvent> listener;
@@ -42,8 +42,8 @@ public class NewModuleComponentDefaultValueService extends DefaultValueService
             }
         };
 
-        op().property( NewModuleOp.PROP_PROJECT_NAME ).attach( this.listener );
-        op().property( NewModuleOp.PROP_COMPONENT_TEMPLATE_NAME ).attach( this.listener );
+        op().property( NewLiferayComponentOp.PROP_PROJECT_NAME ).attach( this.listener );
+        op().property( NewLiferayComponentOp.PROP_COMPONENT_TEMPLATE_NAME ).attach( this.listener );
     }
 
     @Override
@@ -71,9 +71,9 @@ public class NewModuleComponentDefaultValueService extends DefaultValueService
         return componentNameBuffer.toString();
     }
 
-    private NewModuleOp op()
+    private NewLiferayComponentOp op()
     {
-        return context( NewModuleOp.class );
+        return context( NewLiferayComponentOp.class );
     }
 
     @Override
@@ -81,8 +81,8 @@ public class NewModuleComponentDefaultValueService extends DefaultValueService
     {
         if( op() != null )
         {
-            op().property( NewModuleOp.PROP_COMPONENT_TEMPLATE_NAME ).detach( this.listener );
-            op().property( NewModuleOp.PROP_PROJECT_NAME ).detach( this.listener );
+            op().property( NewLiferayComponentOp.PROP_COMPONENT_TEMPLATE_NAME ).detach( this.listener );
+            op().property( NewLiferayComponentOp.PROP_PROJECT_NAME ).detach( this.listener );
         }
 
         super.dispose();

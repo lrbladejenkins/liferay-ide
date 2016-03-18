@@ -15,7 +15,7 @@
 
 package com.liferay.ide.project.core.modules.template;
 
-import com.liferay.ide.project.core.modules.NewModuleOp;
+import com.liferay.ide.project.core.modules.NewLiferayComponentOp;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,7 +25,7 @@ import java.util.List;
  * @author Simon Jiang
  */
 
-public class LiferayDSComponentPortletOperation extends LiferayDSComponentAbstractOperation
+public class NewLiferayComponentPortletOperation extends NewLiferayComponentAbstractOperation
 {
 
     private final static String SUPER_CLASS = "GenericPortlet";
@@ -39,7 +39,7 @@ public class LiferayDSComponentPortletOperation extends LiferayDSComponentAbstra
             "javax.portlet.security-role-ref=power-user,user" 
         };
 
-    public LiferayDSComponentPortletOperation( NewModuleOp op )
+    public NewLiferayComponentPortletOperation( NewLiferayComponentOp op )
     {
         super( op );
     }

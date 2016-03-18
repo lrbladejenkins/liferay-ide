@@ -27,7 +27,7 @@ import org.eclipse.sapphire.services.ValidationService;
  * @author Simon Jiang
  */
 
-public class NewModuleServiceNameValidataionService extends ValidationService
+public class NewLiferayComponentServiceNameValidataionService extends ValidationService
 {
 
     private Listener listener;
@@ -51,7 +51,7 @@ public class NewModuleServiceNameValidataionService extends ValidationService
     {
         if( this.listener != null )
         {
-            op().property( NewModuleOp.PROP_COMPONENT_TEMPLATE_NAME ).detach( this.listener );
+            op().property( NewLiferayComponentOp.PROP_COMPONENT_TEMPLATE_NAME ).detach( this.listener );
 
             this.listener = null;
         }
@@ -71,11 +71,11 @@ public class NewModuleServiceNameValidataionService extends ValidationService
             }
         };
 
-        op().property( NewModuleOp.PROP_COMPONENT_TEMPLATE_NAME ).attach( this.listener );
+        op().property( NewLiferayComponentOp.PROP_COMPONENT_TEMPLATE_NAME ).attach( this.listener );
     }
 
-    private NewModuleOp op()
+    private NewLiferayComponentOp op()
     {
-        return context( NewModuleOp.class );
+        return context( NewLiferayComponentOp.class );
     }
 }

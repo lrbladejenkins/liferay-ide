@@ -15,7 +15,7 @@
 
 package com.liferay.ide.project.core.modules.template;
 
-import com.liferay.ide.project.core.modules.NewModuleOp;
+import com.liferay.ide.project.core.modules.NewLiferayComponentOp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +24,11 @@ import java.util.List;
  * @author Simon Jiang
  */
 
-public class LiferayDSComponentServiceOperation extends LiferayDSComponentAbstractOperation
+public class NewLiferayComponentServiceOperation extends NewLiferayComponentAbstractOperation
 {
     private String serviceClassName;
     
-    public LiferayDSComponentServiceOperation( NewModuleOp op )
+    public NewLiferayComponentServiceOperation( NewLiferayComponentOp op )
     {
         super( op );
         

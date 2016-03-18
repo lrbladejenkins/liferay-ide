@@ -39,10 +39,10 @@ import org.eclipse.sapphire.modeling.annotations.ValidFileSystemResourceType;
 /**
  * @author Simon Jiang
  */
-public interface NewModuleOp extends ExecutableElement
+public interface NewLiferayComponentOp extends ExecutableElement
 {
 
-    ElementType TYPE = new ElementType( NewModuleOp.class );
+    ElementType TYPE = new ElementType( NewLiferayComponentOp.class );
 
     // *** Selected Project Name ***
 
@@ -55,8 +55,8 @@ public interface NewModuleOp extends ExecutableElement
     @Services
     ( 
         { 
-            @Service( impl = NewModuleProjectNameDefaultValueService.class ),
-            @Service( impl = NewModuleProjectNamePossibleService.class ) 
+            @Service( impl = NewLiferayComponentProjectNameDefaultValueService.class ),
+            @Service( impl = NewLiferayComponentProjectNamePossibleService.class ) 
         }
     )
     ValueProperty PROP_PROJECT_NAME = new ValueProperty( TYPE, "ProjectName" );
@@ -72,7 +72,7 @@ public interface NewModuleOp extends ExecutableElement
     @Derived
     @ValidFileSystemResourceType( FileSystemResourceType.FOLDER )
     @Label( standard = "location" )
-    @Service( impl = NewModuleLocationDerivedService.class )
+    @Service( impl = NewLiferayComponentLocationDerivedService.class )
     ValueProperty PROP_LOCATION = new ValueProperty( TYPE, "Location" );
 
     Value<Path> getLocation();
@@ -86,7 +86,7 @@ public interface NewModuleOp extends ExecutableElement
 
     @DefaultValue( text = "mvcportlet" )
     @Label( standard = "Component Template Name" )
-    @Service( impl = NewModuleComponentTemplateNameService.class )
+    @Service( impl = NewLiferayComponentTemplateNameService.class )
     ValueProperty PROP_COMPONENT_TEMPLATE_NAME = new ValueProperty( TYPE, "ComponentTemplateName" );
 
     Value<String> getComponentTemplateName();
@@ -97,8 +97,8 @@ public interface NewModuleOp extends ExecutableElement
     @Services
     ( 
         { 
-            @Service( impl = NewModuleComponentDefaultValueService.class ),
-            @Service( impl = NewModuleComponentValidationService.class ) 
+            @Service( impl = NewLiferayComponentDefaultValueService.class ),
+            @Service( impl = NewLiferayComponentValidationService.class ) 
         }
     )
     ValueProperty PROP_COMPONENT_NAME = new ValueProperty( TYPE, "ComponentName" );
@@ -113,8 +113,8 @@ public interface NewModuleOp extends ExecutableElement
     @Services
     ( 
         { 
-            @Service( impl = NewModuleServicePossibleValuesService.class ),
-            @Service( impl = NewModuleServiceNameValidataionService.class ) 
+            @Service( impl = NewLiferayComponentServicePossibleValuesService.class ),
+            @Service( impl = NewLiferayComponentServiceNameValidataionService.class ) 
         }
     )
     ValueProperty PROP_SERVICE_NAME = new ValueProperty( TYPE, "ServiceName" );
@@ -128,7 +128,7 @@ public interface NewModuleOp extends ExecutableElement
     @Services
     ( 
         { 
-            @Service( impl = NewModulePackageNameValidationService.class ),
+            @Service( impl = NewLiferayComponentPackageNameValidationService.class ),
             @Service( impl = PackageNameDefaultValueService.class ) 
         }
     )
@@ -147,6 +147,6 @@ public interface NewModuleOp extends ExecutableElement
     // *** Method: execute ***
 
     @Override
-    @DelegateImplementation( NewModuleOpMethods.class )
+    @DelegateImplementation( NewLiferayComponentOpMethods.class )
     Status execute( ProgressMonitor monitor );
 }

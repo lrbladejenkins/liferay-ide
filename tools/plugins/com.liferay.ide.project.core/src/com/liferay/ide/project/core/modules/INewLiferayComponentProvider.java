@@ -20,8 +20,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 /**
  * @author Simon Jiang
  */
-public interface IDSComponentProvider
+public interface INewLiferayComponentProvider
 {
-    public void createNewModule( NewModuleOp op, IProgressMonitor monitor ) throws CoreException;
+    public void createNewModule( NewLiferayComponentOp op, IProgressMonitor monitor ) throws CoreException;
 
 }

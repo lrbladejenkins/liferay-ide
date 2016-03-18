@@ -24,7 +24,7 @@ import org.eclipse.sapphire.Value;
 /**
  * @author Simon Jiang
  */
-public class NewModuleProjectNameDefaultValueService extends DefaultValueService
+public class NewLiferayComponentProjectNameDefaultValueService extends DefaultValueService
 {
 
     @Override
@@ -60,8 +60,8 @@ public class NewModuleProjectNameDefaultValueService extends DefaultValueService
         return defaultProjecName;
     }
 
-    private NewModuleOp op()
+    private NewLiferayComponentOp op()
     {
-        return context( NewModuleOp.class );
+        return context( NewLiferayComponentOp.class );
     }
 }

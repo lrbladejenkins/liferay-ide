@@ -28,11 +28,11 @@ import org.eclipse.ui.IWorkbenchPart;
 /**
  * @author Simon Jiang
  */
-public class NewModuleAction implements IObjectActionDelegate
+public class NewLiferayComponentAction implements IObjectActionDelegate
 {
     private ISelection fSelection;
 
-    public NewModuleAction()
+    public NewLiferayComponentAction()
     {
     }
 
@@ -62,8 +62,8 @@ public class NewModuleAction implements IObjectActionDelegate
                 project = (IProject) elem;
             }
 
-            NewLiferayModuleWizard wizard =
-                new NewLiferayModuleWizard( project.getName() );
+            NewLiferayComponentWizard wizard =
+                new NewLiferayComponentWizard( project.getName() );
 
             final Display display = getDisplay();
 

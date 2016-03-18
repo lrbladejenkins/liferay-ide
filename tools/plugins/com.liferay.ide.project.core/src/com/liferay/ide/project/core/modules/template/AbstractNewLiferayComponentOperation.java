@@ -21,7 +21,7 @@ import com.liferay.ide.core.util.CoreUtil;
 import com.liferay.ide.core.util.FileUtil;
 import com.liferay.ide.project.core.ProjectCore;
 import com.liferay.ide.project.core.modules.ILiferayModuleOperation;
-import com.liferay.ide.project.core.modules.NewModuleOp;
+import com.liferay.ide.project.core.modules.NewLiferayComponentOp;
 import com.liferay.ide.project.core.modules.PropertyKey;
 
 import java.io.ByteArrayInputStream;
@@ -61,7 +61,7 @@ import freemarker.template.TemplateExceptionHandler;
  * @author Simon Jiang
  */
 
-public abstract class AbstractLiferayComponentOperation implements ILiferayModuleOperation<NewModuleOp>
+public abstract class AbstractNewLiferayComponentOperation implements ILiferayModuleOperation<NewLiferayComponentOp>
 {
     
     
@@ -86,7 +86,7 @@ public abstract class AbstractLiferayComponentOperation implements ILiferayModul
         }
     }
     
-    public AbstractLiferayComponentOperation( NewModuleOp op )
+    public AbstractNewLiferayComponentOperation( NewLiferayComponentOp op )
     {
         this.projectName = op.getProjectName().content( true );
         this.packageName = op.getPackageName().content( true );

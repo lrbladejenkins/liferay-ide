@@ -17,7 +17,7 @@ package com.liferay.ide.project.core.modules.template;
 
 import com.liferay.ide.core.util.CoreUtil;
 import com.liferay.ide.project.core.ProjectCore;
-import com.liferay.ide.project.core.modules.NewModuleOp;
+import com.liferay.ide.project.core.modules.NewLiferayComponentOp;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,7 +38,7 @@ import org.eclipse.jdt.core.JavaCore;
  * @author Simon Jiang
  */
 
-public class LiferayDSComponentMvcPortletOperation extends LiferayDSComponentPortletOperation
+public class NewLiferayComponentMvcPortletOperation extends NewLiferayComponentPortletOperation
 {
     private final static String SUPER_CLASS = "MVCPortlet"; 
     private final static String[] PROPERTIES_LIST = new String[]
@@ -48,7 +48,7 @@ public class LiferayDSComponentMvcPortletOperation extends LiferayDSComponentPor
     };
 
     
-    public LiferayDSComponentMvcPortletOperation( NewModuleOp op )
+    public NewLiferayComponentMvcPortletOperation( NewLiferayComponentOp op )
     {
         super( op );
     }

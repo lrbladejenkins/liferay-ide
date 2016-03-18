@@ -27,14 +27,14 @@ import org.eclipse.sapphire.platform.ProgressMonitorBridge;
 /**
  * @author Simon Jiang
  */
-public class NewModuleOpMethods
+public class NewLiferayComponentOpMethods
 {
 
-    public static final Status execute( final NewModuleOp op, final ProgressMonitor pm )
+    public static final Status execute( final NewLiferayComponentOp op, final ProgressMonitor pm )
     {
         final IProgressMonitor monitor = ProgressMonitorBridge.create( pm );
 
-        monitor.beginTask( "Creating Liferay plugin project (this process may take several minutes)", 100 ); //$NON-NLS-1$
+        monitor.beginTask( "Creating new Liferay component", 100 );
 
         Status retval = Status.createOkStatus();
 
@@ -42,11 +42,11 @@ public class NewModuleOpMethods
         {
             String projectName = op.getProjectName().content( true );
             IProject project = CoreUtil.getProject( projectName );
-            
+
             if ( project != null )
             {
-                final IDSComponentProvider dsComponentProvider = new DSComponentProvider();
-                dsComponentProvider.createNewModule( op, monitor );
+                final INewLiferayComponentProvider newLiferayComponentComponentProvider = new NewLiferayComponentProvider();
+                newLiferayComponentComponentProvider.createNewModule( op, monitor );
             }
             else
             {
@@ -55,7 +55,7 @@ public class NewModuleOpMethods
         }
         catch( Exception e )
         {
-            final String msg = "Error creating Liferay module."; //$NON-NLS-1$
+            final String msg = "Error creating Liferay component.";
             ProjectCore.logError( msg, e );
 
             return Status.createErrorStatus( msg + " Please see Eclipse error log for more details.", e );

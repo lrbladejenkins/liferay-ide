@@ -34,7 +34,7 @@ import org.eclipse.sapphire.services.ValidationService;
  * @author Simon Jiang
  */
 @SuppressWarnings( "restriction" )
-public class NewModuleComponentValidationService extends ValidationService
+public class NewLiferayComponentValidationService extends ValidationService
 {
 
     private FilteredListener<PropertyContentEvent> listener;
@@ -54,9 +54,9 @@ public class NewModuleComponentValidationService extends ValidationService
             }
         };
 
-        op().property( NewModuleOp.PROP_PROJECT_NAME ).attach( this.listener );
-        op().property( NewModuleOp.PROP_PACKAGE_NAME ).attach( this.listener );
-        op().property( NewModuleOp.PROP_COMPONENT_TEMPLATE_NAME ).attach( this.listener );
+        op().property( NewLiferayComponentOp.PROP_PROJECT_NAME ).attach( this.listener );
+        op().property( NewLiferayComponentOp.PROP_PACKAGE_NAME ).attach( this.listener );
+        op().property( NewLiferayComponentOp.PROP_COMPONENT_TEMPLATE_NAME ).attach( this.listener );
 
     }
 
@@ -117,17 +117,17 @@ public class NewModuleComponentValidationService extends ValidationService
     {
         if( this.listener != null )
         {
-            op().property( NewModuleOp.PROP_PROJECT_NAME ).detach( this.listener );
-            op().property( NewModuleOp.PROP_PACKAGE_NAME ).detach( this.listener );
-            op().property( NewModuleOp.PROP_COMPONENT_TEMPLATE_NAME ).detach( this.listener );
+            op().property( NewLiferayComponentOp.PROP_PROJECT_NAME ).detach( this.listener );
+            op().property( NewLiferayComponentOp.PROP_PACKAGE_NAME ).detach( this.listener );
+            op().property( NewLiferayComponentOp.PROP_COMPONENT_TEMPLATE_NAME ).detach( this.listener );
 
             this.listener = null;
         }
         super.dispose();
     }
 
-    private NewModuleOp op()
+    private NewLiferayComponentOp op()
     {
-        return context( NewModuleOp.class );
+        return context( NewLiferayComponentOp.class );
     }
 }

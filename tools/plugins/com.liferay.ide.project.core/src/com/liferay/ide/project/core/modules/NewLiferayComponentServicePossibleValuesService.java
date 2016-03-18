@@ -34,7 +34,7 @@ import org.eclipse.wst.server.core.ServerCore;
  * @author Simon Jiang
  * @author Lovett Li
  */
-public class NewModuleServicePossibleValuesService extends PossibleValuesService
+public class NewLiferayComponentServicePossibleValuesService extends PossibleValuesService
 {
 
     private Listener listener;
@@ -51,13 +51,13 @@ public class NewModuleServicePossibleValuesService extends PossibleValuesService
             }
         };
 
-        op().property( NewModuleOp.PROP_COMPONENT_TEMPLATE_NAME ).attach( this.listener );
+        op().property( NewLiferayComponentOp.PROP_COMPONENT_TEMPLATE_NAME ).attach( this.listener );
     }
 
     @Override
     protected void compute( final Set<String> values )
     {
-        final NewModuleOp op = op();
+        final NewLiferayComponentOp op = op();
         final String template = op.getComponentTemplateName().content( true ).toString();
         IServer runningServer = null;
         final IServer[] servers = ServerCore.getServers();
@@ -115,16 +115,16 @@ public class NewModuleServicePossibleValuesService extends PossibleValuesService
     {
         if( this.listener != null )
         {
-            op().property( NewModuleOp.PROP_COMPONENT_TEMPLATE_NAME ).detach( this.listener );
+            op().property( NewLiferayComponentOp.PROP_COMPONENT_TEMPLATE_NAME ).detach( this.listener );
 
             this.listener = null;
         }
         super.dispose();
     }
 
-    private NewModuleOp op()
+    private NewLiferayComponentOp op()
     {
-        return context( NewModuleOp.class );
+        return context( NewLiferayComponentOp.class );
     }
 
     @Override

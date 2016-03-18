@@ -15,50 +15,48 @@
 
 package com.liferay.ide.project.core.modules;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.liferay.ide.core.util.CoreUtil;
+import com.liferay.ide.project.core.ProjectCore;
+
 import java.util.Set;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.sapphire.PossibleValuesService;
+import org.eclipse.sapphire.Value;
+import org.eclipse.sapphire.modeling.Status;
 
 /**
  * @author Simon Jiang
  */
-public class NewModuleComponentTemplateNameService extends PossibleValuesService
+
+public class NewLiferayComponentProjectNamePossibleService extends PossibleValuesService
 {
 
-    private List<String> possibleValues;
+    @Override
+    public Status problem( final Value<?> value )
+    {
+        return Status.createOkStatus();
+    }
 
     @Override
-    protected void initPossibleValuesService()
+    protected void compute( final Set<String> values )
     {
-        possibleValues = new ArrayList<String>();
-
         try
         {
-            for( String projectTemplate : BladeCLI.getProjectTemplates() )
+            IProject[] allProjects = CoreUtil.getAllProjects();
+
+            for( IProject project : allProjects )
             {
-                if( !projectTemplate.contains( "hook" ) && !projectTemplate.contains( "fragment" ) &&
-                    !projectTemplate.contains( "servicebuilder" ) )
+                if( CoreUtil.isLiferayProject( project ) &&
+                    project.hasNature( "org.eclipse.buildship.core.gradleprojectnature" ) )
                 {
-                    possibleValues.add( projectTemplate );
+                    values.add( project.getName() );
                 }
             }
         }
         catch( Exception e )
         {
+            ProjectCore.logError( "Get project list error. ", e );
         }
-    }
-
-    @Override
-    protected void compute( Set<String> values )
-    {
-        values.addAll( possibleValues );
-    }
-
-    @Override
-    public boolean ordered()
-    {
-        return true;
     }
 }

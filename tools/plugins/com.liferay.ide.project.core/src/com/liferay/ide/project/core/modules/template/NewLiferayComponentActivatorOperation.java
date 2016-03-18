@@ -17,7 +17,7 @@ package com.liferay.ide.project.core.modules.template;
 
 import com.liferay.ide.core.util.FileUtil;
 import com.liferay.ide.project.core.ProjectCore;
-import com.liferay.ide.project.core.modules.NewModuleOp;
+import com.liferay.ide.project.core.modules.NewLiferayComponentOp;
 import com.liferay.ide.project.core.util.SearchFilesVisitor;
 
 import java.io.ByteArrayInputStream;
@@ -32,10 +32,10 @@ import org.eclipse.core.runtime.CoreException;
  * @author Simon Jiang
  */
 
-public class LiferayDSComponentActivatorOperation extends LiferayDSComponentAbstractOperation
+public class NewLiferayComponentActivatorOperation extends NewLiferayComponentAbstractOperation
 {
 
-    public LiferayDSComponentActivatorOperation( NewModuleOp op )
+    public NewLiferayComponentActivatorOperation( NewLiferayComponentOp op )
     {
         super( op );
     }

@@ -16,7 +16,7 @@
 package com.liferay.ide.project.ui.modules;
 
 import com.liferay.ide.core.util.CoreUtil;
-import com.liferay.ide.project.core.modules.NewModuleOp;
+import com.liferay.ide.project.core.modules.NewLiferayComponentOp;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -37,19 +37,19 @@ import org.eclipse.ui.PlatformUI;
 /**
  * @author Simon Jiang
  */
-public class NewLiferayModuleWizard extends SapphireWizard<NewModuleOp>implements IWorkbenchWizard, INewWizard
+public class NewLiferayComponentWizard extends SapphireWizard<NewLiferayComponentOp>implements IWorkbenchWizard, INewWizard
 {
 
     private boolean firstErrorMessageRemoved = false;
 
-    public NewLiferayModuleWizard()
+    public NewLiferayComponentWizard()
     {
-        super( createDefaultOp(), DefinitionLoader.sdef( NewLiferayModuleWizard.class ).wizard() );
+        super( createDefaultOp(), DefinitionLoader.sdef( NewLiferayComponentWizard.class ).wizard() );
     }
 
-    public NewLiferayModuleWizard( final String projectName )
+    public NewLiferayComponentWizard( final String projectName )
     {
-        super( createDefaultOp( projectName ), DefinitionLoader.sdef( NewLiferayModuleWizard.class ).wizard() );
+        super( createDefaultOp( projectName ), DefinitionLoader.sdef( NewLiferayComponentWizard.class ).wizard() );
     }
 
     @Override
@@ -118,9 +118,9 @@ public class NewLiferayModuleWizard extends SapphireWizard<NewModuleOp>implement
         return project;
     }
 
-    private static NewModuleOp createDefaultOp()
+    private static NewLiferayComponentOp createDefaultOp()
     {
-        NewModuleOp newModuleOp = NewModuleOp.TYPE.instantiate();
+        NewLiferayComponentOp newModuleOp = NewLiferayComponentOp.TYPE.instantiate();
         IProject selectedProject = getSelectedProject();
 
         if( selectedProject != null )
@@ -131,9 +131,9 @@ public class NewLiferayModuleWizard extends SapphireWizard<NewModuleOp>implement
         return newModuleOp;
     }
 
-    private static NewModuleOp createDefaultOp( final String projectName )
+    private static NewLiferayComponentOp createDefaultOp( final String projectName )
     {
-        NewModuleOp newModuleOp = NewModuleOp.TYPE.instantiate();
+        NewLiferayComponentOp newModuleOp = NewLiferayComponentOp.TYPE.instantiate();
 
         newModuleOp.setProjectName( projectName );
 

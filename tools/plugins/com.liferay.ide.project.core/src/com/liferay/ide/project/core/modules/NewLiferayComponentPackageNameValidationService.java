@@ -29,7 +29,7 @@ import org.eclipse.sapphire.services.ValidationService;
  * @author Simon Jiang
  */
 @SuppressWarnings( "restriction" )
-public class NewModulePackageNameValidationService extends ValidationService
+public class NewLiferayComponentPackageNameValidationService extends ValidationService
 {
 
     private FilteredListener<PropertyContentEvent> listener;
@@ -49,7 +49,7 @@ public class NewModulePackageNameValidationService extends ValidationService
             }
         };
 
-        op().property( NewModuleOp.PROP_COMPONENT_NAME ).attach( this.listener );
+        op().property( NewLiferayComponentOp.PROP_COMPONENT_NAME ).attach( this.listener );
     }
 
     @Override
@@ -79,15 +79,15 @@ public class NewModulePackageNameValidationService extends ValidationService
     {
         if( this.listener != null )
         {
-            op().property( NewModuleOp.PROP_COMPONENT_NAME ).detach( this.listener );
+            op().property( NewLiferayComponentOp.PROP_COMPONENT_NAME ).detach( this.listener );
 
             this.listener = null;
         }
         super.dispose();
     }
 
-    private NewModuleOp op()
+    private NewLiferayComponentOp op()
     {
-        return context( NewModuleOp.class );
+        return context( NewLiferayComponentOp.class );
     }
 }
