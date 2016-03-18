@@ -17,6 +17,7 @@ package com.liferay.ide.project.core.modules;
 
 import com.liferay.ide.core.util.CoreUtil;
 import com.liferay.ide.project.core.ProjectCore;
+import com.liferay.ide.project.core.modules.template.BaseNewLiferayComponentOperation;
 import com.liferay.ide.project.core.modules.template.NewLiferayComponentActivatorOperation;
 import com.liferay.ide.project.core.modules.template.NewLiferayComponentMvcPortletOperation;
 import com.liferay.ide.project.core.modules.template.NewLiferayComponentPortletOperation;
@@ -38,34 +39,34 @@ public class NewLiferayComponentOpMethods
 
     public static void createNewModule( NewLiferayComponentOp op, IProgressMonitor monitor ) throws CoreException
     {
-        ILiferayModuleOperation<NewLiferayComponentOp> moduleOperation = null;
+        BaseNewLiferayComponentOperation newLiferayComponentOperation = null;
 
         final String templateName = op.getComponentTemplateName().content( true );
 
         if( templateName.equals( "mvcportlet" ) )
         {
-            moduleOperation = new NewLiferayComponentMvcPortletOperation( op );
+            newLiferayComponentOperation = new NewLiferayComponentMvcPortletOperation( op );
         }
         else if( templateName.equals( "portlet" ) )
         {
-            moduleOperation = new NewLiferayComponentPortletOperation( op );
+            newLiferayComponentOperation = new NewLiferayComponentPortletOperation( op );
         }
         else if( templateName.equals( "service" ) )
         {
-            moduleOperation = new NewLiferayComponentServiceOperation( op );
+            newLiferayComponentOperation = new NewLiferayComponentServiceOperation( op );
         }
         else if( templateName.equals( "servicewrapper" )  )
         {
-            moduleOperation = new NewLiferayComponentServiceWrapperOperation( op );
+            newLiferayComponentOperation = new NewLiferayComponentServiceWrapperOperation( op );
         }
         else if( templateName.equals( "activator" ) )
         {
-            moduleOperation = new NewLiferayComponentActivatorOperation( op );
+            newLiferayComponentOperation = new NewLiferayComponentActivatorOperation( op );
         }
 
-        if( moduleOperation != null )
+        if( newLiferayComponentOperation != null )
         {
-            moduleOperation.doExecute();
+            newLiferayComponentOperation.doExecute();
         }
     }
 

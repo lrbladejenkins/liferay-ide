@@ -24,7 +24,7 @@ import java.util.List;
  * @author Simon Jiang
  */
 
-public class NewLiferayComponentServiceOperation extends NewLiferayComponentAbstractOperation
+public class NewLiferayComponentServiceOperation extends BaseNewLiferayComponentOperation
 {
     private String serviceClassName;
     

@@ -32,7 +32,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Simon Jiang
  */
 
-public class NewLiferayComponentActivatorOperation extends NewLiferayComponentAbstractOperation
+public class NewLiferayComponentActivatorOperation extends BaseNewLiferayComponentOperation
 {
 
     public NewLiferayComponentActivatorOperation( NewLiferayComponentOp op )

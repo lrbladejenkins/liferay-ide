@@ -20,7 +20,6 @@ import com.liferay.ide.core.LiferayCore;
 import com.liferay.ide.core.util.CoreUtil;
 import com.liferay.ide.core.util.FileUtil;
 import com.liferay.ide.project.core.ProjectCore;
-import com.liferay.ide.project.core.modules.ILiferayModuleOperation;
 import com.liferay.ide.project.core.modules.NewLiferayComponentOp;
 import com.liferay.ide.project.core.modules.PropertyKey;
 
@@ -33,6 +32,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -61,32 +61,30 @@ import freemarker.template.TemplateExceptionHandler;
  * @author Simon Jiang
  */
 
-public abstract class AbstractNewLiferayComponentOperation implements ILiferayModuleOperation<NewLiferayComponentOp>
+public class BaseNewLiferayComponentOperation
 {
-    
-    
-    protected static final String TEMPLATE_DIR = "templates/"; //$NON-NLS-1$
-    
+    protected static final String TEMPLATE_DIR = "templates/";
+
+    private static final String TEMPLATE_FILE = "template.ftl";
+
+    protected File[] bndTemplateFiles;
+
     protected Configuration cfg = new Configuration();
-    
-    private void initFreeMarker() throws CoreException
-    {
-        try
-        {
-            URL templateURL = FileLocator.find( ProjectCore.getDefault().getBundle(), new Path(TEMPLATE_DIR), null);
-            cfg.setDirectoryForTemplateLoading( new File( FileLocator.toFileURL( templateURL ).getFile() ) );
-            
-            cfg.setDefaultEncoding( "UTF-8" );
-            cfg.setTemplateExceptionHandler( TemplateExceptionHandler.RETHROW_HANDLER );
-            
-        }
-        catch( IOException e )
-        {
-            throw new CoreException(ProjectCore.createErrorStatus( e ) );
-        }
-    }
-    
-    public AbstractNewLiferayComponentOperation( NewLiferayComponentOp op )
+
+    protected String className;
+
+    protected File[] dependenciesTemplateFiles;
+    protected ILiferayProject liferayProject;
+    protected String packageName;
+    protected IProject project;
+    protected String projectName;
+    protected List<String> properties = new ArrayList<String>();
+
+    protected String serviceName;
+    protected File[] sourceTemplateFiles;
+    protected String templateName;
+
+    public BaseNewLiferayComponentOperation( NewLiferayComponentOp op )
     {
         this.projectName = op.getProjectName().content( true );
         this.packageName = op.getPackageName().content( true );
@@ -106,24 +104,9 @@ public abstract class AbstractNewLiferayComponentOperation implements ILiferayMo
         }
 
         this.project = CoreUtil.getProject( projectName );
-        
-        
+
+
     }
-
-    protected String projectName;
-    protected String packageName;
-    protected String className;
-    protected String templateName;
-    protected String serviceName;
-    protected List<String> properties = new ArrayList<String>();
-
-    protected File[] sourceTemplateFiles;
-    protected File[] dependenciesTemplateFiles;
-    protected File[] bndTemplateFiles;
-
-    protected IProject project;
-    protected ILiferayProject liferayProject;
-
     protected void createFile( IFile newFile, final byte[] input ) throws CoreException
     {
         if( newFile.getParent() instanceof IFolder )
@@ -144,33 +127,6 @@ public abstract class AbstractNewLiferayComponentOperation implements ILiferayMo
             String readContents = FileUtil.readContents( resourceFile, true );
             createFile( projectFile, readContents.getBytes() );
         }
-    }
-
-    protected IFile prepareClassFile() throws CoreException
-    {
-        IFile file = null;
-        try
-        {
-            IFolder sourceFolder = liferayProject.getSourceFolder( "java" );
-            IJavaProject javaProject = JavaCore.create( project );
-            IPackageFragment pack = createJavaPackage( javaProject, packageName );
-
-            if( pack == null )
-            {
-                throw new CoreException( ProjectCore.createErrorStatus( "Can't create package folder" ) );
-            }
-
-            String fileName = className + ".java"; //$NON-NLS-1$
-            IPath packageFullPath = new Path( packageName.replace( '.', IPath.SEPARATOR ) );
-            IPath javaFileFullPath = packageFullPath.append( fileName );
-            file = sourceFolder.getFile( javaFileFullPath );
-        }
-        catch( Exception e )
-        {
-            throw new CoreException( ProjectCore.createErrorStatus( e ) );
-        }
-
-        return file;
     }
 
     protected final IPackageFragment createJavaPackage( IJavaProject javaProject, final String packageName )
@@ -205,7 +161,6 @@ public abstract class AbstractNewLiferayComponentOperation implements ILiferayMo
         return pack;
     }
 
-    @Override
     public void doExecute() throws CoreException
     {
         try
@@ -229,20 +184,25 @@ public abstract class AbstractNewLiferayComponentOperation implements ILiferayMo
 
                     project.refreshLocal( IResource.DEPTH_INFINITE, new NullProgressMonitor() );
                 }
-            }            
+            }
         }
         catch( Exception e)
         {
             throw new CoreException(ProjectCore.createErrorStatus( e ) );
         }
     }
-    protected abstract String getTemplateFile();
-    
-    protected abstract void doMergeBndOperation() throws CoreException;
 
-    protected abstract void doMergeResourcesOperation() throws CoreException;
+    protected void doMergeBndOperation() throws CoreException
+    {
+    }
 
-    protected abstract void doNewPropertiesOperation() throws CoreException;
+    protected void doMergeResourcesOperation() throws CoreException
+    {
+    }
+
+    protected void doNewPropertiesOperation() throws CoreException
+    {
+    }
 
     protected void doSourceCodeOperation(IFile srcFile) throws CoreException
     {
@@ -250,22 +210,32 @@ public abstract class AbstractNewLiferayComponentOperation implements ILiferayMo
         {
 
             Template temp = cfg.getTemplate(getTemplateFile());
-            
+
             Map<String, Object> root = getTemplateMap();
 
             Writer out = new OutputStreamWriter(fos);
             temp.process(root, out);
-            fos.flush();  
+            fos.flush();
         }
         catch( IOException | TemplateException e )
         {
             throw new CoreException(ProjectCore.createErrorStatus( e ) );
         }
     }
-    
 
-    
-    protected abstract Map<String, Object> getTemplateMap();
+    protected String getExtensionClass()
+    {
+        return null;
+    }
+
+    protected List<String> getImports()
+    {
+        List<String> imports = new ArrayList<String>();
+
+        imports.add( "org.osgi.service.component.annotations.Component" );
+
+        return imports;
+    }
 
     protected IProject getProject()
     {
@@ -282,6 +252,11 @@ public abstract class AbstractNewLiferayComponentOperation implements ILiferayMo
         }
 
         return retval;
+    }
+
+    protected List<String> getProperties()
+    {
+        return properties;
     }
 
     protected IPackageFragmentRoot getSourceFolder( IJavaProject javaProject )
@@ -302,4 +277,75 @@ public abstract class AbstractNewLiferayComponentOperation implements ILiferayMo
         }
         return null;
     }
+
+    protected String getSuperClass()
+    {
+        return null;
+    }
+
+    protected String getTemplateFile()
+    {
+        return TEMPLATE_FILE;
+    }
+
+    protected Map<String, Object> getTemplateMap()
+    {
+        Map<String, Object> root = new HashMap<String, Object>();
+
+        root.put( "importlibs", getImports() );
+        root.put( "properties", properties );
+        root.put( "packagename", packageName );
+        root.put( "classname", className );
+        root.put( "projectname", projectName );
+        root.put( "supperclass", getSuperClass() );
+        root.put( "extensionclass", getExtensionClass() );
+        root.put( "componenttype", templateName );
+
+        return root;
+    }
+
+    private void initFreeMarker() throws CoreException
+    {
+        try
+        {
+            URL templateURL = FileLocator.find( ProjectCore.getDefault().getBundle(), new Path(TEMPLATE_DIR), null);
+            cfg.setDirectoryForTemplateLoading( new File( FileLocator.toFileURL( templateURL ).getFile() ) );
+
+            cfg.setDefaultEncoding( "UTF-8" );
+            cfg.setTemplateExceptionHandler( TemplateExceptionHandler.RETHROW_HANDLER );
+
+        }
+        catch( IOException e )
+        {
+            throw new CoreException(ProjectCore.createErrorStatus( e ) );
+        }
+    }
+
+    protected IFile prepareClassFile() throws CoreException
+    {
+        IFile file = null;
+        try
+        {
+            IFolder sourceFolder = liferayProject.getSourceFolder( "java" );
+            IJavaProject javaProject = JavaCore.create( project );
+            IPackageFragment pack = createJavaPackage( javaProject, packageName );
+
+            if( pack == null )
+            {
+                throw new CoreException( ProjectCore.createErrorStatus( "Can't create package folder" ) );
+            }
+
+            String fileName = className + ".java"; //$NON-NLS-1$
+            IPath packageFullPath = new Path( packageName.replace( '.', IPath.SEPARATOR ) );
+            IPath javaFileFullPath = packageFullPath.append( fileName );
+            file = sourceFolder.getFile( javaFileFullPath );
+        }
+        catch( Exception e )
+        {
+            throw new CoreException( ProjectCore.createErrorStatus( e ) );
+        }
+
+        return file;
+    }
+
 }

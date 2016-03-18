@@ -25,7 +25,7 @@ import java.util.List;
  * @author Simon Jiang
  */
 
-public class NewLiferayComponentPortletOperation extends NewLiferayComponentAbstractOperation
+public class NewLiferayComponentPortletOperation extends BaseNewLiferayComponentOperation
 {
 
     private final static String SUPER_CLASS = "GenericPortlet";
