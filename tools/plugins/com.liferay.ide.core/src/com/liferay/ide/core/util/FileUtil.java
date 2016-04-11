@@ -391,6 +391,11 @@ public class FileUtil
         return out.toString();
     }
 
+    public static String[] readLinesFromFile( File file )
+    {
+        return readLinesFromFile( file, false );
+    }
+
     public static String[] readLinesFromFile( File file, boolean includeNewlines )
     {
         if( file == null )
@@ -422,7 +427,7 @@ public class FileUtil
                 {
                     contents.append( System.getProperty( "line.separator" ) ); //$NON-NLS-1$
                 }
-                
+
                 lines.add( contents.toString() );
             }
         }
