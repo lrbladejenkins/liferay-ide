@@ -15,13 +15,12 @@
 
 package com.liferay.ide.project.core.modules;
 
-import com.liferay.ide.core.util.CoreUtil;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.sapphire.FilteredListener;
 import org.eclipse.sapphire.PropertyContentEvent;
+import org.eclipse.sapphire.java.JavaPackageName;
 import org.eclipse.sapphire.modeling.Status;
 import org.eclipse.sapphire.services.ValidationService;
 
@@ -55,15 +54,15 @@ public class NewLiferayComponentPackageNameValidationService extends ValidationS
     @Override
     protected Status compute()
     {
-        final String packageName = op().getPackageName().content( true );
+        final JavaPackageName packageName = op().getPackageName().content( true );
         Status retval = Status.createOkStatus();
 
         int packageNameStatus = IStatus.OK;
 
-        if( !CoreUtil.isNullOrEmpty( packageName ) )
+        if( packageName != null )
         {
             packageNameStatus = JavaConventions.validatePackageName(
-                packageName, CompilerOptions.VERSION_1_5, CompilerOptions.VERSION_1_5 ).getSeverity();
+                packageName.toString(), CompilerOptions.VERSION_1_7, CompilerOptions.VERSION_1_7 ).getSeverity();
 
             if( packageNameStatus == IStatus.ERROR )
             {

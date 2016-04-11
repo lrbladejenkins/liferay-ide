@@ -34,7 +34,7 @@
                     <property>ProjectName</property>
                     <style>Sapphire.PropertyEditor.PopUpListField.Strict</style>
                 </property-editor>
-                <property-editor>Package</property-editor>
+                <property-editor>PackageName</property-editor>
                 <property-editor>
                     <property>ComponentClassTemplateName</property>
                     <style>Sapphire.PropertyEditor.PopUpListField.Strict</style>
@@ -53,7 +53,6 @@
             </visible-when>
             <content>
                 <property-editor>ComponentName</property-editor>
-                <property-editor>PackageName</property-editor>
                 <property-editor>ServiceName</property-editor>
                 <property-editor>
                     <span>false</span>
@@ -75,7 +74,6 @@
             </visible-when>
             <content>
                  <property-editor>ComponentName</property-editor>
-                 <property-editor>PackageName</property-editor>
                  <property-editor>
                      <span>false</span>
                      <property>PropertyKeys</property>
@@ -95,7 +93,6 @@
             </visible-when>
             <content>
                  <property-editor>ComponentName</property-editor>
-                 <property-editor>PackageName</property-editor>
             </content>
             <initial-focus>PropertyKeys</initial-focus>
         </page>

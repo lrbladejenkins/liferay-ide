@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.sapphire.FilteredListener;
 import org.eclipse.sapphire.PropertyContentEvent;
@@ -93,7 +92,7 @@ public class NewLiferayComponentValidationService extends ValidationService
             {
                 try
                 {
-                    String packageName = op().getPackageName().content( true );
+                    String packageName = op().getPackageName().content( true ).toString();
                     IType type = JavaCore.create( project ).findType( packageName + "." + className );
 
                     if( type != null )
@@ -101,7 +100,7 @@ public class NewLiferayComponentValidationService extends ValidationService
                         retval = Status.createErrorStatus( packageName + "." + className + " already existed." );
                     }
                 }
-                catch( JavaModelException e )
+                catch( Exception e )
                 {
                     ProjectCore.logError( "Checking component class name failed.", e );
                 }

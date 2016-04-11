@@ -56,11 +56,13 @@ public interface NewLiferayComponentOp extends ExecutableElement
 
     @Type( base = JavaPackageName.class )
     @Required
-    ValueProperty PROP_PACKAGE = new ValueProperty( TYPE, "Package" );
+    @Service( impl = JavaPackageNameDefaultValueService.class )
+    @Service( impl = JavaPackageNameValidationService.class )
+    ValueProperty PROP_PACKAGE_NAME = new ValueProperty( TYPE, "PackageName" );
 
-    Value<JavaPackageName> getPackage();
-    void setPackage( String value );
-    void setPackage( JavaPackageName value );
+    Value<JavaPackageName> getPackageName();
+    void setPackageName( String value );
+    void setPackageName( JavaPackageName value );
 
     // *** Component Class Template Name ***
 
@@ -123,21 +125,6 @@ public interface NewLiferayComponentOp extends ExecutableElement
 
     Value<String> getServiceName();
     void setServiceName( String value );
-
-    // *** PackageeName ***
-
-    @Label( standard = "Package Name" )
-    @Services
-    (
-        {
-            @Service( impl = NewLiferayComponentPackageNameValidationService.class ),
-            @Service( impl = PackageNameDefaultValueService.class )
-        }
-    )
-    ValueProperty PROP_PACKAGE_NAME = new ValueProperty( TYPE, "PackageName" );
-
-    Value<String> getPackageName();
-    void setPackageName( String value );
 
     // *** PropertyKeys ***
     @Type( base = PropertyKey.class )

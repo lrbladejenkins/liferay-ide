@@ -51,6 +51,7 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.sapphire.ElementList;
+import org.eclipse.sapphire.java.JavaPackageName;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -75,7 +76,7 @@ public class BaseNewLiferayComponentOperation
 
     protected File[] dependenciesTemplateFiles;
     protected ILiferayProject liferayProject;
-    protected String packageName;
+    protected JavaPackageName packageName;
     protected IProject project;
     protected String projectName;
     protected List<String> properties = new ArrayList<String>();
@@ -328,17 +329,21 @@ public class BaseNewLiferayComponentOperation
         {
             IFolder sourceFolder = liferayProject.getSourceFolder( "java" );
             IJavaProject javaProject = JavaCore.create( project );
-            IPackageFragment pack = createJavaPackage( javaProject, packageName );
 
-            if( pack == null )
+            if( packageName != null )
             {
-                throw new CoreException( ProjectCore.createErrorStatus( "Can't create package folder" ) );
-            }
+                IPackageFragment pack = createJavaPackage( javaProject, packageName.toString() );
 
-            String fileName = className + ".java"; //$NON-NLS-1$
-            IPath packageFullPath = new Path( packageName.replace( '.', IPath.SEPARATOR ) );
-            IPath javaFileFullPath = packageFullPath.append( fileName );
-            file = sourceFolder.getFile( javaFileFullPath );
+                if( pack == null )
+                {
+                    throw new CoreException( ProjectCore.createErrorStatus( "Can't create package folder" ) );
+                }
+
+                String fileName = className + ".java";
+                IPath packageFullPath = new Path( packageName.toString().replace( '.', IPath.SEPARATOR ) );
+                IPath javaFileFullPath = packageFullPath.append( fileName );
+                file = sourceFolder.getFile( javaFileFullPath );
+            }
         }
         catch( Exception e )
         {
