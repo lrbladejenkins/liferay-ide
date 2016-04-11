@@ -44,21 +44,9 @@ public interface NewLiferayComponentOp extends ExecutableElement
 
     ElementType TYPE = new ElementType( NewLiferayComponentOp.class );
 
-    // *** Selected Project Name ***
-
-    ValueProperty PROP_SELECTED_PROJECT_NAME = new ValueProperty( TYPE, "SelectedProjectName" );
-    Value<String> getSelectedProjectName();
-    void setSelectedProjectName( String value );
-
     @Label( standard = "project name" )
     @Required
-    @Services
-    ( 
-        { 
-            @Service( impl = NewLiferayComponentProjectNameDefaultValueService.class ),
-            @Service( impl = NewLiferayComponentProjectNamePossibleService.class ) 
-        }
-    )
+    @Service( impl = NewLiferayComponentProjectNamePossibleService.class )
     ValueProperty PROP_PROJECT_NAME = new ValueProperty( TYPE, "ProjectName" );
 
     Value<String> getProjectName();
@@ -80,8 +68,8 @@ public interface NewLiferayComponentOp extends ExecutableElement
     void setLocation( String value );
 
     void setLocation( Path value );
-    
-    
+
+
     // *** Component Template ***
 
     @DefaultValue( text = "mvcportlet" )
@@ -95,10 +83,10 @@ public interface NewLiferayComponentOp extends ExecutableElement
     // *** ComponentName ***
     @Label( standard = "Component Name" )
     @Services
-    ( 
-        { 
+    (
+        {
             @Service( impl = NewLiferayComponentDefaultValueService.class ),
-            @Service( impl = NewLiferayComponentValidationService.class ) 
+            @Service( impl = NewLiferayComponentValidationService.class )
         }
     )
     ValueProperty PROP_COMPONENT_NAME = new ValueProperty( TYPE, "ComponentName" );
@@ -111,10 +99,10 @@ public interface NewLiferayComponentOp extends ExecutableElement
     @Label( standard = "Service Name" )
     @Required
     @Services
-    ( 
-        { 
+    (
+        {
             @Service( impl = NewLiferayComponentServicePossibleValuesService.class ),
-            @Service( impl = NewLiferayComponentServiceNameValidataionService.class ) 
+            @Service( impl = NewLiferayComponentServiceNameValidataionService.class )
         }
     )
     ValueProperty PROP_SERVICE_NAME = new ValueProperty( TYPE, "ServiceName" );
@@ -126,10 +114,10 @@ public interface NewLiferayComponentOp extends ExecutableElement
 
     @Label( standard = "Package Name" )
     @Services
-    ( 
-        { 
+    (
+        {
             @Service( impl = NewLiferayComponentPackageNameValidationService.class ),
-            @Service( impl = PackageNameDefaultValueService.class ) 
+            @Service( impl = PackageNameDefaultValueService.class )
         }
     )
     ValueProperty PROP_PACKAGE_NAME = new ValueProperty( TYPE, "PackageName" );

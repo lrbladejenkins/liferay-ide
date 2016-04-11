@@ -22,7 +22,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.sapphire.ui.def.DefinitionLoader;
@@ -30,9 +29,7 @@ import org.eclipse.sapphire.ui.forms.swt.SapphireWizard;
 import org.eclipse.sapphire.ui.forms.swt.SapphireWizardPage;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWizard;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * @author Simon Jiang
@@ -41,15 +38,11 @@ public class NewLiferayComponentWizard extends SapphireWizard<NewLiferayComponen
 {
 
     private boolean firstErrorMessageRemoved = false;
+    private IProject initialProject;
 
     public NewLiferayComponentWizard()
     {
         super( createDefaultOp(), DefinitionLoader.sdef( NewLiferayComponentWizard.class ).wizard() );
-    }
-
-    public NewLiferayComponentWizard( final String projectName )
-    {
-        super( createDefaultOp( projectName ), DefinitionLoader.sdef( NewLiferayComponentWizard.class ).wizard() );
     }
 
     @Override
@@ -77,62 +70,29 @@ public class NewLiferayComponentWizard extends SapphireWizard<NewLiferayComponen
     @Override
     public void init( IWorkbench workbench, IStructuredSelection selection )
     {
-    }
-
-    private static IProject getSelectedProject()
-    {
-        IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-
-        if( window == null )
+        if( selection != null && !selection.isEmpty() )
         {
-            return null;
+            final Object element = selection.getFirstElement();
+
+            if( element instanceof IResource )
+            {
+                initialProject = ( (IResource) element ).getProject();
+            }
+            else if( element instanceof IJavaProject )
+            {
+                initialProject = ( (IJavaProject) element ).getProject();
+            }
+
+            if( initialProject != null )
+            {
+                element().setProjectName( initialProject.getName() );
+            }
         }
-
-        ISelection selection = window.getSelectionService().getSelection();
-
-        if( selection == null || selection.isEmpty() || !( selection instanceof IStructuredSelection ) )
-        {
-            return null;
-        }
-
-        Object[] elems = ( (IStructuredSelection) selection ).toArray();
-
-        IProject project = null;
-
-        Object elem = elems[0];
-
-        if( elem instanceof IResource )
-        {
-            project = ( (IResource) elem ).getProject();
-        }
-        else if( elem instanceof IJavaProject )
-        {
-            project = ( (IJavaProject) elem ).getProject();
-        }
-
-        return project;
     }
 
     private static NewLiferayComponentOp createDefaultOp()
     {
-        NewLiferayComponentOp newModuleOp = NewLiferayComponentOp.TYPE.instantiate();
-        IProject selectedProject = getSelectedProject();
-
-        if( selectedProject != null )
-        {
-            newModuleOp.setSelectedProjectName( selectedProject.getName() );
-        }
-
-        return newModuleOp;
-    }
-
-    private static NewLiferayComponentOp createDefaultOp( final String projectName )
-    {
-        NewLiferayComponentOp newModuleOp = NewLiferayComponentOp.TYPE.instantiate();
-
-        newModuleOp.setProjectName( projectName );
-
-        return newModuleOp;
+        return NewLiferayComponentOp.TYPE.instantiate();
     }
 
 }
