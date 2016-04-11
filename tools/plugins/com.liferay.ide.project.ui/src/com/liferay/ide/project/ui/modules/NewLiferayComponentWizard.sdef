@@ -42,19 +42,10 @@
                     <style>Sapphire.PropertyEditor.PopUpListField.Strict</style>
                 </property-editor>
             </content>
-            <description>Create a new liferay component</description>
-            <scale-vertically>true</scale-vertically>
-            <margin-right>10</margin-right>
-            <scroll-vertically>true</scroll-vertically>
-            <margin-left>0</margin-left>
-            <margin-bottom>0</margin-bottom>
-            <margin-top>0</margin-top>
-            <margin-horizontal>0</margin-horizontal>
-            <margin-vertical>0</margin-vertical>
-            <margin>0</margin>
-            <image>NewLiferayModuleWizard.png</image>
+            <description>Create a new Liferay Component Class</description>
+            <image>NewLiferayComponentWizard.png</image>
         </page>
-        <description>Create a new liferay component</description>
+        <description>Create a new Liferay Component Class</description>
         <page>
             <id>LiferayServiceModuleSettingWizardPage</id>
             <label>Liferay Service Or ServiceWrapper Module</label>
@@ -74,8 +65,6 @@
                     <child-property>Value</child-property>
                 </property-editor>
             </content>
-            <margin-right>10</margin-right>
-            <margin-left>0</margin-left>
             <initial-focus>PropertyKeys</initial-focus>
         </page>
         <page>
@@ -98,8 +87,6 @@
                  </property-editor>
             </content>
             <initial-focus>PropertyKeys</initial-focus>
-            <margin-right>10</margin-right>
-            <margin-left>0</margin-left>
         </page>
         <page>
             <id>LiferayActivatorModuleSettingWizardPage</id>
@@ -113,8 +100,7 @@
                  <property-editor>PackageName</property-editor>
             </content>
             <initial-focus>PropertyKeys</initial-focus>
-            <margin-right>10</margin-right>
-            <margin-left>0</margin-left>
-        </page>        
+        </page>
+        <image>NewLiferayComponentWizard.png</image>
     </wizard>
 </definition>
