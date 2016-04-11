@@ -51,7 +51,7 @@ public class NewLiferayComponentServiceNameValidataionService extends Validation
     {
         if( this.listener != null )
         {
-            op().property( NewLiferayComponentOp.PROP_COMPONENT_TEMPLATE_NAME ).detach( this.listener );
+            op().property( NewLiferayComponentOp.PROP_COMPONENT_CLASS_TEMPLATE_NAME ).detach( this.listener );
 
             this.listener = null;
         }
@@ -71,7 +71,7 @@ public class NewLiferayComponentServiceNameValidataionService extends Validation
             }
         };
 
-        op().property( NewLiferayComponentOp.PROP_COMPONENT_TEMPLATE_NAME ).attach( this.listener );
+        op().property( NewLiferayComponentOp.PROP_COMPONENT_CLASS_TEMPLATE_NAME ).attach( this.listener );
     }
 
     private NewLiferayComponentOp op()

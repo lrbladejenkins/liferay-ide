@@ -19,6 +19,7 @@ import org.eclipse.sapphire.ElementList;
 import org.eclipse.sapphire.ElementType;
 import org.eclipse.sapphire.ExecutableElement;
 import org.eclipse.sapphire.ListProperty;
+import org.eclipse.sapphire.PossibleValues;
 import org.eclipse.sapphire.Type;
 import org.eclipse.sapphire.Value;
 import org.eclipse.sapphire.ValueProperty;
@@ -34,6 +35,7 @@ import org.eclipse.sapphire.modeling.annotations.Services;
 
 /**
  * @author Simon Jiang
+ * @author Gregory Amerson
  */
 @Service( impl = IJavaProjectConversionService.class )
 public interface NewLiferayComponentOp extends ExecutableElement
@@ -60,15 +62,37 @@ public interface NewLiferayComponentOp extends ExecutableElement
     void setPackage( String value );
     void setPackage( JavaPackageName value );
 
-    // *** Component Template ***
+    // *** Component Class Template Name ***
 
-    @DefaultValue( text = "mvcportlet" )
-    @Label( standard = "Component Template Name" )
-    @Service( impl = NewLiferayComponentTemplateNameService.class )
-    ValueProperty PROP_COMPONENT_TEMPLATE_NAME = new ValueProperty( TYPE, "ComponentTemplateName" );
+    @DefaultValue( text = "Portlet" )
+    @Label( standard = "Component Class Template" )
+    @PossibleValues
+    (
+        values =
+        {
+            "Authenticator",
+            "Auth Failure",
+            "Auth Max Failures",
+            "Configuration Action",
+            "Friendly URL Mapper",
+            "GOGO Command",
+            "Indexer Post Processor",
+            "Login Pre Action",
+            "Model Listener", // need to allow user to select which model class
+            "Poller Processor",
+            "Portlet",
+            "Portlet Action Command",
+            "Portlet Filter",
+            "Rest",
+            "Service Wrapper",
+            "Struts Action",
+            "Struts Portlet Action"
+        }
+    )
+    ValueProperty PROP_COMPONENT_CLASS_TEMPLATE_NAME = new ValueProperty( TYPE, "ComponentClassTemplateName" );
 
-    Value<String> getComponentTemplateName();
-    void setComponentTemplateName( String value );
+    Value<String> getComponentClassTemplateName();
+    void setComponentClassTemplateName( String value );
 
     // *** ComponentName ***
     @Label( standard = "Component Name" )

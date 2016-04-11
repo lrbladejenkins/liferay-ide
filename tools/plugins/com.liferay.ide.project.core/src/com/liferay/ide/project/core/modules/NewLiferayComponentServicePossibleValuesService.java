@@ -51,14 +51,14 @@ public class NewLiferayComponentServicePossibleValuesService extends PossibleVal
             }
         };
 
-        op().property( NewLiferayComponentOp.PROP_COMPONENT_TEMPLATE_NAME ).attach( this.listener );
+        op().property( NewLiferayComponentOp.PROP_COMPONENT_CLASS_TEMPLATE_NAME ).attach( this.listener );
     }
 
     @Override
     protected void compute( final Set<String> values )
     {
         final NewLiferayComponentOp op = op();
-        final String template = op.getComponentTemplateName().content( true ).toString();
+        final String template = op.getComponentClassTemplateName().content( true ).toString();
         IServer runningServer = null;
         final IServer[] servers = ServerCore.getServers();
 
@@ -115,7 +115,7 @@ public class NewLiferayComponentServicePossibleValuesService extends PossibleVal
     {
         if( this.listener != null )
         {
-            op().property( NewLiferayComponentOp.PROP_COMPONENT_TEMPLATE_NAME ).detach( this.listener );
+            op().property( NewLiferayComponentOp.PROP_COMPONENT_CLASS_TEMPLATE_NAME ).detach( this.listener );
 
             this.listener = null;
         }

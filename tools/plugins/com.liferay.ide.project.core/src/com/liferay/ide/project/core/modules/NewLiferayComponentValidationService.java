@@ -56,7 +56,7 @@ public class NewLiferayComponentValidationService extends ValidationService
 
         op().property( NewLiferayComponentOp.PROP_PROJECT_NAME ).attach( this.listener );
         op().property( NewLiferayComponentOp.PROP_PACKAGE_NAME ).attach( this.listener );
-        op().property( NewLiferayComponentOp.PROP_COMPONENT_TEMPLATE_NAME ).attach( this.listener );
+        op().property( NewLiferayComponentOp.PROP_COMPONENT_CLASS_TEMPLATE_NAME ).attach( this.listener );
 
     }
 
@@ -119,7 +119,7 @@ public class NewLiferayComponentValidationService extends ValidationService
         {
             op().property( NewLiferayComponentOp.PROP_PROJECT_NAME ).detach( this.listener );
             op().property( NewLiferayComponentOp.PROP_PACKAGE_NAME ).detach( this.listener );
-            op().property( NewLiferayComponentOp.PROP_COMPONENT_TEMPLATE_NAME ).detach( this.listener );
+            op().property( NewLiferayComponentOp.PROP_COMPONENT_CLASS_TEMPLATE_NAME ).detach( this.listener );
 
             this.listener = null;
         }

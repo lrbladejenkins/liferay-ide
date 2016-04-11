@@ -41,7 +41,7 @@ public class NewLiferayComponentOpMethods
     {
         BaseNewLiferayComponentOperation newLiferayComponentOperation = null;
 
-        final String templateName = op.getComponentTemplateName().content( true );
+        final String templateName = op.getComponentClassTemplateName().content( true );
 
         if( templateName.equals( "mvcportlet" ) )
         {

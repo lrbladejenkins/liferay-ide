@@ -36,7 +36,7 @@
                 </property-editor>
                 <property-editor>Package</property-editor>
                 <property-editor>
-                    <property>ComponentTemplateName</property>
+                    <property>ComponentClassTemplateName</property>
                     <style>Sapphire.PropertyEditor.PopUpListField.Strict</style>
                 </property-editor>
             </content>
@@ -49,7 +49,7 @@
             <label>Liferay Service Or ServiceWrapper Module</label>
             <description>Set Service or ServiceWrapper Advance setting.</description>
             <visible-when>
-                ${ ComponentTemplateName == 'servicewrapper' || ComponentTemplateName == 'service' }
+                ${ ComponentClassTemplateName == 'servicewrapper' || ComponentClassTemplateName == 'service' }
             </visible-when>
             <content>
                 <property-editor>ComponentName</property-editor>
@@ -70,8 +70,8 @@
             <label>Liferay Portlet Module</label>
             <description>Set Portlet Advance setting.</description>
             <visible-when>
-                ${ ComponentTemplateName == 'portlet' || ComponentTemplateName == 'servicebuilder' || 
-                    ComponentTemplateName == 'mvcportlet' }
+                ${ ComponentClassTemplateName == 'portlet' || ComponentClassTemplateName == 'servicebuilder' || 
+                    ComponentClassTemplateName == 'mvcportlet' }
             </visible-when>
             <content>
                  <property-editor>ComponentName</property-editor>
@@ -91,7 +91,7 @@
             <label>Liferay Activator Module</label>
             <description>Set Activator Advance setting.</description>
             <visible-when>
-                ${ ComponentTemplateName == 'activator' }
+                ${ ComponentClassTemplateName == 'activator' }
             </visible-when>
             <content>
                  <property-editor>ComponentName</property-editor>

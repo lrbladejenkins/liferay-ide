@@ -43,7 +43,7 @@ public class NewLiferayComponentDefaultValueService extends DefaultValueService
         };
 
         op().property( NewLiferayComponentOp.PROP_PROJECT_NAME ).attach( this.listener );
-        op().property( NewLiferayComponentOp.PROP_COMPONENT_TEMPLATE_NAME ).attach( this.listener );
+        op().property( NewLiferayComponentOp.PROP_COMPONENT_CLASS_TEMPLATE_NAME ).attach( this.listener );
     }
 
     @Override
@@ -58,7 +58,7 @@ public class NewLiferayComponentDefaultValueService extends DefaultValueService
             return retVal;
         }
 
-        final String projectTemplate = op().getComponentTemplateName().content( true );
+        final String projectTemplate = op().getComponentClassTemplateName().content( true );
 
         final String pName = projectName.replaceAll( "-", "" );
 
@@ -81,7 +81,7 @@ public class NewLiferayComponentDefaultValueService extends DefaultValueService
     {
         if( op() != null )
         {
-            op().property( NewLiferayComponentOp.PROP_COMPONENT_TEMPLATE_NAME ).detach( this.listener );
+            op().property( NewLiferayComponentOp.PROP_COMPONENT_CLASS_TEMPLATE_NAME ).detach( this.listener );
             op().property( NewLiferayComponentOp.PROP_PROJECT_NAME ).detach( this.listener );
         }
 

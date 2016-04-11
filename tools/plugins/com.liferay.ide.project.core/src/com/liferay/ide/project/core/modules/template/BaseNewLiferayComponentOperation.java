@@ -89,7 +89,7 @@ public class BaseNewLiferayComponentOperation
         this.projectName = op.getProjectName().content( true );
         this.packageName = op.getPackageName().content( true );
         this.className = op.getComponentName().content( true );
-        this.templateName = op.getComponentTemplateName().content( true );
+        this.templateName = op.getComponentClassTemplateName().content( true );
         this.serviceName = op.getServiceName().content( true );
 
         ElementList<PropertyKey> propertyKeys = op.getPropertyKeys();
