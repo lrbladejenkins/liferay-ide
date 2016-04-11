@@ -20,6 +20,7 @@ import com.liferay.ide.project.core.modules.NewLiferayComponentOp;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -81,6 +82,10 @@ public class NewLiferayComponentWizard extends SapphireWizard<NewLiferayComponen
             else if( element instanceof IJavaProject )
             {
                 initialProject = ( (IJavaProject) element ).getProject();
+            }
+            else if( element instanceof IJavaElement )
+            {
+                initialProject = ( (IJavaElement) element ).getResource().getProject();
             }
 
             if( initialProject != null )
