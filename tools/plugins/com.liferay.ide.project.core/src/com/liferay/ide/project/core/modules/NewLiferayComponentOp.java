@@ -43,6 +43,7 @@ public interface NewLiferayComponentOp extends ExecutableElement
 
     @Label( standard = "project name" )
     @Required
+    @Service( impl = NewLiferayComponentProjectNameDefaultValueService.class )
     @Service( impl = NewLiferayComponentProjectNamePossibleService.class )
     ValueProperty PROP_PROJECT_NAME = new ValueProperty( TYPE, "ProjectName" );
 
@@ -52,6 +53,7 @@ public interface NewLiferayComponentOp extends ExecutableElement
     // *** Package ***
 
     @Type( base = JavaPackageName.class )
+    @Required
     ValueProperty PROP_PACKAGE = new ValueProperty( TYPE, "Package" );
 
     Value<JavaPackageName> getPackage();
