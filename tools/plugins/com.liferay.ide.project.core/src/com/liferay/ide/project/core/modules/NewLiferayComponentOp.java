@@ -19,26 +19,23 @@ import org.eclipse.sapphire.ElementList;
 import org.eclipse.sapphire.ElementType;
 import org.eclipse.sapphire.ExecutableElement;
 import org.eclipse.sapphire.ListProperty;
+import org.eclipse.sapphire.Type;
 import org.eclipse.sapphire.Value;
 import org.eclipse.sapphire.ValueProperty;
-import org.eclipse.sapphire.modeling.Path;
+import org.eclipse.sapphire.java.JavaPackageName;
 import org.eclipse.sapphire.modeling.ProgressMonitor;
 import org.eclipse.sapphire.modeling.Status;
-import org.eclipse.sapphire.modeling.annotations.AbsolutePath;
 import org.eclipse.sapphire.modeling.annotations.DefaultValue;
 import org.eclipse.sapphire.modeling.annotations.DelegateImplementation;
-import org.eclipse.sapphire.modeling.annotations.Derived;
-import org.eclipse.sapphire.modeling.annotations.FileSystemResourceType;
 import org.eclipse.sapphire.modeling.annotations.Label;
 import org.eclipse.sapphire.modeling.annotations.Required;
 import org.eclipse.sapphire.modeling.annotations.Service;
 import org.eclipse.sapphire.modeling.annotations.Services;
-import org.eclipse.sapphire.Type;
-import org.eclipse.sapphire.modeling.annotations.ValidFileSystemResourceType;
 
 /**
  * @author Simon Jiang
  */
+@Service( impl = IJavaProjectConversionService.class )
 public interface NewLiferayComponentOp extends ExecutableElement
 {
 
@@ -50,25 +47,16 @@ public interface NewLiferayComponentOp extends ExecutableElement
     ValueProperty PROP_PROJECT_NAME = new ValueProperty( TYPE, "ProjectName" );
 
     Value<String> getProjectName();
-
     void setProjectName( String value );
 
-    // *** ProjectLocation ***
+    // *** Package ***
 
-    @Type( base = Path.class )
-    @AbsolutePath
-    @Derived
-    @ValidFileSystemResourceType( FileSystemResourceType.FOLDER )
-    @Label( standard = "location" )
-    @Service( impl = NewLiferayComponentLocationDerivedService.class )
-    ValueProperty PROP_LOCATION = new ValueProperty( TYPE, "Location" );
+    @Type( base = JavaPackageName.class )
+    ValueProperty PROP_PACKAGE = new ValueProperty( TYPE, "Package" );
 
-    Value<Path> getLocation();
-
-    void setLocation( String value );
-
-    void setLocation( Path value );
-
+    Value<JavaPackageName> getPackage();
+    void setPackage( String value );
+    void setPackage( JavaPackageName value );
 
     // *** Component Template ***
 
