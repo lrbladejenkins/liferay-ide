@@ -90,12 +90,7 @@ public class NewLiferayComponentWizard extends SapphireWizard<NewLiferayComponen
 
         ISelection selection = window.getSelectionService().getSelection();
 
-        if( selection == null || selection.isEmpty() )
-        {
-            return null;
-        }
-
-        if( !( selection instanceof IStructuredSelection ) )
+        if( selection == null || selection.isEmpty() || !( selection instanceof IStructuredSelection ) )
         {
             return null;
         }
