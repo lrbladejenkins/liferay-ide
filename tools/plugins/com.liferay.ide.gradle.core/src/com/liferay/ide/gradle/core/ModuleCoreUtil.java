@@ -38,13 +38,13 @@ import org.eclipse.core.runtime.OperationCanceledException;
 public class ModuleCoreUtil
 {
 
-    public static void addFacets( final File projectLocation, IProgressMonitor monitor ) throws CoreException
+    public static void addFacetsIfNeeded( final File projectLocation, IProgressMonitor monitor ) throws CoreException
     {
-        List<IProject> projects = new ArrayList<IProject>();
+        final List<IProject> projects = new ArrayList<IProject>();
 
         ProjectUtil.collectProjectsFromDirectory( projects, projectLocation );
 
-        for( IProject project : projects )
+        for( final IProject project : projects )
         {
             if( hasJsp( project ) )
             {

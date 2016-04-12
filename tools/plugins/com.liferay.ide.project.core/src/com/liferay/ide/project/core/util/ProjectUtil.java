@@ -105,7 +105,7 @@ public class ProjectUtil
 {
     public static final String METADATA_FOLDER = ".metadata"; //$NON-NLS-1$
 
-    public static boolean collectProjectsFromDirectory(
+    public static boolean collectSDKProjectsFromDirectory(
         Collection<File> eclipseProjectFiles, Collection<File> liferayProjectDirs, File directory,
         Set<String> directoriesVisited, boolean recurse, IProgressMonitor monitor )
     {
@@ -150,7 +150,7 @@ public class ProjectUtil
                 // recurse to see if it has project file
                 int currentSize = eclipseProjectFiles.size();
 
-                collectProjectsFromDirectory(
+                collectSDKProjectsFromDirectory(
                     eclipseProjectFiles, liferayProjectDirs, contents[i], directoriesVisited, false, monitor );
 
                 int newSize = eclipseProjectFiles.size();
@@ -201,7 +201,7 @@ public class ProjectUtil
                     // are Liferay projects
                     if( ! liferayProjectDirs.contains( contents[i] ) && recurse )
                     {
-                        collectProjectsFromDirectory(
+                        collectSDKProjectsFromDirectory(
                             eclipseProjectFiles, liferayProjectDirs, contents[i], directoriesVisited, recurse, monitor );
                     }
                 }

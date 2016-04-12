@@ -105,7 +105,7 @@ public class GradleModuleProjectImporter extends AbstractLiferayProjectImporter
 
         GradleUtil.importGradleProject( projectLocation, monitor );
 
-        ModuleCoreUtil.addFacets( projectLocation, monitor );
+        ModuleCoreUtil.addFacetsIfNeeded( projectLocation, monitor );
     }
 
 }
