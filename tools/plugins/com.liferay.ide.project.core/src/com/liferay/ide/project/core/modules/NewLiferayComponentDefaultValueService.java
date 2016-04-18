@@ -15,6 +15,7 @@
 
 package com.liferay.ide.project.core.modules;
 
+import org.apache.commons.lang.WordUtils;
 import org.eclipse.sapphire.DefaultValueService;
 import org.eclipse.sapphire.FilteredListener;
 import org.eclipse.sapphire.PropertyContentEvent;
@@ -65,9 +66,14 @@ public class NewLiferayComponentDefaultValueService extends DefaultValueService
         {
             final String projectTemplate = op().getComponentClassTemplateName().content( true ).getShortName();
 
-            final String pName = projectName.replaceAll( "-", "" );
+            final char[] tokens = new char[] { '-', '.', '_' };
 
-            final String finalProjectName = pName.replaceAll( "\\.", "" );
+            String finalProjectName = WordUtils.capitalizeFully( projectName, tokens );
+
+            for( char token : tokens )
+            {
+                finalProjectName = finalProjectName.replaceAll( "\\" + token, "" );
+            }
 
             final StringBuffer componentNameBuffer = new StringBuffer( finalProjectName );
 
