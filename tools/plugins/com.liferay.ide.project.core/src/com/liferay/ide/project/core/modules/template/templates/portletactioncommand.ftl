@@ -2,7 +2,7 @@
 
 <#include "./component.ftl">
 
-public class ${classname} extends ${supperclass} {
+public class ${classname} implements ${supperclass} {
 
 <#if ( supperclass == "MVCActionCommand" ) >
 	@Override
