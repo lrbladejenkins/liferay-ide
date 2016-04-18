@@ -32,6 +32,11 @@
 					<style>Sapphire.PropertyEditor.PopUpListField.Strict</style>
 				</property-editor>
 				<property-editor>PackageName</property-editor>
+				<property-editor>ComponentClassName</property-editor>
+				<property-editor>
+					<property>ComponentClassTemplateName</property>
+					<style>Sapphire.PropertyEditor.PopUpListField.Strict</style>
+				</property-editor>
 				<property-editor>
 					<visible-when>${ ComponentClassTemplateName == 'ServiceHook' }
 					</visible-when>
@@ -42,12 +47,7 @@
 					</visible-when>
 					<property>ModelClass</property>
 				</property-editor>
-				<property-editor>ComponentName</property-editor>
-				<property-editor>
-					<property>ComponentClassTemplateName</property>
-					<style>Sapphire.PropertyEditor.PopUpListField.Strict</style>
-				</property-editor>
-			</content>
+							</content>
 			<description>Create a new Liferay Component Class</description>
 			<image>NewLiferayComponentWizard.png</image>
 		</page>
