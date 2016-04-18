@@ -48,7 +48,7 @@ public class NewLiferayComponentPackageNameValidationService extends ValidationS
             }
         };
 
-        op().property( NewLiferayComponentOp.PROP_COMPONENT_NAME ).attach( this.listener );
+        op().property( NewLiferayComponentOp.PROP_COMPONENT_CLASS_NAME ).attach( this.listener );
     }
 
     @Override
@@ -78,7 +78,7 @@ public class NewLiferayComponentPackageNameValidationService extends ValidationS
     {
         if( this.listener != null )
         {
-            op().property( NewLiferayComponentOp.PROP_COMPONENT_NAME ).detach( this.listener );
+            op().property( NewLiferayComponentOp.PROP_COMPONENT_CLASS_NAME ).detach( this.listener );
 
             this.listener = null;
         }

@@ -63,6 +63,16 @@ public interface NewLiferayComponentOp extends ExecutableElement
     void setPackageName( String value );
     void setPackageName( JavaPackageName value );
 
+    // *** ComponentClassName ***
+
+    @Label( standard = "Component Class Name" )
+    @Service( impl = NewLiferayComponentDefaultValueService.class )
+    @Service( impl = NewLiferayComponentValidationService.class )
+    ValueProperty PROP_COMPONENT_CLASS_NAME = new ValueProperty( TYPE, "ComponentClassName" );
+
+    Value<String> getComponentClassName();
+    void setComponentClassName( String value );
+
     // *** Component Class Template Name ***
 
     @Type( base = IComponentTemplate.class )
@@ -85,20 +95,7 @@ public interface NewLiferayComponentOp extends ExecutableElement
     Value<String> getModelClass();
     void setModelClass( String value );
 
-    // *** ComponentName ***
-    @Label( standard = "Component Name" )
-    @Services
-    (
-        {
-            @Service( impl = NewLiferayComponentDefaultValueService.class ),
-            @Service( impl = NewLiferayComponentValidationService.class )
-        }
-    )
-    ValueProperty PROP_COMPONENT_NAME = new ValueProperty( TYPE, "ComponentName" );
 
-    Value<String> getComponentName();
-
-    void setComponentName( String value );
 
     // *** ServiceName ***
     @Label( standard = "Service Name" )

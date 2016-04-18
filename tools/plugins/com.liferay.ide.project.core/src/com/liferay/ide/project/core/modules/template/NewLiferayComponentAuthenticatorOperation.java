@@ -115,7 +115,7 @@ public class NewLiferayComponentAuthenticatorOperation extends BaseNewLiferayCom
 
             IFolder metaFolder = resourceFolder.getFolder( "META-INF/resources" );
 
-            final IFile authIni = metaFolder.getFile( new Path( className + "/userauth.ini" ) );
+            final IFile authIni = metaFolder.getFile( new Path( componentClassName + "/userauth.ini" ) );
 
             if( !authIni.getLocation().toFile().exists() )
             {

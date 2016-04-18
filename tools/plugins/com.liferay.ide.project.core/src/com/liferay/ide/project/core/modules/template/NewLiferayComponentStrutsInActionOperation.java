@@ -68,7 +68,7 @@ public class NewLiferayComponentStrutsInActionOperation extends BaseNewLiferayCo
 
         imports.addAll( super.getImports() );
 
-        imports.add( "path=/portal/" + className );
+        imports.add( "path=/portal/" + componentClassName );
 
         return imports;
     }
@@ -107,14 +107,14 @@ public class NewLiferayComponentStrutsInActionOperation extends BaseNewLiferayCo
 
             IFolder metaFolder = resourceFolder.getFolder( "META-INF/resources" );
 
-            final IFile initJsp = metaFolder.getFile( new Path( className + "/html/init.jsp" ) );
+            final IFile initJsp = metaFolder.getFile( new Path( componentClassName + "/html/init.jsp" ) );
 
             if( !initJsp.getLocation().toFile().exists() )
             {
                 createSampleFile( initJsp, "strutsinaction-init.jsp" );
             }
 
-            final IFile viewJsp = metaFolder.getFile( new Path( className + "/html/portal/blade.jsp" ) );
+            final IFile viewJsp = metaFolder.getFile( new Path( componentClassName + "/html/portal/blade.jsp" ) );
 
             if( !viewJsp.getLocation().toFile().exists() )
             {

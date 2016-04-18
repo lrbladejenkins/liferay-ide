@@ -52,7 +52,7 @@ public class NewLiferayComponentPollerProcessorOperation extends BaseNewLiferayC
 
     private final static String POLLER_SUPER_CLASSES = "BasePollerProcessor";
     private final static String POLLER_PORTLET_SUPER_CLASSES = "MVCPortlet";
-    
+
     private final static String POLLER_EXTENSION_CLASSES = "PollerProcessor.class";
     private final static String POLLER_PORTLET_EXTENSION_CLASSES = "Portlet.class";
 
@@ -108,7 +108,7 @@ public class NewLiferayComponentPollerProcessorOperation extends BaseNewLiferayC
         {
             properties.add( property );
         }
-        properties.add( "javax.portlet.name=" + this.className + "Portlet" );
+        properties.add( "javax.portlet.name=" + this.componentClassName + "Portlet" );
 
         return properties;
     }
@@ -123,13 +123,13 @@ public class NewLiferayComponentPollerProcessorOperation extends BaseNewLiferayC
             properties.add( property );
         }
 
-        properties.add( "com.liferay.portlet.poller-processor-class=" + this.packageName + "." + this.className );
-        properties.add( "javax.portlet.display-name=" + this.className );
-        properties.add( "javax.portlet.portlet.info.short-title=" + this.className );
-        properties.add( "javax.portlet.portlet.info.title=" + this.className );
-        properties.add( "com.liferay.portlet.header-portlet-javascript=/" + className + "/js/main.js" );
-        properties.add( "javax.portlet.init-param.view-template=/" + className + "/view.jsp" );
-        properties.add( "javax.portlet.resource-bundle=content." + className + ".Language" );
+        properties.add( "com.liferay.portlet.poller-processor-class=" + this.packageName + "." + this.componentClassName );
+        properties.add( "javax.portlet.display-name=" + this.componentClassName );
+        properties.add( "javax.portlet.portlet.info.short-title=" + this.componentClassName );
+        properties.add( "javax.portlet.portlet.info.title=" + this.componentClassName );
+        properties.add( "com.liferay.portlet.header-portlet-javascript=/" + componentClassName + "/js/main.js" );
+        properties.add( "javax.portlet.init-param.view-template=/" + componentClassName + "/view.jsp" );
+        properties.add( "javax.portlet.resource-bundle=content." + componentClassName + ".Language" );
 
         return properties;
     }
@@ -161,7 +161,7 @@ public class NewLiferayComponentPollerProcessorOperation extends BaseNewLiferayC
         {
             this.projectName = op.getProjectName().content( true );
             this.packageName = op.getPackageName().content( true );
-            this.className = op.getComponentName().content( true );
+            this.componentClassName = op.getComponentClassName().content( true );
 
             this.project = CoreUtil.getProject( projectName );
 
@@ -173,10 +173,10 @@ public class NewLiferayComponentPollerProcessorOperation extends BaseNewLiferayC
                 {
                     initFreeMarker();
 
-                    IFile pollerClassFile = prepareClassFile( this.className );
+                    IFile pollerClassFile = prepareClassFile( this.componentClassName );
                     doSourceCodeOperation( pollerClassFile, "poller" );
 
-                    IFile pollerPortletClassFile = prepareClassFile( this.className + "Portlet" );
+                    IFile pollerPortletClassFile = prepareClassFile( this.componentClassName + "Portlet" );
                     doSourceCodeOperation( pollerPortletClassFile, "pollerPortlet" );
 
                     doMergeResourcesOperation();
@@ -199,7 +199,7 @@ public class NewLiferayComponentPollerProcessorOperation extends BaseNewLiferayC
         {
             root.put( "importlibs", getPollerImports() );
             root.put( "properties", getPollerProperties() );
-            root.put( "classname", className );
+            root.put( "classname", componentClassName );
             root.put( "supperclass", getPollerSuperClass() );
             root.put( "extensionclass", getPollerExtensionClass() );
         }
@@ -207,7 +207,7 @@ public class NewLiferayComponentPollerProcessorOperation extends BaseNewLiferayC
         {
             root.put( "importlibs", getPollerPortletImports() );
             root.put( "properties", getPollerPortletProperties() );
-            root.put( "classname", className + "Portlet" );
+            root.put( "classname", componentClassName + "Portlet" );
             root.put( "supperclass", getPollerPortletSuperClass() );
             root.put( "extensionclass", getPollerPortletExtensionClass() );
         }
@@ -259,7 +259,7 @@ public class NewLiferayComponentPollerProcessorOperation extends BaseNewLiferayC
             resourceFolder = liferayProject.getSourceFolder( "resources" );
 
             IFolder contentFolder = resourceFolder.getFolder( "META-INF/content" );
-            final IFile languageProperties = contentFolder.getFile( new Path( className + "/Language.properties" ) );
+            final IFile languageProperties = contentFolder.getFile( new Path( componentClassName + "/Language.properties" ) );
 
             if( !languageProperties.getLocation().toFile().exists() )
             {
@@ -268,21 +268,21 @@ public class NewLiferayComponentPollerProcessorOperation extends BaseNewLiferayC
 
             IFolder metaFolder = resourceFolder.getFolder( "META-INF/resources" );
 
-            final IFile mainJs = metaFolder.getFile( new Path( className + "/js/main.js" ) );
+            final IFile mainJs = metaFolder.getFile( new Path( componentClassName + "/js/main.js" ) );
 
             if( !mainJs.getLocation().toFile().exists() )
             {
                 createSampleFile( mainJs, "poller-main.js" );
             }
 
-            final IFile initJsp = metaFolder.getFile( new Path( className + "/init.jsp" ) );
+            final IFile initJsp = metaFolder.getFile( new Path( componentClassName + "/init.jsp" ) );
 
             if( !initJsp.getLocation().toFile().exists() )
             {
                 createSampleFile( initJsp, "poller-init.jsp" );
             }
 
-            final IFile viewJsp = metaFolder.getFile( new Path( className + "/view.jsp" ) );
+            final IFile viewJsp = metaFolder.getFile( new Path( componentClassName + "/view.jsp" ) );
 
             if( !viewJsp.getLocation().toFile().exists() )
             {

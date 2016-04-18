@@ -52,7 +52,7 @@ public class NewLiferayComponentPortletActionCommandOperation extends BaseNewLif
 
     private final static String PORTLET_SUPER_CLASSES = "FreeMarkerPortlet";
     private final static String PORTLET_ACTION_COMMAND_SUPER_CLASSES = "MVCActionCommand";
-    
+
     private final static String PORTLET_EXTENSION_CLASSES = "Portlet.class";
     private final static String PORTLET_ACTION_COMMAND_EXTENSION_CLASSES = "MVCActionCommand.class";
 
@@ -106,8 +106,8 @@ public class NewLiferayComponentPortletActionCommandOperation extends BaseNewLif
         {
             properties.add( property );
         }
-        properties.add( "javax.portlet.display-name=" + className );
-        properties.add( "javax.portlet.init-param.view-template=/" + className + "/view.ftl" );
+        properties.add( "javax.portlet.display-name=" + componentClassName );
+        properties.add( "javax.portlet.init-param.view-template=/" + componentClassName + "/view.ftl" );
         properties.add( "com.liferay.portlet.css-class-wrapper=portlet-" + projectName );
 
         return properties;
@@ -122,8 +122,8 @@ public class NewLiferayComponentPortletActionCommandOperation extends BaseNewLif
             properties.add( property );
         }
 
-        properties.add( "mvc.command.name=" + this.className );
-        properties.add( "javax.portlet.name=" + this.className );
+        properties.add( "mvc.command.name=" + this.componentClassName );
+        properties.add( "javax.portlet.name=" + this.componentClassName );
 
         return properties;
     }
@@ -155,7 +155,7 @@ public class NewLiferayComponentPortletActionCommandOperation extends BaseNewLif
         {
             this.projectName = op.getProjectName().content( true );
             this.packageName = op.getPackageName().content( true );
-            this.className = op.getComponentName().content( true );
+            this.componentClassName = op.getComponentClassName().content( true );
 
             this.project = CoreUtil.getProject( projectName );
 
@@ -167,10 +167,10 @@ public class NewLiferayComponentPortletActionCommandOperation extends BaseNewLif
                 {
                     initFreeMarker();
 
-                    IFile pollerClassFile = prepareClassFile( this.className );
+                    IFile pollerClassFile = prepareClassFile( this.componentClassName );
                     doSourceCodeOperation( pollerClassFile, "portlet" );
 
-                    IFile pollerPortletClassFile = prepareClassFile( this.className + "ActionCommand" );
+                    IFile pollerPortletClassFile = prepareClassFile( this.componentClassName + "ActionCommand" );
                     doSourceCodeOperation( pollerPortletClassFile, "actionCommand" );
 
                     doMergeResourcesOperation();
@@ -193,7 +193,7 @@ public class NewLiferayComponentPortletActionCommandOperation extends BaseNewLif
         {
             root.put( "importlibs", getPortletImports() );
             root.put( "properties", getPortletProperties() );
-            root.put( "classname", className );
+            root.put( "classname", componentClassName );
             root.put( "supperclass", getPortletSuperClass() );
             root.put( "extensionclass", getPortletExtensionClass() );
         }
@@ -201,7 +201,7 @@ public class NewLiferayComponentPortletActionCommandOperation extends BaseNewLif
         {
             root.put( "importlibs", getPortletActionCommandImports() );
             root.put( "properties", getPortletActionCommandProperties() );
-            root.put( "classname", className + "ActionCommand" );
+            root.put( "classname", componentClassName + "ActionCommand" );
             root.put( "supperclass", getPortletActionCommandSuperClass() );
             root.put( "extensionclass", getPortletActionCommandExtensionClass() );
         }
@@ -254,14 +254,14 @@ public class NewLiferayComponentPortletActionCommandOperation extends BaseNewLif
 
             IFolder metaFolder = resourceFolder.getFolder( "META-INF/resources" );
 
-            final IFile initFtl = metaFolder.getFile( new Path( className + "/init.ftl" ) );
+            final IFile initFtl = metaFolder.getFile( new Path( componentClassName + "/init.ftl" ) );
 
             if( !initFtl.getLocation().toFile().exists() )
             {
                 createSampleFile( initFtl, "portletactioncommand-init.ftl" );
             }
 
-            final IFile viewFtl = metaFolder.getFile( new Path( className + "/view.ftl" ) );
+            final IFile viewFtl = metaFolder.getFile( new Path( componentClassName + "/view.ftl" ) );
 
             if( !viewFtl.getLocation().toFile().exists() )
             {
@@ -273,5 +273,5 @@ public class NewLiferayComponentPortletActionCommandOperation extends BaseNewLif
         {
             throw new CoreException( ProjectCore.createErrorStatus( e ) );
         }
-    } 
+    }
 }

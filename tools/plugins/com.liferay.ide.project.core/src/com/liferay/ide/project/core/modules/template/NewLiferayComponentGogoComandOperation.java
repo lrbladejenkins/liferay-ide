@@ -54,7 +54,7 @@ public class NewLiferayComponentGogoComandOperation extends BaseNewLiferayCompon
     {
         List<String> mvcProperties = new ArrayList<String>();
         mvcProperties.addAll( Arrays.asList( PROPERTIES_LIST ) );
-        mvcProperties.add( "osgi.command.function=" + className.toLowerCase() );
+        mvcProperties.add( "osgi.command.function=" + componentClassName.toLowerCase() );
 
         return mvcProperties;
     }

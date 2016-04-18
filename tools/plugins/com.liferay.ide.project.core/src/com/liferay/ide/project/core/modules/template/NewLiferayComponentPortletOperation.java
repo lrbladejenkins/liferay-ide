@@ -76,7 +76,7 @@ public class NewLiferayComponentPortletOperation extends BaseNewLiferayComponent
             properties.add( property );
         }
 
-        properties.add( "javax.portlet.display-name=" + className + " Portlet" );
+        properties.add( "javax.portlet.display-name=" + componentClassName + " Portlet" );
         return properties;
     }
 

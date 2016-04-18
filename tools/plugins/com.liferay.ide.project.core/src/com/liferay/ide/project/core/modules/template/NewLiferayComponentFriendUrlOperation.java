@@ -62,7 +62,7 @@ public class NewLiferayComponentFriendUrlOperation extends BaseNewLiferayCompone
 
         friendUrlProperties.addAll( Arrays.asList( PROPERTIES_LIST ) );
         friendUrlProperties.add(
-            "com.liferay.portlet.friendly-url-routes=META-INF/friendly-url-routes/" + className + "/routes.xml" );
+            "com.liferay.portlet.friendly-url-routes=META-INF/friendly-url-routes/" + componentClassName + "/routes.xml" );
 
         return friendUrlProperties;
     }
@@ -101,7 +101,7 @@ public class NewLiferayComponentFriendUrlOperation extends BaseNewLiferayCompone
 
             IFolder metaFolder = resourceFolder.getFolder( "META-INF/friendly-url-routes" );
 
-            final IFile routesXml = metaFolder.getFile( new Path( className + "/routes.xml" ) );
+            final IFile routesXml = metaFolder.getFile( new Path( componentClassName + "/routes.xml" ) );
 
             if( !routesXml.getLocation().toFile().exists() )
             {

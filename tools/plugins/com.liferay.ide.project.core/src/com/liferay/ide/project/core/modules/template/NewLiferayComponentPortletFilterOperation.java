@@ -50,7 +50,7 @@ public class NewLiferayComponentPortletFilterOperation extends BaseNewLiferayCom
 
     private final static String PORTLET_SUPER_CLASSES = "GenericPortlet";
     private final static String PORTLET_FILTER_SUPER_CLASSES = "RenderFilter";
-    
+
     private final static String PORTLET_EXTENSION_CLASSES = "Portlet.class";
     private final static String PORTLET_FILTER_EXTENSION_CLASSES = "PortletFilter.class";
 
@@ -60,7 +60,7 @@ public class NewLiferayComponentPortletFilterOperation extends BaseNewLiferayCom
     			"com.liferay.portlet.instanceable=true",
     			"javax.portlet.security-role-ref=power-user,user"
     	};
-    
+
     public NewLiferayComponentPortletFilterOperation( )
     {
         super();
@@ -71,11 +71,11 @@ public class NewLiferayComponentPortletFilterOperation extends BaseNewLiferayCom
         List<String> imports = new ArrayList<String>();
 
         imports.addAll( super.getImports() );
-        imports.add( "java.io.IOException" ); 
+        imports.add( "java.io.IOException" );
         imports.add( "java.io.PrintWriter" );
-        imports.add( "javax.portlet.GenericPortlet" ); 
+        imports.add( "javax.portlet.GenericPortlet" );
         imports.add( "javax.portlet.Portlet" );
-        imports.add( "javax.portlet.PortletException" ); 
+        imports.add( "javax.portlet.PortletException" );
         imports.add( "javax.portlet.RenderRequest" );
         imports.add( "javax.portlet.RenderResponse" );
 
@@ -87,7 +87,7 @@ public class NewLiferayComponentPortletFilterOperation extends BaseNewLiferayCom
         List<String> imports = new ArrayList<String>();
 
         imports.addAll( super.getImports() );
-        imports.add( "java.io.IOException" ); 
+        imports.add( "java.io.IOException" );
         imports.add( "javax.portlet.filter.FilterChain" );
         imports.add( "javax.portlet.filter.FilterConfig" );
         imports.add( "javax.portlet.filter.PortletFilter" );
@@ -95,7 +95,7 @@ public class NewLiferayComponentPortletFilterOperation extends BaseNewLiferayCom
         imports.add( "javax.portlet.RenderRequest" );
         imports.add( "javax.portlet.RenderResponse" );
         imports.add( "javax.portlet.PortletException" );
-        
+
         return imports;
     }
 
@@ -107,8 +107,8 @@ public class NewLiferayComponentPortletFilterOperation extends BaseNewLiferayCom
         {
             properties.add( property );
         }
-        properties.add( "javax.portlet.display-name=" + className );
-        properties.add( "javax.portlet.name=" + className );
+        properties.add( "javax.portlet.display-name=" + componentClassName );
+        properties.add( "javax.portlet.name=" + componentClassName );
 
         return properties;
     }
@@ -122,7 +122,7 @@ public class NewLiferayComponentPortletFilterOperation extends BaseNewLiferayCom
             properties.add( property );
         }
 
-        properties.add( "javax.portlet.name=" + this.className );
+        properties.add( "javax.portlet.name=" + this.componentClassName );
 
         return properties;
     }
@@ -154,7 +154,7 @@ public class NewLiferayComponentPortletFilterOperation extends BaseNewLiferayCom
         {
             this.projectName = op.getProjectName().content( true );
             this.packageName = op.getPackageName().content( true );
-            this.className = op.getComponentName().content( true );
+            this.componentClassName = op.getComponentClassName().content( true );
 
             this.project = CoreUtil.getProject( projectName );
 
@@ -166,10 +166,10 @@ public class NewLiferayComponentPortletFilterOperation extends BaseNewLiferayCom
                 {
                     initFreeMarker();
 
-                    IFile pollerClassFile = prepareClassFile( this.className );
+                    IFile pollerClassFile = prepareClassFile( this.componentClassName );
                     doSourceCodeOperation( pollerClassFile, "portlet" );
 
-                    IFile pollerPortletClassFile = prepareClassFile( this.className + "RenderFilter" );
+                    IFile pollerPortletClassFile = prepareClassFile( this.componentClassName + "RenderFilter" );
                     doSourceCodeOperation( pollerPortletClassFile, "renderFilter" );
 
                     project.refreshLocal( IResource.DEPTH_INFINITE, new NullProgressMonitor() );
@@ -190,7 +190,7 @@ public class NewLiferayComponentPortletFilterOperation extends BaseNewLiferayCom
         {
             root.put( "importlibs", getPortletImports() );
             root.put( "properties", getPortletProperties() );
-            root.put( "classname", className );
+            root.put( "classname", componentClassName );
             root.put( "supperclass", getPortletSuperClass() );
             root.put( "extensionclass", getPortletExtensionClass() );
         }
@@ -198,7 +198,7 @@ public class NewLiferayComponentPortletFilterOperation extends BaseNewLiferayCom
         {
             root.put( "importlibs", getPortletFilterImports() );
             root.put( "properties", getPortletFilterProperties() );
-            root.put( "classname", className + "RenderFilter" );
+            root.put( "classname", componentClassName + "RenderFilter" );
             root.put( "supperclass", getPortletFilterSuperClass() );
             root.put( "extensionclass", getPortletFilterExtensionClass() );
         }
@@ -233,5 +233,5 @@ public class NewLiferayComponentPortletFilterOperation extends BaseNewLiferayCom
         {
             throw new CoreException( ProjectCore.createErrorStatus( e ) );
         }
-    } 
+    }
 }

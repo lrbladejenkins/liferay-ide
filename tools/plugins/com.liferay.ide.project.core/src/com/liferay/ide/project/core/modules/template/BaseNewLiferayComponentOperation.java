@@ -77,7 +77,7 @@ public abstract class BaseNewLiferayComponentOperation extends AbstractLiferayCo
 
     protected Configuration cfg = new Configuration();
 
-    protected String className;
+    protected String componentClassName;
 
     protected File[] dependenciesTemplateFiles;
     protected ILiferayProject liferayProject;
@@ -208,7 +208,7 @@ public abstract class BaseNewLiferayComponentOperation extends AbstractLiferayCo
         {
             this.projectName = op.getProjectName().content( true );
             this.packageName = op.getPackageName().content( true );
-            this.className = op.getComponentName().content( true );
+            this.componentClassName = op.getComponentClassName().content( true );
             this.serviceName = op.getServiceName().content( true );
             this.modelClass = op.getModelClass().content( true );
 
@@ -240,7 +240,7 @@ public abstract class BaseNewLiferayComponentOperation extends AbstractLiferayCo
                 {
                     initFreeMarker();
 
-                    IFile srcFile = prepareClassFile( this.className );
+                    IFile srcFile = prepareClassFile( this.componentClassName );
                     doSourceCodeOperation( srcFile );
 
                     doNewPropertiesOperation();
@@ -359,7 +359,7 @@ public abstract class BaseNewLiferayComponentOperation extends AbstractLiferayCo
         root.put( "importlibs", getImports() );
         root.put( "properties", getProperties() );
         root.put( "packagename", packageName );
-        root.put( "classname", className );
+        root.put( "classname", componentClassName );
         root.put( "projectname", projectName );
         root.put( "supperclass", getSuperClass() );
         root.put( "extensionclass", getExtensionClass() );

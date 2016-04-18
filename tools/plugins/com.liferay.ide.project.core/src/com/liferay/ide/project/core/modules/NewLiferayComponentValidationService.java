@@ -65,7 +65,7 @@ public class NewLiferayComponentValidationService extends ValidationService
     {
         Status retval = Status.createOkStatus();
 
-        final String className = op().getComponentName().content( true );
+        final String className = op().getComponentClassName().content( true );
 
         if( !CoreUtil.isNullOrEmpty( className ) )
         {
