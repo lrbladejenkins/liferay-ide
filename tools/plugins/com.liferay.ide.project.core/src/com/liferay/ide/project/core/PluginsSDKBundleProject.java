@@ -212,6 +212,12 @@ public class PluginsSDKBundleProject extends FlexibleProject implements IWebProj
     }
 
     @Override
+    public String getBundleShape()
+    {
+        return "war";
+    }
+
+    @Override
     public IPath getOutputBundle( boolean buildIfNeeded, IProgressMonitor monitor ) throws CoreException
     {
         IPath retval = null;

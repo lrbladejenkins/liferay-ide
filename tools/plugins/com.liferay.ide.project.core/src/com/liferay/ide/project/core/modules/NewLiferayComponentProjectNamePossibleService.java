@@ -16,7 +16,6 @@
 package com.liferay.ide.project.core.modules;
 
 import com.liferay.ide.core.IBundleProject;
-import com.liferay.ide.core.ILiferayProject;
 import com.liferay.ide.core.LiferayCore;
 import com.liferay.ide.core.util.CoreUtil;
 import com.liferay.ide.project.core.ProjectCore;
@@ -50,15 +49,11 @@ public class NewLiferayComponentProjectNamePossibleService extends PossibleValue
 
             for( IProject project : allProjects )
             {
-                boolean isLiferayProject = CoreUtil.isLiferayProject( project );
-                
-                if ( isLiferayProject )
+                final IBundleProject bundleProject = LiferayCore.create( IBundleProject.class, project );
+
+                if( bundleProject != null && "jar".equals( bundleProject.getBundleShape() ) )
                 {
-                    ILiferayProject liferayProject = LiferayCore.create(project);
-                    if ( liferayProject instanceof IBundleProject )
-                    {
-                        values.add( project.getName() );
-                    }                    
+                    values.add( project.getName() );
                 }
             }
         }

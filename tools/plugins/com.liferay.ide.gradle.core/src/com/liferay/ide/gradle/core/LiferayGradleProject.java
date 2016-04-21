@@ -93,6 +93,12 @@ public class LiferayGradleProject extends BaseLiferayProject implements IBundleP
     }
 
     @Override
+    public String getBundleShape()
+    {
+        return "jar";
+    }
+
+    @Override
     public List<IFile> getDefaultLanguageProperties()
     {
         return PropertiesUtil.getDefaultLanguagePropertiesFromModuleProject( getProject() );
