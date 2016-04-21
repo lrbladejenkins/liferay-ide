@@ -30,7 +30,7 @@ import org.eclipse.sapphire.platform.ProgressMonitorBridge;
  */
 public class NewLiferayComponentOpMethods
 {
-    public static void createNewModule( NewLiferayComponentOp op, IProgressMonitor monitor ) throws CoreException
+    public static void createNewComponent( NewLiferayComponentOp op, IProgressMonitor monitor ) throws CoreException
     {
         IComponentTemplate<NewLiferayComponentOp> componentOp =
             op.getComponentClassTemplateName().content( true );
@@ -56,7 +56,7 @@ public class NewLiferayComponentOpMethods
 
             if( project != null )
             {
-                createNewModule( op, monitor );
+                createNewComponent( op, monitor );
             }
             else
             {
