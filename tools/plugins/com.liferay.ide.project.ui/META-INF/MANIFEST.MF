@@ -53,9 +53,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.sapphire.ui.swt.xml.editor,
  org.eclipse.sapphire.osgi,
  org.eclipse.sapphire.modeling.xml,
- org.eclipse.core.filesystem,
- org.codehaus.jackson.mapper,
- org.codehaus.jackson.core
+ org.eclipse.core.filesystem
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: com.liferay.ide.project.ui,
